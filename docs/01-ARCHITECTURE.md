@@ -6,7 +6,7 @@
 **Վերջին թարմացում.** 2026-07-18
 
 ## 1. Architecture drivers
-
+ 
 - Storefront, customer և admin surfaces-ը կիսում են նույն catalog/order/auth domain-ը։
 - Checkout, stock և money flows-ը պահանջում են transaction consistency և մեկ source of truth։
 - SEO էջերը շահում են Server Components/streaming/caching-ից։
