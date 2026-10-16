@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 
 const MOBILE_QUERY = '(max-width: 767px), (orientation: portrait) and (max-width: 1199px)';
 /** Dock is 176px in the 440px frame, then scaled to the viewport, plus a gap. */
-const LIFT = 'calc(176px * 100vw / 440 + env(safe-area-inset-bottom, 0px) + 1.25rem)';
+const LIFT = 'calc(176px * 100vw / 440 + env(safe-area-inset-bottom, 0px) + 5rem)';
 
 const OVERLAY_QUERY =
   '[role="dialog"][aria-modal="true"], [role="alertdialog"][aria-modal="true"]';
