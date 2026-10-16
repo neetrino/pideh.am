@@ -26,7 +26,12 @@ export async function ProductRelatedSection({
 }: ProductRelatedSectionProps) {
   const related = await getRelatedProducts(locale, productId);
   const menuButton = (
-    <PidehPillButton href={`/${locale}/products`} label={dictionary.home.viewAll} tone="yellow" />
+    <PidehPillButton
+      href={`/${locale}/products`}
+      label={dictionary.home.viewAll}
+      tone="yellow"
+      className="max-sm:px-4 max-sm:py-2.5 max-sm:text-sm"
+    />
   );
 
   if (related.length === 0) {
@@ -44,38 +49,39 @@ export async function ProductRelatedSection({
 
   return (
     <section className="mt-16 flex flex-col gap-8 md:mt-20">
-      <div className="flex flex-col items-start gap-6 md:flex-row md:items-end md:justify-between">
-        <h2 className="min-w-0 font-display text-[clamp(2.3rem,7.7vw,4.8rem)] leading-[0.95] text-white">
+      <div className="flex items-end justify-between gap-3">
+        <h2 className="min-w-0 flex-1 font-display text-[clamp(1.55rem,6vw,4.8rem)] leading-[0.9] break-words text-white">
           {labels.related}
         </h2>
         <div className="shrink-0">{menuButton}</div>
       </div>
-      <div className="grid w-full min-w-0 grid-cols-2 items-stretch justify-items-stretch gap-[13px] overflow-visible lg:grid-cols-4">
+      <div className="flex w-full min-w-0 snap-x snap-mandatory gap-[13px] overflow-x-auto overscroll-x-contain pb-1 lg:grid lg:snap-none lg:grid-cols-4 lg:overflow-visible">
         {related.map((item) => {
           const price = formatPrice(item.priceAmount);
           const compareAt = item.compareAtAmount != null ? formatPrice(item.compareAtAmount) : null;
 
           return (
-            <HomeProductCard
-              key={item.id}
-              href={`/${locale}/products/${item.translation.slug}`}
-              title={item.translation.title}
-              description={item.translation.description ?? null}
-              priceFormatted={price.formatted}
-              compareAtFormatted={compareAt?.formatted ?? null}
-              imageUrl={item.imageUrl}
-              inStock={item.stockOnHand > 0}
-              locale={locale}
-              productId={item.id}
-              inWishlist={wishlistIds.has(item.id)}
-              cartQuantity={cartQuantities[item.id] ?? 0}
-              maxQuantity={item.stockOnHand}
-              isSignedIn={isSignedIn}
-              wishlistLabel={dictionary.nav.wishlist}
-              orderLabel={dictionary.home.orderCta}
-              outOfStockLabel={labels.outOfStock}
-              className="min-w-0 max-w-none"
-            />
+            <div key={item.id} className="w-[82%] shrink-0 snap-start lg:w-auto lg:shrink">
+              <HomeProductCard
+                href={`/${locale}/products/${item.translation.slug}`}
+                title={item.translation.title}
+                description={item.translation.description ?? null}
+                priceFormatted={price.formatted}
+                compareAtFormatted={compareAt?.formatted ?? null}
+                imageUrl={item.imageUrl}
+                inStock={item.stockOnHand > 0}
+                locale={locale}
+                productId={item.id}
+                inWishlist={wishlistIds.has(item.id)}
+                cartQuantity={cartQuantities[item.id] ?? 0}
+                maxQuantity={item.stockOnHand}
+                isSignedIn={isSignedIn}
+                wishlistLabel={dictionary.nav.wishlist}
+                orderLabel={dictionary.home.orderCta}
+                outOfStockLabel={labels.outOfStock}
+                className="min-w-0 max-w-none"
+              />
+            </div>
           );
         })}
       </div>

@@ -60,29 +60,31 @@ export function OrderDetailsDrawer({
               {copy.orders.drawer.title}
             </h2>
             {detail ? (
-              <div className="mt-2 flex flex-wrap items-center gap-2">
+              <div className="mt-2 flex flex-nowrap items-center gap-2">
                 <p className="text-sm text-gray-500">#{detail.orderNumber}</p>
                 {isGroup ? (
                   <span className="inline-flex rounded-full bg-[#1a4d3a] px-2.5 py-0.5 text-xs font-bold text-white">
                     {copy.orders.kindSwitcher.group}
                   </span>
                 ) : null}
+                <OrderStatusPills
+                  className="sm:hidden"
+                  statusLabel={statusLabel}
+                  paymentLabel={paymentLabel}
+                  statusAriaLabel={`${copy.orders.drawer.status} ${statusLabel}`}
+                  paymentAriaLabel={`${copy.orders.drawer.payment} ${paymentLabel}`}
+                />
               </div>
             ) : null}
           </div>
           {detail ? (
-            <div className="flex shrink-0 flex-wrap justify-end gap-2">
-              <OrderMetaPill
-                icon={Package}
-                label={statusLabel}
-                ariaLabel={`${copy.orders.drawer.status} ${statusLabel}`}
-              />
-              <OrderMetaPill
-                icon={CreditCard}
-                label={paymentLabel}
-                ariaLabel={`${copy.orders.drawer.payment} ${paymentLabel}`}
-              />
-            </div>
+            <OrderStatusPills
+              className="hidden shrink-0 sm:flex"
+              statusLabel={statusLabel}
+              paymentLabel={paymentLabel}
+              statusAriaLabel={`${copy.orders.drawer.status} ${statusLabel}`}
+              paymentAriaLabel={`${copy.orders.drawer.payment} ${paymentLabel}`}
+            />
           ) : null}
         </div>
       </div>
@@ -135,6 +137,27 @@ export function OrderDetailsDrawer({
         ) : null}
       </div>
     </SideSheet>
+  );
+}
+
+function OrderStatusPills({
+  className,
+  statusLabel,
+  paymentLabel,
+  statusAriaLabel,
+  paymentAriaLabel,
+}: {
+  className: string;
+  statusLabel: string;
+  paymentLabel: string;
+  statusAriaLabel: string;
+  paymentAriaLabel: string;
+}) {
+  return (
+    <div className={`flex flex-nowrap items-center gap-2 ${className}`}>
+      <OrderMetaPill icon={Package} label={statusLabel} ariaLabel={statusAriaLabel} />
+      <OrderMetaPill icon={CreditCard} label={paymentLabel} ariaLabel={paymentAriaLabel} />
+    </div>
   );
 }
 

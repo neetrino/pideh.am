@@ -99,7 +99,7 @@ function CreateGroupOrderDialog({
 
   return (
     <motion.div
-      className="fixed inset-0 z-[220] flex items-end justify-center sm:items-center sm:p-4"
+      className="fixed inset-0 z-[220] flex items-center justify-center p-4"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
@@ -120,7 +120,7 @@ function CreateGroupOrderDialog({
         animate={{ opacity: 1, y: 0, scale: 1 }}
         exit={reduceMotion ? { opacity: 0 } : { opacity: 0, y: 14, scale: 0.98 }}
         transition={{ duration: 0.32, ease: PANEL_EASE }}
-        className="relative z-[1] flex max-h-[min(92dvh,calc(100dvh-1rem))] w-full max-w-[min(440px,calc(100%-1.5rem))] flex-col overflow-hidden rounded-t-[28px] border-2 border-pideh-ink bg-pideh-cream shadow-[8px_8px_0_#1e1e1e] sm:rounded-[28px]"
+        className="relative z-[1] flex max-h-[min(92dvh,calc(100dvh-2rem))] w-full min-w-0 max-w-[min(440px,calc(100%-2rem))] flex-col overflow-hidden rounded-[28px] border-2 border-pideh-ink bg-pideh-cream shadow-[8px_8px_0_#1e1e1e]"
       >
         <div className="relative border-b-2 border-pideh-ink/10 bg-pideh-yellow/35 px-6 pt-5 pb-4">
           <CloseButton label={labels.close} onClose={onClose} />
@@ -130,7 +130,10 @@ function CreateGroupOrderDialog({
           >
             {labels.createTitle}
           </h2>
-          <p id={descriptionId} className="mt-2 pr-6 text-sm leading-relaxed text-pideh-muted">
+          <p
+            id={descriptionId}
+            className="mt-2 hidden min-w-0 text-sm leading-relaxed break-words text-pretty text-pideh-muted sm:block"
+          >
             {labels.createDescription}
           </p>
         </div>
@@ -177,7 +180,7 @@ function GroupOrderCreateFields({
   onPaymentModeChange: (value: GroupOrderPaymentMode) => void;
 }) {
   return (
-    <div className="min-h-0 flex-1 space-y-4 overflow-y-auto">
+    <div className="min-h-0 min-w-0 flex-1 space-y-4 overflow-x-hidden overflow-y-auto">
       <label className="block">
         <span className="mb-2 block text-sm font-semibold text-pideh-ink">
           {labels.organizerNameLabel}
@@ -191,7 +194,7 @@ function GroupOrderCreateFields({
         />
       </label>
       <LayoutGroup>
-        <fieldset className="space-y-3">
+        <fieldset className="min-w-0 space-y-3">
           <legend className="sr-only">{labels.createTitle}</legend>
           <GroupOrderPaymentOption
             selected={paymentMode === 'ORGANIZER_PAYS_ALL'}
@@ -200,13 +203,13 @@ function GroupOrderCreateFields({
             icon="user"
             onSelect={() => onPaymentModeChange('ORGANIZER_PAYS_ALL')}
           >
-            <div className="flex items-center rounded-full border border-pideh-orange/25 bg-pideh-cream px-4 py-2.5">
+            <div className="flex w-full min-w-0 items-center rounded-full border border-pideh-orange/25 bg-pideh-cream px-4 py-2.5">
               <input
                 inputMode="numeric"
                 value={spendLimit}
                 onChange={(event) => onSpendLimitChange(event.target.value)}
                 placeholder={labels.spendLimitLabel}
-                className="min-w-0 flex-1 bg-transparent text-sm font-medium text-pideh-ink outline-none placeholder:text-pideh-muted"
+                className="w-full min-w-0 flex-1 bg-transparent text-sm font-medium text-pideh-ink outline-none placeholder:text-pideh-muted"
               />
               <span className="pl-2 text-sm font-bold text-pideh-orange">֏</span>
             </div>
@@ -219,9 +222,9 @@ function GroupOrderCreateFields({
           />
         </fieldset>
       </LayoutGroup>
-      <p className="flex items-start gap-2 text-xs leading-relaxed text-pideh-muted">
+      <p className="flex min-w-0 items-start gap-2 text-xs leading-relaxed text-pideh-muted">
         <Info className="mt-0.5 h-4 w-4 shrink-0 text-pideh-orange" aria-hidden />
-        {labels.infoNote}
+        <span className="min-w-0 break-words">{labels.infoNote}</span>
       </p>
       {error ? (
         <p className="text-sm text-red-600" role="alert">

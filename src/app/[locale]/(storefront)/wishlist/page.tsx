@@ -1,9 +1,14 @@
 import { notFound } from 'next/navigation';
 
+import {
+  MOBILE_STOREFRONT_SHELL,
+  STOREFRONT_DESKTOP_ONLY,
+} from '@/components/layout/page-container';
 import { RevealOnView } from '@/components/motion/RevealOnView';
 import { StaggerGroup, StaggerItem } from '@/components/motion/StaggerGroup';
 import { cardShelf, fadeUp, titleSweep } from '@/components/motion/presets';
 import { HomeProductCard } from '@/features/home/ui/HomeProductCard';
+import { MobileProductGrid } from '@/features/home/ui/mobile/MobileProductGrid';
 import { getActivePlainCartQuantities } from '@/features/cart/get-active-plain-quantities';
 import { listWishlistProducts } from '@/features/wishlist/queries';
 import { WishlistEmptyState } from '@/features/wishlist/ui/WishlistEmptyState';
@@ -109,40 +114,65 @@ export default async function WishlistPage({ params }: WishlistPageProps) {
             />
           </RevealOnView>
         ) : (
-          <StaggerGroup
-            className="grid grid-cols-1 justify-items-stretch gap-[13px] overflow-visible sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
-            stagger={0.08}
-            delayChildren={0.04}
-          >
-            {priced.map(({ product, priceFormatted, compareAtFormatted }, index) => (
-              <StaggerItem
-                key={product.id}
-                variants={cardShelf}
-                className="relative z-0 w-full min-w-0 overflow-visible hover:z-50"
+          <>
+            <div className={MOBILE_STOREFRONT_SHELL}>
+              <MobileProductGrid
+                locale={rawLocale}
+                products={priced.map(({ product, priceFormatted }) => ({
+                  id: product.id,
+                  href: `/${rawLocale}/products/${product.translation.slug}`,
+                  title: product.translation.title,
+                  description: product.translation.description ?? null,
+                  priceFormatted,
+                  imageUrl: product.imageUrl,
+                  inStock: product.stockOnHand > 0,
+                  inWishlist: true,
+                  cartQuantity: cartQuantities[product.id] ?? 0,
+                  maxQuantity: product.stockOnHand,
+                }))}
+                isSignedIn
+                wishlistLabel={title}
+                addLabel={dictionary.home.orderCta}
+                priorityCount={2}
+              />
+            </div>
+            <div className={STOREFRONT_DESKTOP_ONLY}>
+              <StaggerGroup
+                className="grid grid-cols-1 justify-items-stretch gap-[13px] overflow-visible sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+                stagger={0.08}
+                delayChildren={0.04}
               >
-                <HomeProductCard
-                  href={`/${rawLocale}/products/${product.translation.slug}`}
-                  title={product.translation.title}
-                  description={product.translation.description ?? null}
-                  priceFormatted={priceFormatted}
-                  compareAtFormatted={compareAtFormatted}
-                  imageUrl={product.imageUrl}
-                  inStock={product.stockOnHand > 0}
-                  priority={index < 4}
-                  locale={rawLocale}
-                  productId={product.id}
-                  inWishlist
-                  cartQuantity={cartQuantities[product.id] ?? 0}
-                  maxQuantity={product.stockOnHand}
-                  isSignedIn
-                  wishlistLabel={title}
-                  orderLabel={dictionary.home.orderCta}
-                  outOfStockLabel={dictionary.product.outOfStock}
-                  className="max-w-none"
-                />
-              </StaggerItem>
-            ))}
-          </StaggerGroup>
+                {priced.map(({ product, priceFormatted, compareAtFormatted }, index) => (
+                  <StaggerItem
+                    key={product.id}
+                    variants={cardShelf}
+                    className="relative z-0 w-full min-w-0 overflow-visible hover:z-50"
+                  >
+                    <HomeProductCard
+                      href={`/${rawLocale}/products/${product.translation.slug}`}
+                      title={product.translation.title}
+                      description={product.translation.description ?? null}
+                      priceFormatted={priceFormatted}
+                      compareAtFormatted={compareAtFormatted}
+                      imageUrl={product.imageUrl}
+                      inStock={product.stockOnHand > 0}
+                      priority={index < 4}
+                      locale={rawLocale}
+                      productId={product.id}
+                      inWishlist
+                      cartQuantity={cartQuantities[product.id] ?? 0}
+                      maxQuantity={product.stockOnHand}
+                      isSignedIn
+                      wishlistLabel={title}
+                      orderLabel={dictionary.home.orderCta}
+                      outOfStockLabel={dictionary.product.outOfStock}
+                      className="max-w-none"
+                    />
+                  </StaggerItem>
+                ))}
+              </StaggerGroup>
+            </div>
+          </>
         )}
       </div>
     </section>

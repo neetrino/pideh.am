@@ -33,7 +33,7 @@ export function GroupOrderPaymentOption({
 
   return (
     <label
-      className={`relative block cursor-pointer rounded-[18px] border p-4 transition-colors ${cardClass}`}
+      className={`relative block min-w-0 max-w-full cursor-pointer rounded-[18px] border p-4 transition-colors ${cardClass}`}
     >
       {selected ? (
         <motion.span

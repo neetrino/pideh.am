@@ -399,6 +399,12 @@ body {
   background: #ff6b00;
 }
 
+/* Sheets and modals start at z-50. Keep the chat bubble behind them. */
+body:has([role='dialog'][aria-modal='true'], [role='alertdialog'][aria-modal='true']) #tidio-chat,
+body:has([role='dialog'][aria-modal='true'], [role='alertdialog'][aria-modal='true']) #tidio-chat-iframe {
+  z-index: 30 !important;
+}
+
 @media (max-width: 767px), (orientation: portrait) and (max-width: 1199px) {
   html {
     touch-action: manipulation;
@@ -416,15 +422,7 @@ body {
    * the viewport. Sit the chat bubble just above that orange band.
    */
   #tidio-chat-iframe {
-    bottom: calc(176px * 100vw / 440 + env(safe-area-inset-bottom, 0px) + 1.25rem) !important;
-  }
-
-  /* Tidio's bubble sits on popup actions. Hide it while a modal is open. */
-  body:has([role='dialog'][aria-modal='true']) #tidio-chat,
-  body:has([role='dialog'][aria-modal='true']) #tidio-chat-iframe {
-    display: none !important;
-    visibility: hidden !important;
-    pointer-events: none !important;
+    bottom: calc(176px * 100vw / 440 + env(safe-area-inset-bottom, 0px) + 5rem) !important;
   }
 
   /* Phone + iPad portrait: Figma mobile header + dock. */
