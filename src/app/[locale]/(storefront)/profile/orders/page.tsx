@@ -147,7 +147,7 @@ function OrderKindTabs({
   return (
     <nav
       aria-label={ariaLabel}
-      className="flex w-fit max-w-full gap-1 overflow-x-auto rounded-full border border-[#1e1e1e]/10 bg-white p-1"
+      className="flex w-full items-center justify-between gap-2 rounded-full border border-[#1e1e1e]/10 bg-white p-1"
     >
       {tabs.map((tab) => {
         const active = kind === tab.id;
@@ -157,7 +157,7 @@ function OrderKindTabs({
             href={`/${locale}/profile/orders${buildOrdersQuery(tab.id, 1)}`}
             prefetchPolicy="intent"
             aria-current={active ? 'page' : undefined}
-            className={`rounded-full px-4 py-2 text-sm font-semibold whitespace-nowrap ${
+            className={`shrink-0 rounded-full px-4 py-2 text-center text-sm font-semibold whitespace-nowrap ${
               active
                 ? 'border border-[#ff6b00] text-[#1e1e1e]'
                 : 'border border-transparent text-[#1e1e1e]/45'
