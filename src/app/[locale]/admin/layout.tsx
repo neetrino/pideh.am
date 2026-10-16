@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation';
 
+import { TidioAdminSuppress } from '@/components/layout/TidioAdminSuppress';
 import { AdminShell } from '@/features/admin/ui/AdminShell';
 import { requireAdmin } from '@/lib/auth/policies';
 import { isLocale } from '@/lib/i18n/config';
@@ -18,6 +19,7 @@ export default async function AdminLayout({ children, params }: AdminLayoutProps
 
   return (
     <AdminShell locale={locale} copy={dictionary.admin}>
+      <TidioAdminSuppress />
       {children}
     </AdminShell>
   );
