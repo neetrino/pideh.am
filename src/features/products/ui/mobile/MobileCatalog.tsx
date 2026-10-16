@@ -12,7 +12,7 @@ import type { Locale } from '@/lib/i18n/config';
 import type { Dictionary } from '@/lib/i18n/get-dictionary';
 
 /** Gap under the copyright so the raised home button and dock stay fully visible. */
-const COPYRIGHT_NAV_CLEARANCE_PX = NAV_DOCK_HEIGHT_PX + 72;
+const COPYRIGHT_NAV_CLEARANCE_PX = NAV_DOCK_HEIGHT_PX - 24;
 
 export type MobileCatalogSectionData = {
   key: string;
