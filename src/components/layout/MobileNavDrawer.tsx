@@ -338,9 +338,9 @@ export function MobileNavDrawer({
                     <a
                       href={phoneHref}
                       aria-label={phoneLabel}
-                      className="font-montserrat-arm flex items-center gap-3 rounded-xl px-1 py-3.5 text-[22px] leading-none font-black tracking-tight text-pideh-ink"
+                      className="font-montserrat-arm flex items-center gap-2.5 rounded-xl px-1 py-3 text-[16px] leading-none font-black tracking-tight text-pideh-ink"
                     >
-                      <Phone className="size-6 shrink-0 text-[#ff6b00]" aria-hidden="true" />
+                      <Phone className="size-5 shrink-0 text-[#ff6b00]" aria-hidden="true" />
                       {phoneNumber}
                     </a>
                     {navItems.map((item) => {
@@ -351,7 +351,7 @@ export function MobileNavDrawer({
                           href={item.href}
                           prefetchPolicy="intent"
                           aria-current={active ? 'page' : undefined}
-                          className={`font-montserrat-arm rounded-xl px-1 py-3.5 text-[22px] leading-none font-black tracking-tight transition-colors ${
+                          className={`font-montserrat-arm rounded-xl px-1 py-3 text-[16px] leading-none font-black tracking-tight transition-colors ${
                             active
                               ? 'text-pideh-orange'
                               : 'text-pideh-ink hover:bg-pideh-cream hover:text-pideh-orange'
