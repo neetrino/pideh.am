@@ -1,7 +1,6 @@
-import { cookies, headers } from 'next/headers';
+import { cookies } from 'next/headers';
 import { notFound } from 'next/navigation';
 
-import { ComingSoonScreen, isComingSoonBypassPath } from '@/components/layout/ComingSoonScreen';
 import { MobileBottomNavIsland } from '@/components/layout/MobileBottomNavIsland';
 import { MobileStorefrontHeader } from '@/components/layout/MobileStorefrontHeader';
 import { PAGE_CONTAINER } from '@/components/layout/page-container';
@@ -14,7 +13,6 @@ import { resolveActiveGroupOrderSession } from '@/features/group-orders/applicat
 import { ActiveGroupOrderBanner } from '@/features/group-orders/ui/ActiveGroupOrderBanner';
 import { GroupOrderSessionWatcher } from '@/features/group-orders/ui/GroupOrderSessionWatcher';
 import { PromoPopupIsland } from '@/features/popups/ui/PromoPopupIsland';
-import { getCurrentUser } from '@/lib/auth/session';
 import { isLocale, type Locale } from '@/lib/i18n/config';
 import { getDictionary } from '@/lib/i18n/get-dictionary';
 import { CURRENCY_COOKIE_NAME, parseCurrencyCookie } from '@/lib/money/currency-cookie';
@@ -32,14 +30,6 @@ export default async function StorefrontLayout({ children, params }: StorefrontL
   }
 
   const locale: Locale = rawLocale;
-  const pathname = (await headers()).get('x-pathname') ?? '';
-  if (!isComingSoonBypassPath(pathname)) {
-    const user = await getCurrentUser();
-    if (!user || user.status !== 'ACTIVE') {
-      return <ComingSoonScreen />;
-    }
-  }
-
   const dictionary = getDictionary(locale);
   const cookieStore = await cookies();
   const currency = parseCurrencyCookie(cookieStore.get(CURRENCY_COOKIE_NAME)?.value);
