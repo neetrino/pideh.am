@@ -107,14 +107,6 @@ const nextConfig: NextConfig = {
         source: '/brand/pideh/hero-food-poster.jpg',
         headers: [heroMediaCache],
       },
-      {
-        source: '/brand/pideh/coming-soon-desktop-v4.webp',
-        headers: [heroMediaCache],
-      },
-      {
-        source: '/brand/pideh/coming-soon-mobile.webp',
-        headers: [heroMediaCache],
-      },
     ];
   },
 };
