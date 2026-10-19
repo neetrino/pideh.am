@@ -58,7 +58,7 @@ export function BuyGiftCardForm({
   const [amount, setAmount] = useState(settings.presets[0] ?? settings.minAmount);
   const [customAmount, setCustomAmount] = useState('');
   const [useCustom, setUseCustom] = useState(false);
-  const [paymentMethod, setPaymentMethod] = useState<CheckoutPaymentMethod>('arca');
+  const [paymentMethod, setPaymentMethod] = useState<CheckoutPaymentMethod>('cash_on_delivery');
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();

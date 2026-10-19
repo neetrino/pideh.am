@@ -2,6 +2,18 @@ export const CHECKOUT_PAYMENT_METHODS = ['cash_on_delivery', 'idram', 'arca', 't
 
 export type CheckoutPaymentMethod = (typeof CHECKOUT_PAYMENT_METHODS)[number];
 
+/**
+ * Temporary storefront lock. Idram and Arca stay visible but cannot be selected.
+ * Set to `false` to turn them back on.
+ */
+export const IDRAM_ARCA_TEMPORARILY_UNAVAILABLE = true;
+
+const TEMPORARILY_UNAVAILABLE_METHODS = new Set<CheckoutPaymentMethod>(['idram', 'arca']);
+
+export function isPaymentMethodTemporarilyUnavailable(method: CheckoutPaymentMethod): boolean {
+  return IDRAM_ARCA_TEMPORARILY_UNAVAILABLE && TEMPORARILY_UNAVAILABLE_METHODS.has(method);
+}
+
 export function isCheckoutPaymentMethod(value: string): value is CheckoutPaymentMethod {
   return (CHECKOUT_PAYMENT_METHODS as readonly string[]).includes(value);
 }

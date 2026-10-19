@@ -28,7 +28,10 @@ import { withTransaction } from '@/db/transaction';
 import { getCartWithItems, revalidateCartPaths } from '@/features/cart/cart';
 import { cartLineUnitAmount } from '@/features/cart/domain/line-price';
 import { checkoutSchema, type CheckoutInput } from '@/features/checkout/schemas';
-import { toPaymentRecord } from '@/features/checkout/domain/payment-methods';
+import {
+  isPaymentMethodTemporarilyUnavailable,
+  toPaymentRecord,
+} from '@/features/checkout/domain/payment-methods';
 import { STORE_PICKUP_LABEL } from '@/features/checkout/domain/shipping-methods';
 import { resolveGroupOrderCheckoutContext } from '@/features/checkout/application/group-order-checkout-context';
 import { getStoreIdentity } from '@/features/settings/application/queries';
@@ -108,6 +111,9 @@ export async function createOrderAction(raw: CheckoutInput): Promise<CreateOrder
   }
 
   const input = parsed.data;
+  if (isPaymentMethodTemporarilyUnavailable(input.paymentMethod)) {
+    return { ok: false, error: 'This payment method is temporarily unavailable.' };
+  }
   const user = await getCurrentUser();
   const { cart, items } = await getCartWithItems();
   const cookieStore = await cookies();

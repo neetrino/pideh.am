@@ -12,6 +12,7 @@ import {
   CHECKOUT_RADIO_OFF,
   CHECKOUT_RADIO_ON,
 } from '@/features/checkout/ui/checkout-ui-classes';
+import { isPaymentMethodTemporarilyUnavailable } from '@/features/checkout/domain/payment-methods';
 import type { CheckoutOnlineProvider } from '@/features/checkout/domain/payment-modes';
 import type { Dictionary } from '@/lib/i18n/get-dictionary';
 import type { Locale } from '@/lib/i18n/config';
@@ -48,24 +49,32 @@ function NamedLine({ template, name }: { template: string; name: string }) {
 function ProviderChoice({
   option,
   selected,
+  unavailable,
   onSelect,
 }: {
   option: ProviderOption;
   selected: boolean;
+  unavailable: boolean;
   onSelect: () => void;
 }) {
   return (
     <label
-      className={`flex cursor-pointer items-center gap-3 rounded-[18px] border-2 p-3.5 transition ${
-        selected ? CHECKOUT_RADIO_ON : CHECKOUT_RADIO_OFF
+      aria-disabled={unavailable || undefined}
+      className={`flex items-center gap-3 rounded-[18px] border-2 p-3.5 transition ${
+        unavailable
+          ? 'cursor-not-allowed border-[#1e1e1e]/15 bg-[#1a1a1a]/12 opacity-45 grayscale'
+          : `cursor-pointer ${selected ? CHECKOUT_RADIO_ON : CHECKOUT_RADIO_OFF}`
       }`}
     >
       <input
         type="radio"
         name="provider"
         value={option.id}
-        checked={selected}
-        onChange={onSelect}
+        checked={selected && !unavailable}
+        onChange={() => {
+          if (!unavailable) onSelect();
+        }}
+        disabled={unavailable}
         className="sr-only"
       />
       <span className="relative flex size-11 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-[#ff6b00]/15 bg-white">
@@ -77,11 +86,13 @@ function ProviderChoice({
       </span>
       <span
         className={`inline-flex size-5 shrink-0 items-center justify-center rounded-full border-2 ${
-          selected ? 'border-[#ff6b00] bg-[#ff6b00] text-white' : 'border-[#1e1e1e]/15'
+          selected && !unavailable
+            ? 'border-[#ff6b00] bg-[#ff6b00] text-white'
+            : 'border-[#1e1e1e]/15'
         }`}
         aria-hidden="true"
       >
-        {selected ? <Check className="size-3" strokeWidth={3} /> : null}
+        {selected && !unavailable ? <Check className="size-3" strokeWidth={3} /> : null}
       </span>
     </label>
   );
@@ -188,14 +199,18 @@ export function GroupOrderPayClient({
 
         <fieldset className="space-y-3 border-t border-dashed border-[#1e1e1e]/12 px-5 py-4">
           <legend className="text-sm font-bold text-pideh-ink">{labels.paySelectProvider}</legend>
-          {providers.map((option) => (
-            <ProviderChoice
-              key={option.id}
-              option={option}
-              selected={provider === option.id}
-              onSelect={() => setProvider(option.id)}
-            />
-          ))}
+          {providers.map((option) => {
+            const unavailable = isPaymentMethodTemporarilyUnavailable(option.id);
+            return (
+              <ProviderChoice
+                key={option.id}
+                option={option}
+                unavailable={unavailable}
+                selected={provider === option.id}
+                onSelect={() => setProvider(option.id)}
+              />
+            );
+          })}
         </fieldset>
 
         <div className="px-5 pb-5">
@@ -207,7 +222,7 @@ export function GroupOrderPayClient({
           <button
             type="button"
             className={`${CHECKOUT_PRIMARY_BTN} cursor-pointer transition disabled:cursor-not-allowed disabled:opacity-50`}
-            disabled={pending}
+            disabled={pending || isPaymentMethodTemporarilyUnavailable(provider)}
             onClick={() => {
               setError(null);
               startTransition(async () => {

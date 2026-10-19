@@ -6,6 +6,7 @@ import { assertParticipantAccess } from '@/features/group-orders/application/acc
 import { advanceSplitGroupOrderIfAllPaid } from '@/features/group-orders/application/advance-after-payments';
 import { appendGroupOrderEvent } from '@/features/group-orders/application/money';
 import { isSuccessfulParticipantPayment } from '@/features/group-orders/domain/spend-limit';
+import { isPaymentMethodTemporarilyUnavailable } from '@/features/checkout/domain/payment-methods';
 import type { CheckoutOnlineProvider } from '@/features/checkout/domain/payment-modes';
 import { createId } from '@/lib/id';
 
@@ -35,6 +36,10 @@ export async function completeParticipantCardPayment(input: {
   inviteToken: string;
   provider: CheckoutOnlineProvider;
 }): Promise<ParticipantPaymentResult> {
+  if (isPaymentMethodTemporarilyUnavailable(input.provider)) {
+    return { ok: false, error: 'This payment method is temporarily unavailable.' };
+  }
+
   const access = await assertParticipantAccess(input.inviteToken);
   if (!access.ok) return access;
 
