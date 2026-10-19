@@ -14,6 +14,16 @@ import { createId } from '@/lib/id';
 import { defaultLocale, isLocale, type Locale } from '@/lib/i18n/config';
 import { getDictionary } from '@/lib/i18n/get-dictionary';
 
+function readSubmittedValues(formData: FormData): Record<string, string> {
+  const values: Record<string, string> = {};
+  for (const [key, value] of formData.entries()) {
+    if (typeof value === 'string') {
+      values[key] = value;
+    }
+  }
+  return values;
+}
+
 export async function registerAction(
   localeInput: string,
   _previousState: AuthActionState,
@@ -23,12 +33,17 @@ export async function registerAction(
   const locale: Locale = isLocale(localeInput) ? localeInput : defaultLocale;
 
   if (!parsed.success) {
+    const issue = parsed.error.issues[0];
+    const field = issue?.path[0];
     return {
       error: translatePasswordError(
         locale,
-        parsed.error.issues[0]?.message,
+        issue?.message,
         getDictionary(locale).auth.passwordInvalid,
       ),
+      field: typeof field === 'string' ? field : undefined,
+      values: readSubmittedValues(formData),
+      revision: (_previousState.revision ?? 0) + 1,
     };
   }
 
@@ -38,7 +53,12 @@ export async function registerAction(
     .where(eq(users.email, parsed.data.email))
     .limit(1);
   if (existingUser) {
-    return { error: 'Unable to create account with those details.' };
+    return {
+      error: 'Unable to create account with those details.',
+      field: 'email',
+      values: readSubmittedValues(formData),
+      revision: (_previousState.revision ?? 0) + 1,
+    };
   }
 
   const { password, confirmPassword: _confirmPassword, ...registration } = parsed.data;

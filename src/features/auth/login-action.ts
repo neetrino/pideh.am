@@ -11,7 +11,15 @@ import { createSession } from '@/lib/auth/session';
 import { verifyPassword } from '@/lib/auth/password';
 import { defaultLocale, isLocale, type Locale } from '@/lib/i18n/config';
 
-export type AuthActionState = { error?: string };
+export type AuthActionState = {
+  error?: string;
+  /** Field name that failed validation, when one can be identified. */
+  field?: string;
+  /** Submitted text, restored after a failed attempt. */
+  values?: Record<string, string>;
+  /** Changes on each failed attempt so inputs remount with `values`. */
+  revision?: number;
+};
 
 export async function loginAction(
   localeInput: string,
