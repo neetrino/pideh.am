@@ -1,5 +1,6 @@
 import { z } from 'zod';
 
+import { isOfferedCheckoutPaymentMethod } from '@/features/checkout/domain/payment-methods';
 import {
   GROUP_ORDER_PAYMENT_MODES,
   GROUP_ORDER_STATUSES,
@@ -91,10 +92,20 @@ export const adminMarkParticipantPaidSchema = z.object({
   participantId: z.string().uuid(),
 });
 
-export const completeParticipantCardPaymentSchema = z.object({
-  inviteToken: z.string().uuid(),
-  provider: z.enum(['idram', 'arca']),
-});
+export const completeParticipantCardPaymentSchema = z
+  .object({
+    inviteToken: z.string().uuid(),
+    provider: z.enum(['idram', 'arca']),
+  })
+  .superRefine((value, ctx) => {
+    if (!isOfferedCheckoutPaymentMethod(value.provider)) {
+      ctx.addIssue({
+        code: 'custom',
+        path: ['provider'],
+        message: 'This payment method is not available.',
+      });
+    }
+  });
 
 export const adminRefundParticipantSchema = z.object({
   groupOrderId: z.string().uuid(),

@@ -3,6 +3,13 @@ export const CHECKOUT_PAYMENT_METHODS = ['cash_on_delivery', 'idram', 'arca', 't
 export type CheckoutPaymentMethod = (typeof CHECKOUT_PAYMENT_METHODS)[number];
 
 /**
+ * Completely removed from storefront lists. Stored orders may still use these ids.
+ * Remove an id from this list to show that method again.
+ * Idram and Arca stay off this list so the temporary lock can keep them visible.
+ */
+export const HIDDEN_CHECKOUT_PAYMENT_METHODS = [] as const satisfies readonly CheckoutPaymentMethod[];
+
+/**
  * Temporary storefront lock. Idram and Arca stay visible but cannot be selected.
  * Set to `false` to turn them back on.
  */
@@ -16,6 +23,16 @@ export function isPaymentMethodTemporarilyUnavailable(method: CheckoutPaymentMet
 
 export function isCheckoutPaymentMethod(value: string): value is CheckoutPaymentMethod {
   return (CHECKOUT_PAYMENT_METHODS as readonly string[]).includes(value);
+}
+
+/** True when the method must not appear in storefront lists. */
+export function isHiddenCheckoutPaymentMethod(method: CheckoutPaymentMethod): boolean {
+  return (HIDDEN_CHECKOUT_PAYMENT_METHODS as readonly CheckoutPaymentMethod[]).includes(method);
+}
+
+/** Storefront may select this method. Hidden and locked methods stay valid for stored orders. */
+export function isOfferedCheckoutPaymentMethod(method: CheckoutPaymentMethod): boolean {
+  return !isHiddenCheckoutPaymentMethod(method) && !isPaymentMethodTemporarilyUnavailable(method);
 }
 
 /** Cash on delivery is only for solo checkout, not group-order organizer pay. */
