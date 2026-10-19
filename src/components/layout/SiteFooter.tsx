@@ -35,7 +35,7 @@ export function SiteFooter({ dictionary, locale }: SiteFooterProps) {
 
   return (
     <div className="storefront-desktop-tree mt-auto hidden md:block">
-      <footer className="storefront-footer relative z-20 -mt-10 bg-[#ffcf48]">
+      <footer className="storefront-footer relative z-20 -mt-10 bg-[#fff8e7]">
         <div className="relative w-full">
           <div aria-hidden="true" className="pointer-events-none absolute -top-16 right-0 bottom-0 left-0 overflow-hidden">
             <div className="absolute top-16 right-0 bottom-0 left-1/2 w-[104.72%] max-w-none -translate-x-1/2 [filter:drop-shadow(0_-8px_22px_rgba(199,89,15,0.28))]">
