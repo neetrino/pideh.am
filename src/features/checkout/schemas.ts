@@ -1,6 +1,9 @@
 import { z } from 'zod';
 
-import { CHECKOUT_PAYMENT_METHODS } from '@/features/checkout/domain/payment-methods';
+import {
+  CHECKOUT_PAYMENT_METHODS,
+  isOfferedCheckoutPaymentMethod,
+} from '@/features/checkout/domain/payment-methods';
 import { CHECKOUT_SHIPPING_METHODS } from '@/features/checkout/domain/shipping-methods';
 
 export const checkoutSchema = z
@@ -47,6 +50,14 @@ export const checkoutSchema = z
     orderNote: z.string().trim().max(500).optional(),
   })
   .superRefine((value, ctx) => {
+    if (!isOfferedCheckoutPaymentMethod(value.paymentMethod)) {
+      ctx.addIssue({
+        code: 'custom',
+        path: ['paymentMethod'],
+        message: 'This payment method is not available.',
+      });
+    }
+
     if (value.shippingMethod !== 'delivery') {
       return;
     }

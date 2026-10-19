@@ -3,7 +3,7 @@
 import { Check, Users } from 'lucide-react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { useState, useTransition } from 'react';
+import { useMemo, useState, useTransition } from 'react';
 
 import { AppLink } from '@/components/ui/AppLink';
 import { completeParticipantCardPaymentAction } from '@/features/group-orders/actions';
@@ -12,7 +12,10 @@ import {
   CHECKOUT_RADIO_OFF,
   CHECKOUT_RADIO_ON,
 } from '@/features/checkout/ui/checkout-ui-classes';
-import type { CheckoutOnlineProvider } from '@/features/checkout/domain/payment-modes';
+import {
+  offeredCheckoutOnlineProviders,
+  type CheckoutOnlineProvider,
+} from '@/features/checkout/domain/payment-modes';
 import type { Dictionary } from '@/lib/i18n/get-dictionary';
 import type { Locale } from '@/lib/i18n/config';
 
@@ -131,7 +134,9 @@ export function GroupOrderPayClient({
   amount,
 }: GroupOrderPayClientProps) {
   const router = useRouter();
-  const [provider, setProvider] = useState<CheckoutOnlineProvider>('arca');
+  const [provider, setProvider] = useState<CheckoutOnlineProvider | null>(
+    () => offeredCheckoutOnlineProviders()[0] ?? null,
+  );
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
   const backHref = `/${locale}/group-orders/${inviteToken}`;
@@ -147,20 +152,24 @@ export function GroupOrderPayClient({
     );
   }
 
-  const providers: ProviderOption[] = [
-    {
-      id: 'arca',
-      name: labels.payArca,
-      description: labels.payArcaDescription,
-      logo: '/assets/payments/arca.png',
-    },
-    {
-      id: 'idram',
-      name: labels.payIdram,
-      description: labels.payIdramDescription,
-      logo: '/assets/payments/idram.png',
-    },
-  ];
+  const providers = useMemo(() => {
+    const offered = new Set(offeredCheckoutOnlineProviders());
+    const options: ProviderOption[] = [
+      {
+        id: 'arca',
+        name: labels.payArca,
+        description: labels.payArcaDescription,
+        logo: '/assets/payments/arca.png',
+      },
+      {
+        id: 'idram',
+        name: labels.payIdram,
+        description: labels.payIdramDescription,
+        logo: '/assets/payments/idram.png',
+      },
+    ];
+    return options.filter((option) => offered.has(option.id));
+  }, [labels.payArca, labels.payArcaDescription, labels.payIdram, labels.payIdramDescription]);
 
   return (
     <div className="mx-auto w-full max-w-md px-4 py-8 sm:py-12">
@@ -186,17 +195,19 @@ export function GroupOrderPayClient({
           </div>
         </div>
 
-        <fieldset className="space-y-3 border-t border-dashed border-[#1e1e1e]/12 px-5 py-4">
-          <legend className="text-sm font-bold text-pideh-ink">{labels.paySelectProvider}</legend>
-          {providers.map((option) => (
-            <ProviderChoice
-              key={option.id}
-              option={option}
-              selected={provider === option.id}
-              onSelect={() => setProvider(option.id)}
-            />
-          ))}
-        </fieldset>
+        {providers.length > 0 ? (
+          <fieldset className="space-y-3 border-t border-dashed border-[#1e1e1e]/12 px-5 py-4">
+            <legend className="text-sm font-bold text-pideh-ink">{labels.paySelectProvider}</legend>
+            {providers.map((option) => (
+              <ProviderChoice
+                key={option.id}
+                option={option}
+                selected={provider === option.id}
+                onSelect={() => setProvider(option.id)}
+              />
+            ))}
+          </fieldset>
+        ) : null}
 
         <div className="px-5 pb-5">
           {error ? (
@@ -204,28 +215,30 @@ export function GroupOrderPayClient({
               {error}
             </p>
           ) : null}
-          <button
-            type="button"
-            className={`${CHECKOUT_PRIMARY_BTN} cursor-pointer transition disabled:cursor-not-allowed disabled:opacity-50`}
-            disabled={pending}
-            onClick={() => {
-              setError(null);
-              startTransition(async () => {
-                const result = await completeParticipantCardPaymentAction({
-                  inviteToken,
-                  provider,
+          {provider != null ? (
+            <button
+              type="button"
+              className={`${CHECKOUT_PRIMARY_BTN} cursor-pointer transition disabled:cursor-not-allowed disabled:opacity-50`}
+              disabled={pending}
+              onClick={() => {
+                setError(null);
+                startTransition(async () => {
+                  const result = await completeParticipantCardPaymentAction({
+                    inviteToken,
+                    provider,
+                  });
+                  if (!result.ok) {
+                    setError(result.error ?? labels.errorGeneric);
+                    return;
+                  }
+                  router.push(backHref);
+                  router.refresh();
                 });
-                if (!result.ok) {
-                  setError(result.error ?? labels.errorGeneric);
-                  return;
-                }
-                router.push(backHref);
-                router.refresh();
-              });
-            }}
-          >
-            {pending ? labels.payProcessing : labels.payConfirm}
-          </button>
+              }}
+            >
+              {pending ? labels.payProcessing : labels.payConfirm}
+            </button>
+          ) : null}
           <AppLink
             href={backHref}
             className="mt-3 block text-center text-sm font-bold text-pideh-ink/55 transition hover:text-[#ff6b00]"

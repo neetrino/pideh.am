@@ -6,6 +6,7 @@ import { useMemo, useState, useTransition, useEffect, useRef, type ReactNode } f
 import { Copy, Share2, Trash2, Users, X } from 'lucide-react';
 
 import { PidehPillButton } from '@/components/brand/PidehPillButton';
+import { offeredCheckoutOnlineProviders } from '@/features/checkout/domain/payment-modes';
 import { AppLink } from '@/components/ui/AppLink';
 import { AddressAutocomplete } from '@/components/ui/AddressAutocomplete';
 import { SelectDropdown } from '@/components/ui/SelectDropdown';
@@ -742,7 +743,8 @@ export function GroupOrderPageClient({
           />
         ) : null}
 
-        {view.paymentMode === 'SPLIT_PER_PARTICIPANT' &&
+        {offeredCheckoutOnlineProviders().length > 0 &&
+        view.paymentMode === 'SPLIT_PER_PARTICIPANT' &&
         view.status === 'AWAITING_PAYMENTS' &&
         !isOrganizer &&
         view.currentParticipantId &&

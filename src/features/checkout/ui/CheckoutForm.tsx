@@ -10,6 +10,7 @@ import { previewCouponAction } from '@/features/checkout/application/preview-cou
 import { createOrderAction } from '@/features/checkout/create-order';
 import {
   isCashOnDeliveryAllowedForCheckout,
+  isOfferedCheckoutPaymentMethod,
   type CheckoutPaymentMethod,
 } from '@/features/checkout/domain/payment-methods';
 import type { CheckoutShippingMethod } from '@/features/checkout/domain/shipping-methods';
@@ -269,10 +270,18 @@ export function CheckoutForm({
         logos: ['/assets/payments/terminal.png'],
       },
     ];
-    if (isCashOnDeliveryAllowedForCheckout(isGroupOrderCheckout)) {
-      return options;
-    }
-    return options.filter((option) => option.id !== 'cash_on_delivery');
+    return options.filter((option) => {
+      if (!isOfferedCheckoutPaymentMethod(option.id)) {
+        return false;
+      }
+      if (
+        option.id === 'cash_on_delivery' &&
+        !isCashOnDeliveryAllowedForCheckout(isGroupOrderCheckout)
+      ) {
+        return false;
+      }
+      return true;
+    });
   }, [
     isGroupOrderCheckout,
     labels.arca,
