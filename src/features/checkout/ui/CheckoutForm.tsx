@@ -10,7 +10,7 @@ import { previewCouponAction } from '@/features/checkout/application/preview-cou
 import { createOrderAction } from '@/features/checkout/create-order';
 import {
   isCashOnDeliveryAllowedForCheckout,
-  isOfferedCheckoutPaymentMethod,
+  isHiddenCheckoutPaymentMethod,
   type CheckoutPaymentMethod,
 } from '@/features/checkout/domain/payment-methods';
 import type { CheckoutShippingMethod } from '@/features/checkout/domain/shipping-methods';
@@ -271,7 +271,7 @@ export function CheckoutForm({
       },
     ];
     return options.filter((option) => {
-      if (!isOfferedCheckoutPaymentMethod(option.id)) {
+      if (isHiddenCheckoutPaymentMethod(option.id)) {
         return false;
       }
       if (

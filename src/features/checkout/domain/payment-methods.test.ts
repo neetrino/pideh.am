@@ -6,20 +6,27 @@ import { completeParticipantCardPaymentSchema } from '@/features/group-orders/sc
 import {
   HIDDEN_CHECKOUT_PAYMENT_METHODS,
   isOfferedCheckoutPaymentMethod,
+  isPaymentMethodTemporarilyUnavailable,
 } from '@/features/checkout/domain/payment-methods';
-import { offeredCheckoutOnlineProviders } from '@/features/checkout/domain/payment-modes';
+import {
+  offeredCheckoutOnlineProviders,
+  visibleCheckoutOnlineProviders,
+} from '@/features/checkout/domain/payment-modes';
 
-describe('hidden checkout payment methods', () => {
-  it('keeps card and Idram defined but not offered', () => {
-    expect(HIDDEN_CHECKOUT_PAYMENT_METHODS).toEqual(['idram', 'arca']);
+describe('locked checkout payment methods', () => {
+  it('keeps card and Idram visible but not selectable', () => {
+    expect(HIDDEN_CHECKOUT_PAYMENT_METHODS).toEqual([]);
+    expect(isPaymentMethodTemporarilyUnavailable('idram')).toBe(true);
+    expect(isPaymentMethodTemporarilyUnavailable('arca')).toBe(true);
     expect(isOfferedCheckoutPaymentMethod('idram')).toBe(false);
     expect(isOfferedCheckoutPaymentMethod('arca')).toBe(false);
     expect(isOfferedCheckoutPaymentMethod('cash_on_delivery')).toBe(true);
     expect(isOfferedCheckoutPaymentMethod('terminal')).toBe(true);
+    expect(visibleCheckoutOnlineProviders()).toEqual(['idram', 'arca']);
     expect(offeredCheckoutOnlineProviders()).toEqual([]);
   });
 
-  it('rejects hidden methods on new checkout, gift card, and group-order payments', () => {
+  it('rejects locked methods on new checkout, gift card, and group-order payments', () => {
     const checkout = checkoutSchema.safeParse({
       firstName: 'Ani',
       lastName: 'Petrosyan',

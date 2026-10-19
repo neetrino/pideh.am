@@ -2,7 +2,10 @@
 
 import { useState, type ReactNode } from 'react';
 
-import type { CheckoutPaymentMethod } from '@/features/checkout/domain/payment-methods';
+import {
+  isPaymentMethodTemporarilyUnavailable,
+  type CheckoutPaymentMethod,
+} from '@/features/checkout/domain/payment-methods';
 import {
   CHECKOUT_PANEL,
   CHECKOUT_RADIO_OFF,
@@ -42,15 +45,19 @@ export function CheckoutPaymentMethods({
       <h2 className={CHECKOUT_SECTION_TITLE}>{title}</h2>
       <div className="space-y-2">
         {options.map((option) => {
-          const selected = value === option.id;
+          const unavailable = isPaymentMethodTemporarilyUnavailable(option.id);
+          const selected = value === option.id && !unavailable;
           const logos = option.logos.filter((src) => !logoErrors[src]);
           const showFallback = logos.length === 0;
 
           return (
             <div key={option.id} className="space-y-3">
               <label
-                className={`flex cursor-pointer items-center rounded-[18px] border-2 px-3 py-2.5 transition-colors ${
-                  selected ? CHECKOUT_RADIO_ON : CHECKOUT_RADIO_OFF
+                aria-disabled={unavailable || undefined}
+                className={`flex items-center rounded-[18px] border-2 px-3 py-2.5 transition-colors ${
+                  unavailable
+                    ? 'cursor-not-allowed border-[#1e1e1e]/15 bg-[#1a1a1a]/12 opacity-45 grayscale'
+                    : `cursor-pointer ${selected ? CHECKOUT_RADIO_ON : CHECKOUT_RADIO_OFF}`
                 }`}
               >
               <input
@@ -58,9 +65,11 @@ export function CheckoutPaymentMethods({
                 name="paymentMethod"
                 value={option.id}
                 checked={selected}
-                onChange={() => onChange(option.id)}
-                className="mr-3 accent-[#ff6b00]"
-                disabled={disabled}
+                onChange={() => {
+                  if (!unavailable) onChange(option.id);
+                }}
+                className="mr-3 accent-[#ff6b00] disabled:cursor-not-allowed"
+                disabled={disabled || unavailable}
               />
               <div className="flex flex-1 items-center gap-3">
                 {showFallback ? (

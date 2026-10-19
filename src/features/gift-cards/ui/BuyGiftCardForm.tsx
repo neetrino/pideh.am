@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/Button';
 import { purchaseGiftCardAction } from '@/features/gift-cards/application/admin-actions';
 import {
   CHECKOUT_PAYMENT_METHODS,
+  isHiddenCheckoutPaymentMethod,
   isOfferedCheckoutPaymentMethod,
   type CheckoutPaymentMethod,
 } from '@/features/checkout/domain/payment-methods';
@@ -77,8 +78,8 @@ export function BuyGiftCardForm({
     return Number.isInteger(parsed) ? parsed : 0;
   }, [amount, customAmount, useCustom]);
 
-  const paymentOptions = useMemo(
-    (): PaymentOption[] => [
+  const paymentOptions = useMemo((): PaymentOption[] => {
+    const options: PaymentOption[] = [
       {
         id: 'cash_on_delivery',
         name: copy.cashOnDelivery,
@@ -107,18 +108,18 @@ export function BuyGiftCardForm({
         description: copy.terminalDescription,
         logos: ['/assets/payments/terminal.png'],
       },
-    ].filter((option) => isOfferedCheckoutPaymentMethod(option.id)),
-    [
-      copy.arca,
-      copy.arcaDescription,
-      copy.cashOnDelivery,
-      copy.cashOnDeliveryDescription,
-      copy.idram,
-      copy.idramDescription,
-      copy.terminal,
-      copy.terminalDescription,
-    ],
-  );
+    ];
+    return options.filter((option) => !isHiddenCheckoutPaymentMethod(option.id));
+  }, [
+    copy.arca,
+    copy.arcaDescription,
+    copy.cashOnDelivery,
+    copy.cashOnDeliveryDescription,
+    copy.idram,
+    copy.idramDescription,
+    copy.terminal,
+    copy.terminalDescription,
+  ]);
 
   function onSubmit(event: FormEvent<HTMLFormElement>): void {
     event.preventDefault();

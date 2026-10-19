@@ -10,6 +10,7 @@ import {
   createGiftCardRecord,
 } from '@/features/gift-cards/application/create-gift-card';
 import { sendGiftCardEmail } from '@/features/gift-cards/application/send-gift-card-email';
+import { isPaymentMethodTemporarilyUnavailable } from '@/features/checkout/domain/payment-methods';
 import { isValidGiftCardAmount } from '@/features/gift-cards/domain/gift-card-rules';
 import {
   adminCreateGiftCardSchema,
@@ -42,6 +43,9 @@ export async function purchaseGiftCardAction(
   }
   if (!isLocale(parsed.data.locale)) {
     return err('INVALID_LOCALE', 'Invalid locale.');
+  }
+  if (isPaymentMethodTemporarilyUnavailable(parsed.data.paymentMethod)) {
+    return err('PAYMENT_UNAVAILABLE', 'This payment method is temporarily unavailable.');
   }
 
   const user = await getCurrentUser();
