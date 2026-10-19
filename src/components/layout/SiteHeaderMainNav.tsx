@@ -98,6 +98,12 @@ export function SiteHeaderMainNav({
             data-header-logo
             className="relative h-12 w-[56px] shrink-0 md:h-16 md:w-[75px]"
             aria-label={dictionary.brand}
+            onClick={(event) => {
+              if (pathname === `/${locale}`) {
+                event.preventDefault();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }
+            }}
           >
             <Image
               src={PIDEH_ASSETS.logo}

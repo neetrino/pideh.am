@@ -2,6 +2,7 @@
 
 import { Users } from 'lucide-react';
 import Image from 'next/image';
+import { usePathname } from 'next/navigation';
 import { useState } from 'react';
 
 import { MobileNavDrawer } from '@/components/layout/MobileNavDrawer';
@@ -38,6 +39,7 @@ export function MobileBrandBar({
   isSignedIn,
   className = '',
 }: MobileBrandBarProps) {
+  const pathname = usePathname();
   const [groupOpen, setGroupOpen] = useState(false);
   const [menuPresent, setMenuPresent] = useState(false);
   const navItems = [
@@ -56,6 +58,12 @@ export function MobileBrandBar({
         prefetchPolicy="intent"
         className="relative h-[75px] w-[88px] shrink-0"
         aria-label={dictionary.brand}
+        onClick={(event) => {
+          if (pathname === `/${locale}`) {
+            event.preventDefault();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }
+        }}
       >
         <Image
           src={PIDEH_ASSETS.logo}
