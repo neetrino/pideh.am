@@ -5,7 +5,11 @@ import { useRouter } from 'next/navigation';
 
 import { Button } from '@/components/ui/Button';
 import { purchaseGiftCardAction } from '@/features/gift-cards/application/admin-actions';
-import type { CheckoutPaymentMethod } from '@/features/checkout/domain/payment-methods';
+import {
+  CHECKOUT_PAYMENT_METHODS,
+  isOfferedCheckoutPaymentMethod,
+  type CheckoutPaymentMethod,
+} from '@/features/checkout/domain/payment-methods';
 import {
   CheckoutPaymentMethods,
   type PaymentOption,
@@ -58,7 +62,9 @@ export function BuyGiftCardForm({
   const [amount, setAmount] = useState(settings.presets[0] ?? settings.minAmount);
   const [customAmount, setCustomAmount] = useState('');
   const [useCustom, setUseCustom] = useState(false);
-  const [paymentMethod, setPaymentMethod] = useState<CheckoutPaymentMethod>('arca');
+  const [paymentMethod, setPaymentMethod] = useState<CheckoutPaymentMethod>(
+    () => CHECKOUT_PAYMENT_METHODS.find(isOfferedCheckoutPaymentMethod) ?? 'cash_on_delivery',
+  );
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
@@ -101,7 +107,7 @@ export function BuyGiftCardForm({
         description: copy.terminalDescription,
         logos: ['/assets/payments/terminal.png'],
       },
-    ],
+    ].filter((option) => isOfferedCheckoutPaymentMethod(option.id)),
     [
       copy.arca,
       copy.arcaDescription,
