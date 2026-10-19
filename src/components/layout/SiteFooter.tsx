@@ -60,7 +60,7 @@ export function SiteFooter({ dictionary, locale }: SiteFooterProps) {
                 />
               </StaggerItem>
 
-              <StaggerItem className="lg:pl-16 xl:pl-28" variants={footerColumn}>
+              <StaggerItem className="mt-8 xl:mt-12 xl:pl-16" variants={footerColumn}>
                 <h4 className="font-display mb-5 text-[18px] leading-5 text-[#ff6b00] uppercase">
                   {footer.navigation}
                 </h4>
@@ -110,7 +110,7 @@ export function SiteFooter({ dictionary, locale }: SiteFooterProps) {
                 </a>
               </StaggerItem>
 
-              <StaggerItem className="lg:pl-10" variants={footerColumn}>
+              <StaggerItem className="mt-8 xl:mt-12" variants={footerColumn}>
                 <h4 className="font-display mb-5 text-[18px] leading-5 text-[#ff6b00] uppercase">
                   {footer.contactInfo}
                 </h4>
@@ -171,7 +171,7 @@ export function SiteFooter({ dictionary, locale }: SiteFooterProps) {
                 </ul>
               </StaggerItem>
 
-              <StaggerItem className="lg:pl-10" variants={footerColumn}>
+              <StaggerItem className="mt-8 xl:mt-12" variants={footerColumn}>
                 <h4 className="font-display mb-6 text-[18px] leading-5 text-[#ff6b00] uppercase">
                   {footer.support}
                 </h4>
