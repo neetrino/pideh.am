@@ -63,7 +63,7 @@ export function ActiveGroupOrderBanner({
             <div className="min-w-0 flex-1">
               <BannerMessage template={labels.activeSessionBanner} name={organizerDisplayName} />
             </div>
-            <div className="flex shrink-0 flex-col gap-1.5">
+            <div className="flex shrink-0 flex-row gap-1.5">
               <AppLink
                 href={`/${locale}/group-orders/${inviteToken}`}
                 prefetchPolicy="intent"

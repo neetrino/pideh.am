@@ -19,13 +19,6 @@ type SiteFooterProps = {
   locale: Locale;
 };
 
-type SocialItem = {
-  href: string;
-  label: string;
-  src: string;
-  inner?: boolean;
-};
-
 /**
  * Card schemes accepted through the ArCa gateway, shown as trust badges.
  * Artwork lives in `public/assets/payments/` — swap the files, not this list.
@@ -39,22 +32,13 @@ const PAYMENT_BADGES: readonly { label: string; src: string }[] = [
 export function SiteFooter({ dictionary, locale }: SiteFooterProps) {
   const year = new Date().getFullYear();
   const footer = dictionary.footer;
-  const social = dictionary.contact.social;
-
-  const socials: readonly SocialItem[] = [
-    { href: social.instagram, label: 'Instagram', src: PIDEH_ASSETS.socialInstagram },
-    { href: social.facebook, label: 'Facebook', src: PIDEH_ASSETS.socialFacebook },
-    { href: social.linkedin, label: 'Telegram', src: PIDEH_ASSETS.socialTelegram },
-    { href: social.instagram, label: 'WhatsApp', src: PIDEH_ASSETS.socialWhatsapp },
-    { href: social.instagram, label: 'Viber', src: PIDEH_ASSETS.socialViber, inner: true },
-  ];
 
   return (
     <div className="storefront-desktop-tree mt-auto hidden md:block">
-      <footer className="storefront-footer relative z-20 -mt-10 overflow-hidden bg-[#FFD54A]">
+      <footer className="storefront-footer relative z-20 -mt-10 bg-[#ffcf48]">
         <div className="relative w-full">
-          <div aria-hidden="true" className="pointer-events-none absolute inset-0">
-            <div className="absolute inset-0 left-1/2 max-w-none w-[104.72%] -translate-x-1/2 [filter:drop-shadow(0_-4px_17px_rgba(199,89,15,0.21))]">
+          <div aria-hidden="true" className="pointer-events-none absolute -top-16 right-0 bottom-0 left-0 overflow-hidden">
+            <div className="absolute top-16 right-0 bottom-0 left-1/2 w-[104.72%] max-w-none -translate-x-1/2 [filter:drop-shadow(0_-8px_22px_rgba(199,89,15,0.28))]">
               <SwimDripWave spec={FOOTER_DRIP} preserveAspectRatio="xMidYMin slice" />
             </div>
           </div>
@@ -66,13 +50,13 @@ export function SiteFooter({ dictionary, locale }: SiteFooterProps) {
             >
               <StaggerItem variants={footerColumn}>
                 <Image
-                  src={PIDEH_ASSETS.logo}
+                  src="/brand/pideh/footer-wordmark.png"
                   alt={dictionary.brand}
-                  width={2024}
-                  height={1720}
+                  width={253}
+                  height={215}
                   quality={100}
-                  sizes="640px"
-                  className="mt-[21px] h-[180px] w-auto max-w-full"
+                  sizes="280px"
+                  className="mt-[21px] h-[180px] w-auto max-w-full object-contain"
                 />
               </StaggerItem>
 
@@ -109,6 +93,21 @@ export function SiteFooter({ dictionary, locale }: SiteFooterProps) {
                     </AppLink>
                   </li>
                 </ul>
+                <a
+                  href={dictionary.contact.social.instagram}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-5 inline-flex size-10 transition hover:brightness-105"
+                  aria-label="Instagram"
+                >
+                  <Image
+                    src={PIDEH_ASSETS.socialInstagram}
+                    alt=""
+                    width={40}
+                    height={40}
+                    className="size-10"
+                  />
+                </a>
               </StaggerItem>
 
               <StaggerItem className="lg:pl-10" variants={footerColumn}>
@@ -147,7 +146,7 @@ export function SiteFooter({ dictionary, locale }: SiteFooterProps) {
                   </li>
                   {dictionary.contact.storeAddressSecondary ? (
                     <li className="flex items-center gap-2">
-                      <MapPin className="h-[21px] w-[2ձpx] shrink-0 text-[#ff6b00]" />
+                      <MapPin className="h-[21px] w-[21px] shrink-0 text-[#ff6b00]" />
                       <a
                         href={toMapsHref(dictionary.contact.storeAddressSecondary)}
                         target="_blank"
@@ -209,32 +208,30 @@ export function SiteFooter({ dictionary, locale }: SiteFooterProps) {
             </StaggerGroup>
 
             <RevealOnView className="relative mt-10 lg:mt-12" variants={footerColumn} delay={0.2}>
-              <div className="flex flex-col items-center gap-4 xl:flex-row xl:items-center xl:justify-between">
-                <div className="flex items-center gap-4">
-                  {socials.map((item) => (
-                    <a
-                      key={item.label}
-                      href={item.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className={
-                        item.inner
-                          ? 'relative flex size-10 items-center justify-center rounded-full bg-[#ff6b00] transition hover:brightness-105'
-                          : 'size-10 shrink-0 transition hover:brightness-105'
-                      }
-                      aria-label={item.label}
-                    >
-                      <Image
-                        src={item.src}
-                        alt=""
-                        width={item.inner ? 20 : 40}
-                        height={item.inner ? 22 : 40}
-                        className={item.inner ? 'h-[22px] w-5' : 'size-10'}
-                      />
-                    </a>
-                  ))}
-                </div>
-                <div className="flex flex-wrap items-center justify-center gap-3 xl:justify-end">
+              <div className="flex flex-col items-start gap-4 xl:flex-row xl:items-center xl:justify-between">
+                <p className="text-left text-sm leading-4 tracking-[0.35px] text-[#1e1e1e]">
+                  {footer.copyright
+                    .replace('{year}', String(year))
+                    .split('Neetrino')
+                    .map((part, index, parts) =>
+                      index < parts.length - 1 ? (
+                        <span key={`copy-${index}`}>
+                          {part}
+                          <a
+                            href="https://www.neetrino.com/"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-[#ff6900] underline-offset-2 hover:underline"
+                          >
+                            Neetrino
+                          </a>
+                        </span>
+                      ) : (
+                        <span key={`copy-end-${index}`}>{part}</span>
+                      ),
+                    )}
+                </p>
+                <div className="flex flex-wrap items-center gap-3">
                   {PAYMENT_BADGES.map((badge) => (
                     <span
                       key={badge.label}
@@ -250,29 +247,6 @@ export function SiteFooter({ dictionary, locale }: SiteFooterProps) {
                     </span>
                   ))}
                 </div>
-
-                <p className="px-2 text-center text-sm leading-4 tracking-[0.35px] text-[#1e1e1e] xl:absolute xl:top-1/2 xl:left-1/2 xl:m-0 xl:-translate-x-1/2 xl:-translate-y-1/2">
-                {footer.copyright
-                  .replace('{year}', String(year))
-                  .split('Neetrino')
-                  .map((part, index, parts) =>
-                    index < parts.length - 1 ? (
-                      <span key={`copy-${index}`}>
-                        {part}
-                        <a
-                          href="https://www.neetrino.com/"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-[#ff6900] underline-offset-2 hover:underline"
-                        >
-                          Neetrino
-                        </a>
-                      </span>
-                    ) : (
-                      <span key={`copy-end-${index}`}>{part}</span>
-                    ),
-                  )}
-              </p>
               </div>
             </RevealOnView>
           </div>
