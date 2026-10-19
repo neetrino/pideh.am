@@ -95,7 +95,7 @@ export function HomeCategories({
   return (
     <section
       data-home-categories
-      className="relative z-[5] overflow-x-clip bg-transparent pb-8 lg:pb-16"
+      className="relative z-[5] overflow-x-clip overflow-y-hidden bg-transparent pb-8 lg:pb-16"
     >
       {/* Wave sits over the hero video; drip valleys show the video underneath. */}
       <div className="absolute inset-x-0 top-0 z-[1] w-full">

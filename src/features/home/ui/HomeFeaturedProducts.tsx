@@ -50,7 +50,10 @@ export function HomeFeaturedProducts({
   products,
 }: HomeFeaturedProductsProps) {
   return (
-    <section className="relative z-10 overflow-x-clip bg-[#ff6b00]">
+    <section
+      className="relative z-10 overflow-x-clip bg-[#ff6b00]"
+      style={{ clipPath: 'inset(-260px 0 0 0)' }}
+    >
       {/*
         Wave fill is #FF6B00. The drip path is inset on the lower left, so a
         transparent section leaked the lighter home shell as a gutter triangle.

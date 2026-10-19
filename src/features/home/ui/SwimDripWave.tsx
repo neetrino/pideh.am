@@ -8,6 +8,11 @@ import type { DripWaveSpec } from '@/features/home/ui/wave-paths';
 type SwimDripWaveProps = {
   spec: DripWaveSpec;
   className?: string;
+  /**
+   * `slice` keeps the drip shape on wide screens. `none` stretches the path
+   * to the box, which flattens the crest on an iMac-width footer.
+   */
+  preserveAspectRatio?: 'none' | 'xMidYMin slice';
 };
 
 const PATH_TOKEN = /[A-Za-z]|-?\d*\.?\d+(?:e[-+]?\d+)?/g;
@@ -114,7 +119,11 @@ function buildCrestPath(compiled: CompiledCrest, horizon: number, progress: numb
  * plays once and stays. Path morphing updates the DOM directly (throttled)
  * so React/Motion does not rebuild SVG props every frame.
  */
-export function SwimDripWave({ spec, className = '' }: SwimDripWaveProps) {
+export function SwimDripWave({
+  spec,
+  className = '',
+  preserveAspectRatio = 'none',
+}: SwimDripWaveProps) {
   const reduceMotion = useReducedMotion();
   const rootRef = useRef<HTMLDivElement>(null);
   const pathRef = useRef<SVGPathElement>(null);
@@ -169,7 +178,7 @@ export function SwimDripWave({ spec, className = '' }: SwimDripWaveProps) {
         className="block size-full max-w-none overflow-visible"
         viewBox={spec.viewBox}
         fill="none"
-        preserveAspectRatio="none"
+        preserveAspectRatio={preserveAspectRatio}
       >
         <path ref={pathRef} d={reduceMotion ? spec.full : flatPath} fill={spec.fill} />
       </svg>

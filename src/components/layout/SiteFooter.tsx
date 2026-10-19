@@ -51,17 +51,17 @@ export function SiteFooter({ dictionary, locale }: SiteFooterProps) {
 
   return (
     <div className="storefront-desktop-tree mt-auto hidden md:block">
-      <footer className="storefront-footer relative -mt-10 overflow-hidden">
+      <footer className="storefront-footer relative z-20 -mt-10 overflow-hidden bg-[#FFD54A]">
         <div className="relative w-full">
           <div aria-hidden="true" className="pointer-events-none absolute inset-0">
             <div className="absolute inset-0 left-1/2 max-w-none w-[104.72%] -translate-x-1/2 [filter:drop-shadow(0_-4px_17px_rgba(199,89,15,0.21))]">
-              <SwimDripWave spec={FOOTER_DRIP} />
+              <SwimDripWave spec={FOOTER_DRIP} preserveAspectRatio="xMidYMin slice" />
             </div>
           </div>
 
           <div className={`relative z-[2] flex flex-col pb-10 pt-48 ${PAGE_CONTAINER}`}>
             <StaggerGroup
-              className="grid grid-cols-1 items-start gap-x-8 gap-y-8 md:grid-cols-2 xl:grid-cols-4"
+              className="grid min-w-0 grid-cols-1 items-start gap-x-8 gap-y-8 md:grid-cols-2 xl:grid-cols-4"
               stagger={0.12}
             >
               <StaggerItem variants={footerColumn}>
@@ -72,11 +72,11 @@ export function SiteFooter({ dictionary, locale }: SiteFooterProps) {
                   height={1720}
                   quality={100}
                   sizes="640px"
-                  className="mt-[21px] h-[180px] w-auto"
+                  className="mt-[21px] h-[180px] w-auto max-w-full"
                 />
               </StaggerItem>
 
-              <StaggerItem className="lg:pl-10" variants={footerColumn}>
+              <StaggerItem className="lg:pl-16 xl:pl-28" variants={footerColumn}>
                 <h4 className="font-display mb-5 text-[18px] leading-5 text-[#ff6b00] uppercase">
                   {footer.navigation}
                 </h4>
