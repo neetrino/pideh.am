@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next';
-import { Geist_Mono, Montserrat, Noto_Sans_Armenian } from 'next/font/google';
+import { Geist_Mono, Montserrat } from 'next/font/google';
 import localFont from 'next/font/local';
 
 import './globals.css';
@@ -46,10 +46,17 @@ const montserrat = Montserrat({
   weight: ['400', '500', '600', '700', '800', '900'],
 });
 
-const notoArmenian = Noto_Sans_Armenian({
+/**
+ * Armenian UI face, weights 400–900. SIL OFL.
+ * Vendored so production builds do not download this family from Google Fonts.
+ * @see https://fonts.google.com/noto/specimen/Noto+Sans+Armenian
+ */
+const notoArmenian = localFont({
+  src: '../fonts/NotoSansArmenian.woff2',
   variable: '--font-noto-armenian',
-  subsets: ['armenian'],
-  weight: ['400', '500', '600', '700', '800', '900'],
+  weight: '400 900',
+  style: 'normal',
+  display: 'swap',
 });
 
 const geistMono = Geist_Mono({
