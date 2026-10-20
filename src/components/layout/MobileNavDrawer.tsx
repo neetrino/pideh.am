@@ -20,6 +20,29 @@ import type { Dictionary } from '@/lib/i18n/get-dictionary';
 import type { Locale } from '@/lib/i18n/config';
 import type { Currency } from '@/lib/money/currency';
 
+const BURGER_BAR =
+  'absolute inset-x-0 h-[2.5px] rounded-full bg-[#FF6900] motion-safe:transition-transform motion-safe:duration-300 motion-safe:ease-[cubic-bezier(0.32,0.72,0,1)]';
+
+/** Three bars that rotate into a cross. `open` is the cross. */
+export function BurgerToCross({ open }: { open: boolean }) {
+  return (
+    <span className="relative block h-4 w-[22px]" aria-hidden="true">
+      <span
+        className={`${BURGER_BAR} top-0 origin-center`}
+        style={{ transform: open ? 'translateY(6.75px) rotate(45deg)' : 'none' }}
+      />
+      <span
+        className="absolute inset-x-0 top-1/2 h-[2.5px] -translate-y-1/2 rounded-full bg-[#FF6900] motion-safe:transition-opacity motion-safe:duration-200"
+        style={{ opacity: open ? 0 : 1 }}
+      />
+      <span
+        className={`${BURGER_BAR} bottom-0 origin-center`}
+        style={{ transform: open ? 'translateY(-6.75px) rotate(-45deg)' : 'none' }}
+      />
+    </span>
+  );
+}
+
 const MENU_EXIT_MS = 260;
 const MENU_GAP_PX = 8;
 const MENU_INSET_PX = 12;
@@ -263,64 +286,46 @@ export function MobileNavDrawer({
       {mounted && rendered
         ? createPortal(
             <div>
-              <button
-                type="button"
-                aria-label={dictionary.nav.closeMenu}
-                className={`fixed inset-0 z-[60] cursor-pointer border-0 bg-pideh-ink/35 backdrop-blur-[10px] transition-[opacity,visibility] duration-[260ms] ease-[cubic-bezier(0.32,0.72,0,1)] ${
-                  expanded
-                    ? 'pointer-events-auto visible opacity-100'
-                    : 'pointer-events-none invisible opacity-0'
-                }`}
-                onClick={() => setOpen(false)}
-              />
               {pillBox ? (
                 <div
-                  className={`fixed z-[80] flex items-center rounded-full bg-white shadow-[0_10px_28px_rgba(30,30,30,0.16)] transition-opacity duration-[260ms] ${
+                  aria-hidden="true"
+                  className={`pointer-events-none fixed z-[60] rounded-full transition-opacity duration-[260ms] ${
                     expanded ? 'opacity-100' : 'opacity-0'
                   }`}
                   style={{
                     top: pillBox.top,
-                    right: MENU_INSET_PX,
+                    left: pillBox.left,
                     width: pillBox.width,
                     height: pillBox.height,
+                    boxShadow: '0 0 0 100vmax rgba(30, 30, 30, 0.35)',
                   }}
-                >
-                  <button
-                    type="button"
-                    className="flex h-full min-w-0 flex-1 items-center justify-center text-[#1e1e1e]"
-                    aria-label={dictionary.nav.closeMenu}
-                    onClick={() => setOpen(false)}
-                  >
-                    <X className="size-[42%] max-h-6 max-w-6" strokeWidth={2.4} aria-hidden="true" />
-                  </button>
-                  <button
-                    type="button"
-                    className="flex h-full shrink-0 items-center justify-center pr-0.5"
-                    aria-label={dictionary.groupOrder.createButton}
-                    onClick={() => {
-                      setOpen(false);
-                      onOpenGroupOrder();
-                    }}
-                  >
-                    <span
-                      className="flex items-center justify-center rounded-full bg-[#ff6b00] text-[#ffd54a]"
-                      style={{ width: pillBox.height - 4, height: pillBox.height - 4 }}
-                    >
-                      <Users className="size-[42%]" aria-hidden="true" />
-                    </span>
-                  </button>
-                </div>
+                />
               ) : null}
+              <button
+                type="button"
+                aria-label={dictionary.nav.closeMenu}
+                className={`fixed inset-0 z-[60] cursor-pointer border-0 bg-transparent transition-[opacity,visibility] duration-[260ms] ease-[cubic-bezier(0.32,0.72,0,1)] ${
+                  expanded
+                    ? 'pointer-events-auto visible opacity-100'
+                    : 'pointer-events-none invisible opacity-0'
+                }`}
+                style={
+                  pillBox
+                    ? {
+                        clipPath: `polygon(evenodd, 0 0, 100% 0, 100% 100%, 0 100%, 0 0, ${pillBox.left}px ${pillBox.top}px, ${pillBox.right}px ${pillBox.top}px, ${pillBox.right}px ${pillBox.bottom}px, ${pillBox.left}px ${pillBox.bottom}px)`,
+                      }
+                    : undefined
+                }
+                onClick={() => setOpen(false)}
+              />
               <div
                 ref={panelRef}
                 id={menuId}
                 role="dialog"
                 aria-modal="true"
                 aria-label={dictionary.nav.navigation}
-                className={`fixed z-[75] overflow-hidden rounded-[28px] bg-white px-6 shadow-[0_16px_40px_rgba(30,30,30,0.14)] transition-[opacity,transform] duration-[260ms] ease-[cubic-bezier(0.32,0.72,0,1)] ${
-                  expanded
-                    ? 'translate-y-0 scale-100 opacity-100'
-                    : '-translate-y-2.5 scale-[0.98] opacity-0'
+                className={`fixed z-[75] overflow-hidden rounded-[28px] bg-white px-6 shadow-[0_16px_40px_rgba(30,30,30,0.14)] transition-opacity duration-[260ms] ease-[cubic-bezier(0.32,0.72,0,1)] ${
+                  expanded ? 'opacity-100' : 'opacity-0'
                 }`}
                 style={{
                   top: pillBox ? pillBox.bottom + MENU_GAP_PX : panelTopPx + MENU_GAP_PX,

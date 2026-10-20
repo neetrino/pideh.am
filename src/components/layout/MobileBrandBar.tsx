@@ -5,7 +5,7 @@ import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
 
-import { MobileNavDrawer } from '@/components/layout/MobileNavDrawer';
+import { BurgerToCross, MobileNavDrawer } from '@/components/layout/MobileNavDrawer';
 import { CreateGroupOrderModal } from '@/features/group-orders/ui/CreateGroupOrderModal';
 import { AppLink } from '@/components/ui/AppLink';
 import { PIDEH_ASSETS } from '@/features/home/ui/brand-assets';
@@ -41,7 +41,6 @@ export function MobileBrandBar({
 }: MobileBrandBarProps) {
   const pathname = usePathname();
   const [groupOpen, setGroupOpen] = useState(false);
-  const [menuPresent, setMenuPresent] = useState(false);
   const navItems = [
     { href: `/${locale}`, label: dictionary.nav.home },
     { href: `/${locale}/products`, label: dictionary.nav.menu },
@@ -83,7 +82,7 @@ export function MobileBrandBar({
           alt=""
           width={113}
           height={56}
-          className={`pointer-events-none absolute inset-0 size-full ${menuPresent ? 'invisible' : ''}`}
+          className="pointer-events-none absolute inset-0 size-full"
           aria-hidden="true"
         />
         <MobileNavDrawer
@@ -95,23 +94,25 @@ export function MobileBrandBar({
           phoneNumber={dictionary.contact.storePhone}
           phoneLabel={phoneLabel}
           onOpenGroupOrder={() => setGroupOpen(true)}
-          onPresenceChange={setMenuPresent}
           navItems={navItems}
-          triggerClassName="absolute inset-y-0 left-0 z-10 w-[52%] touch-manipulation bg-transparent"
+          triggerClassName="absolute inset-y-0 left-0 z-10 flex w-[52%] touch-manipulation items-center justify-center bg-transparent"
           triggerContent={(open) => (
-            <span className="sr-only">
-              {open ? dictionary.nav.closeMenu : dictionary.nav.openMenu}
-            </span>
+            <>
+              <BurgerToCross open={open} />
+              <span className="sr-only">
+                {open ? dictionary.nav.closeMenu : dictionary.nav.openMenu}
+              </span>
+            </>
           )}
         />
         <button
           type="button"
-          className={`absolute inset-y-0 right-0 z-10 flex w-[48%] items-center justify-center touch-manipulation ${menuPresent ? 'invisible' : ''}`}
+          className="absolute inset-y-0 right-0 z-10 flex w-[48%] items-center justify-center touch-manipulation"
           aria-label={dictionary.groupOrder.createButton}
           onClick={() => setGroupOpen(true)}
         >
           <span className="flex size-[52px] items-center justify-center rounded-full bg-[#FF6900] text-[#FFD54A]">
-            <Users className="size-5" aria-hidden="true" />
+            <Users className="size-6" aria-hidden="true" />
           </span>
         </button>
       </div>
