@@ -173,7 +173,7 @@ export function MobileProductDetail(props: MobileProductDetailProps) {
         }
         footer={
           <>
-            <div className="mt-6">
+            <div className="mt-10">
               <ProductSpecialRequestsField
                 label={labels.specialRequests}
                 placeholder={labels.specialRequestsPlaceholder}

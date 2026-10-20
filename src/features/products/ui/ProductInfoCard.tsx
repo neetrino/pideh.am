@@ -108,13 +108,15 @@ export function ProductInfoCard({
         error={state.error}
       />
 
-      <ProductSpecialRequestsField
-        label={labels.specialRequests}
-        placeholder={labels.specialRequestsPlaceholder}
-        value={state.customerNote}
-        disabled={state.disabled}
-        onChange={state.setCustomerNote}
-      />
+      <div className="mt-4">
+        <ProductSpecialRequestsField
+          label={labels.specialRequests}
+          placeholder={labels.specialRequestsPlaceholder}
+          value={state.customerNote}
+          disabled={state.disabled}
+          onChange={state.setCustomerNote}
+        />
+      </div>
     </div>
   );
 }
