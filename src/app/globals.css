@@ -530,6 +530,12 @@ body:has([role='dialog'][aria-modal='true'], [role='alertdialog'][aria-modal='tr
     -ms-overflow-style: none;
   }
 
+  /* Trailing inset lives on the row so it survives scroll-end (same 24px as search). */
+  .pideh-shop-mobile .shop-chips-scroll > * {
+    width: max-content;
+    padding-inline: 1.5rem;
+  }
+
   .pideh-shop-mobile .shop-chips-scroll::-webkit-scrollbar {
     display: none;
   }
