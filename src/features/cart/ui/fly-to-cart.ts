@@ -29,6 +29,15 @@ function createClone(image: HTMLImageElement, from: DOMRect): HTMLImageElement {
   return clone;
 }
 
+function visibleCartTarget(): HTMLElement | null {
+  const targets = document.querySelectorAll<HTMLElement>(`[${CART_TARGET_ATTR}]`);
+  for (const target of targets) {
+    const box = target.getBoundingClientRect();
+    if (box.width > 0 && box.height > 0) return target;
+  }
+  return null;
+}
+
 function bumpCartIcon(target: HTMLElement): void {
   target.animate(
     [
@@ -83,7 +92,7 @@ export function flyToCart(source: HTMLElement | null): void {
   }
 
   const image = source.querySelector('img');
-  const target = document.querySelector<HTMLElement>(`[${CART_TARGET_ATTR}]`);
+  const target = visibleCartTarget();
   if (image == null || target == null) {
     return;
   }

@@ -160,6 +160,7 @@ export function MobileBottomNav({
                     onFocus={prefetchDrawerView}
                     aria-label={label}
                     aria-expanded={open}
+                    data-cart-target=""
                     className="relative flex size-full items-center justify-center"
                   >
                     <NavGlyph src={MOBILE_HOME_ASSETS.navCart} size={ICON_CART} />

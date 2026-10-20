@@ -5,6 +5,7 @@ import { useEffect, useRef, useState, type MouseEvent, type ReactNode } from 're
 
 import { PidehPillButton } from '@/components/brand/PidehPillButton';
 import { beginCartBadgeAdd } from '@/features/cart/ui/cart-badge-count';
+import { flyToCart } from '@/features/cart/ui/fly-to-cart';
 import { setActiveCartProductQuantity } from '@/features/group-orders/application/add-to-active';
 import { alertIfSpendLimitExceeded } from '@/features/group-orders/ui/alert-spend-limit-exceeded';
 import { PIDEH_ASSETS } from '@/features/home/ui/brand-assets';
@@ -47,10 +48,13 @@ function useCardQuantity(
     setQuantity(initialQuantity);
   }, [initialQuantity, productId]);
 
-  function commit(next: number): void {
+  function commit(next: number, origin?: HTMLElement): void {
     if (!inStock || next === quantityRef.current) return;
     if (next < 0 || next > maxQuantity) return;
     const previous = quantityRef.current;
+    if (next > previous) {
+      flyToCart(origin?.closest('article') ?? null);
+    }
     quantityRef.current = next;
     setQuantity(next);
     const settle = beginCartBadgeAdd(next - previous);
@@ -128,13 +132,17 @@ export function ProductCardCartControl({
 
   if (quantity < 1) {
     return variant === 'compact' ? (
-      <CompactAdd label={orderLabel} disabled={!inStock} onAdd={() => commit(1)} />
+      <CompactAdd
+        label={orderLabel}
+        disabled={!inStock}
+        onAdd={(origin) => commit(1, origin)}
+      />
     ) : (
       <PidehPillButton
         label={orderLabel}
         onClick={(event) => {
           stopPress(event);
-          commit(1);
+          commit(1, event.currentTarget);
         }}
         disabled={!inStock}
         className="shrink-0"
@@ -149,7 +157,7 @@ export function ProductCardCartControl({
     decreaseLabel: labels.decreaseQuantity,
     increaseLabel: labels.increaseQuantity,
     onDecrease: () => commit(quantity - 1),
-    onIncrease: () => commit(quantity + 1),
+    onIncrease: (origin) => commit(quantity + 1, origin),
   };
 
   return variant === 'compact' ? <CompactStepper {...stepperProps} /> : <PillStepper {...stepperProps} />;
@@ -162,7 +170,7 @@ type StepperProps = {
   decreaseLabel: string;
   increaseLabel: string;
   onDecrease: () => void;
-  onIncrease: () => void;
+  onIncrease: (origin: HTMLElement) => void;
 };
 
 function PillStepper({
@@ -176,7 +184,12 @@ function PillStepper({
 }: StepperProps) {
   return (
     <div className="flex h-[58px] shrink-0 items-center justify-between gap-2 rounded-[42px] border border-[rgba(255,107,0,0.43)] bg-[#ff6b00] px-2 text-white">
-      <RoundButton label={decreaseLabel} disabled={pending} onClick={onDecrease} tone="ghost">
+      <RoundButton
+        label={decreaseLabel}
+        disabled={pending}
+        onClick={() => onDecrease()}
+        tone="ghost"
+      >
         <Image src={PIDEH_ASSETS.pdpQtyMinus} alt="" width={14} height={14} className="size-[14px]" />
       </RoundButton>
       <span className="min-w-6 text-center text-base leading-6 font-bold" aria-live="polite">
@@ -197,7 +210,11 @@ function PillStepper({
 function CompactStepper(props: StepperProps) {
   return (
     <div className="relative z-10 flex shrink-0 items-center gap-1">
-      <OutlineButton label={props.decreaseLabel} disabled={props.pending} onClick={props.onDecrease}>
+      <OutlineButton
+        label={props.decreaseLabel}
+        disabled={props.pending}
+        onClick={() => props.onDecrease()}
+      >
         −
       </OutlineButton>
       <span className="w-6 text-center text-lg leading-none font-bold text-[#1e1e1e]" aria-live="polite">
@@ -221,7 +238,7 @@ function CompactAdd({
 }: {
   label: string;
   disabled: boolean;
-  onAdd: () => void;
+  onAdd: (origin: HTMLElement) => void;
 }) {
   return (
     <button
@@ -230,7 +247,7 @@ function CompactAdd({
       disabled={disabled}
       onClick={(event) => {
         stopPress(event);
-        onAdd();
+        onAdd(event.currentTarget);
       }}
       className="relative z-10 box-border flex h-[56px] w-[59px] shrink-0 items-center justify-center overflow-hidden rounded-[42px] border-0 bg-[#ff6b00] p-0 transition enabled:hover:brightness-105 enabled:active:scale-95 disabled:pointer-events-none disabled:opacity-50"
     >
@@ -256,7 +273,7 @@ function RoundButton({
 }: {
   label: string;
   disabled: boolean;
-  onClick: () => void;
+  onClick: (origin: HTMLElement) => void;
   tone: 'ghost' | 'solid';
   children: ReactNode;
 }) {
@@ -269,7 +286,7 @@ function RoundButton({
       disabled={disabled}
       onClick={(event) => {
         stopPress(event);
-        onClick();
+        onClick(event.currentTarget);
       }}
       className={`flex size-10 items-center justify-center rounded-full ${toneClass} transition enabled:hover:brightness-105 enabled:active:scale-95 disabled:opacity-40`}
     >
@@ -286,7 +303,7 @@ function OutlineButton({
 }: {
   label: string;
   disabled: boolean;
-  onClick: () => void;
+  onClick: (origin: HTMLElement) => void;
   children: ReactNode;
 }) {
   return (
@@ -296,7 +313,7 @@ function OutlineButton({
       disabled={disabled}
       onClick={(event) => {
         stopPress(event);
-        onClick();
+        onClick(event.currentTarget);
       }}
       className="flex size-9 items-center justify-center rounded-full border border-[#ff6b00] text-lg leading-none font-bold text-[#ff6b00] transition enabled:active:scale-95 disabled:opacity-40"
     >
