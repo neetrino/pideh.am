@@ -29,7 +29,7 @@ export function MobileProductSheet({
       className="relative z-10 overflow-clip rounded-t-[30px] bg-white px-[22px] pt-7"
       style={{ paddingBottom: paddingBottomPx }}
     >
-      <div className="flex min-h-[204px] flex-col">
+      <div className="flex flex-col">
         <div className="flex items-start justify-between gap-3">
           <h1 className="font-display min-w-0 text-[40px] !leading-[1.25] text-[#1e1e1e]">
             {title}
@@ -39,7 +39,7 @@ export function MobileProductSheet({
         {children}
       </div>
 
-      <div className="flex min-w-0 items-center justify-between gap-2">{priceRow}</div>
+      <div className="mt-3 flex min-w-0 items-center justify-between gap-2">{priceRow}</div>
       {footer}
     </div>
   );
