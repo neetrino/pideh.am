@@ -439,17 +439,12 @@ body:has([role='dialog'][aria-modal='true'], [role='alertdialog'][aria-modal='tr
    * Dock frame is 176px tall inside the 440px mobile frame, then scaled to
    * the viewport. Sit the chat bubble just above that orange band.
    */
-  #tidio-chat-iframe {
-    bottom: calc(176px * 100vw / 440 + env(safe-area-inset-bottom, 0px) + 9rem) !important;
-  }
-
   /*
-   * Featured heading starts at top 432px in the 440 frame and ends near x=307.
-   * Keep the bubble above that title until TidioMobileLift measures it.
+   * The launcher iframe is pinned to the full viewport (top + height), so
+   * `bottom` does not move the bubble. Shift the whole widget up by the dock.
    */
-  .storefront-shell:has(.pideh-home-mobile) #tidio-chat-iframe {
-    bottom: calc(100dvh - 420px * 100vw / 440) !important;
-    right: calc(133px * 100vw / 440) !important;
+  #tidio-chat-iframe {
+    transform: translateY(calc(-1 * (176px * 100vw / 440 + env(safe-area-inset-bottom, 0px) + 0.75rem))) !important;
   }
 
   /* Phone + iPad portrait: Figma mobile header + dock. */

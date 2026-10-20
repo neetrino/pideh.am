@@ -4,48 +4,20 @@ import { useEffect } from 'react';
 
 const MOBILE_QUERY = '(max-width: 767px), (orientation: portrait) and (max-width: 1199px)';
 /** Dock is 176px in the 440px frame, then scaled to the viewport, plus a gap. */
-const LIFT = 'calc(176px * 100vw / 440 + env(safe-area-inset-bottom, 0px) + 9rem)';
+const LIFT = 'translateY(calc(-1 * (176px * 100vw / 440 + env(safe-area-inset-bottom, 0px) + 0.75rem)))';
 
 const OVERLAY_QUERY =
   '[role="dialog"][aria-modal="true"], [role="alertdialog"][aria-modal="true"]';
 /** Side sheets and modals start at z-50. */
 const BELOW_OVERLAY_Z = '30';
 
-const HOME_ANCHOR = '[data-home-chat-anchor]';
-/** Clear space between the bubble and the top of the featured heading. */
-const HOME_GAP_PX = 12;
-
 function liftBubble(iframe: HTMLElement): void {
   const wanted = LIFT.replaceAll(/\s/g, '');
-  const current = iframe.style.getPropertyValue('bottom').replaceAll(/\s/g, '');
-  if (current === wanted && iframe.style.getPropertyPriority('bottom') === 'important') {
+  const current = iframe.style.getPropertyValue('transform').replaceAll(/\s/g, '');
+  if (current === wanted && iframe.style.getPropertyPriority('transform') === 'important') {
     return;
   }
-  iframe.style.setProperty('bottom', LIFT, 'important');
-  iframe.style.setProperty('top', 'auto', 'important');
-  iframe.style.removeProperty('right');
-}
-
-/** Places the closed bubble above the featured heading, on the right. */
-function placeOnHomeHero(iframe: HTMLElement): boolean {
-  const anchor = document.querySelector(HOME_ANCHOR);
-  if (!(anchor instanceof HTMLElement)) return false;
-  const rect = anchor.getBoundingClientRect();
-  if (rect.width === 0 || rect.height === 0) return false;
-  const docTop = rect.top + window.scrollY;
-  const docRight = rect.right + window.scrollX;
-  const bottom = `${Math.max(0, Math.round(window.innerHeight - docTop + HOME_GAP_PX))}px`;
-  const right = `${Math.max(0, Math.round(window.innerWidth - docRight))}px`;
-  if (
-    iframe.style.getPropertyValue('bottom') === bottom &&
-    iframe.style.getPropertyValue('right') === right
-  ) {
-    return true;
-  }
-  iframe.style.setProperty('bottom', bottom, 'important');
-  iframe.style.setProperty('right', right, 'important');
-  iframe.style.setProperty('top', 'auto', 'important');
-  return true;
+  iframe.style.setProperty('transform', LIFT, 'important');
 }
 
 function stackUnderOverlay(node: HTMLElement, covered: boolean): void {
@@ -61,9 +33,7 @@ function stackUnderOverlay(node: HTMLElement, covered: boolean): void {
 }
 
 function resetDesktopPlacement(iframe: HTMLElement): void {
-  iframe.style.removeProperty('bottom');
-  iframe.style.removeProperty('right');
-  iframe.style.removeProperty('top');
+  iframe.style.removeProperty('transform');
 }
 
 /** Keeps the chat above the mobile dock, and behind open modals and side sheets. */
@@ -80,9 +50,7 @@ export function TidioMobileLift() {
       if (!(iframe instanceof HTMLElement)) return;
       stackUnderOverlay(iframe, covered);
       if (media.matches) {
-        const home = document.querySelector('.pideh-home-mobile');
-        const homeVisible = home instanceof HTMLElement && home.getClientRects().length > 0;
-        if (!homeVisible || !placeOnHomeHero(iframe)) liftBubble(iframe);
+        liftBubble(iframe);
       } else {
         resetDesktopPlacement(iframe);
       }

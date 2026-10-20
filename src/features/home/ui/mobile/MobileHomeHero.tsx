@@ -263,7 +263,6 @@ export function MobileHomeHero({
       {/* Featured title — 260:492 */}
       <h2
         ref={headingRef}
-        data-home-chat-anchor
         className="font-display absolute top-[432px] left-[calc(50%-203px)] z-20 h-[130px] w-[290px] text-[50px] leading-[0.84] text-white"
       >
         <span className="mb-0 block">{titleLine1}</span>
