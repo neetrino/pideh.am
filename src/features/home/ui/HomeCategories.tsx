@@ -101,8 +101,8 @@ export function HomeCategories({
           style={{ top: `${(452 / CATEGORY_FRAME.h) * 100}%` }}
         >
           <div className={PAGE_CONTAINER}>
-            <div className="flex items-start gap-[clamp(1rem,2.2vw,2rem)]">
-              <RevealOnView className="h-14 w-full max-w-[213px] min-w-0 shrink" variants={pillPop} delay={0.12}>
+            <div className="flex h-14 items-center gap-[clamp(1rem,2.2vw,2rem)]">
+              <RevealOnView className="h-14 w-full max-w-[213px] min-w-0 shrink-0" variants={pillPop} delay={0.12}>
                 <PidehPillButton
                   href={viewAllHref}
                   label={viewAllLabel}
@@ -111,11 +111,12 @@ export function HomeCategories({
                 />
               </RevealOnView>
               {active ? (
-                <div className="relative min-h-14 min-w-0 max-w-[26rem] flex-1 overflow-hidden">
+                <div className="relative h-14 min-w-0 max-w-[26rem] flex-1">
+                  <div className="absolute inset-y-0 left-0 flex w-full items-center">
                   <AnimatePresence mode="popLayout" initial={false}>
                     <motion.p
                       key={active.id}
-                      className="font-display flex min-h-14 items-center text-balance break-words text-[#1e1e1e]"
+                      className="font-display w-full text-balance break-words text-[#1e1e1e]"
                       style={{
                         fontSize: 'clamp(1.75rem, 3.73vw, 3.375rem)',
                         lineHeight: 1,
@@ -131,6 +132,7 @@ export function HomeCategories({
                       {active.title}
                     </motion.p>
                   </AnimatePresence>
+                  </div>
                 </div>
               ) : null}
             </div>
