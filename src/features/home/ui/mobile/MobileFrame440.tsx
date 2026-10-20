@@ -41,8 +41,13 @@ export function MobileFrame440({ height, children, className = '' }: MobileFrame
   }, []);
 
   return (
-    <div ref={ref} className={`relative w-full ${className}`}>
-      <div className="relative w-full" style={{ height: height * scale }}>
+    <div ref={ref} data-mobile-frame className={`relative w-full ${className}`}>
+      <div
+        data-mobile-frame-spacer
+        data-frame-height={height}
+        className="relative w-full"
+        style={{ height: height * scale }}
+      >
         <div
           className="absolute top-0 left-0 origin-top-left"
           style={{

@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useRef, useState, type FormEvent } from 'react';
 
 import { AppLink } from '@/components/ui/AppLink';
+import { GroupOrderBannerSlot } from '@/features/group-orders/ui/GroupOrderBannerSlot';
 import {
   MOBILE_ORBIT_MOVE_MS,
   MobileCategoryOrbit,
@@ -70,6 +71,9 @@ export function MobileHomeHero({
 }: MobileHomeHeroProps) {
   const router = useRouter();
   const searchInputRef = useRef<HTMLInputElement>(null);
+  const bannerSlotRef = useRef<HTMLDivElement>(null);
+  const headingRef = useRef<HTMLHeadingElement>(null);
+  const viewAllRef = useRef<HTMLDivElement>(null);
   const productsHref = `/${locale}/products`;
   const [searchQuery, setSearchQuery] = useState('');
   const [spin, setSpin] = useState(0);
@@ -77,6 +81,39 @@ export function MobileHomeHero({
   const unlockTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const orbitBusyRef = useRef(false);
   orbitBusyRef.current = orbitBusy;
+
+  useEffect(() => {
+    const slot = bannerSlotRef.current;
+    const heading = headingRef.current;
+    const viewAll = viewAllRef.current;
+    if (!slot || !heading || !viewAll) return;
+
+    const headingTop = 432;
+    const viewAllTop = 505;
+    const bannerTop = 440;
+    const gap = 16;
+
+    function apply(): void {
+      const bannerHeight = slot?.offsetHeight ?? 0;
+      const shift = bannerHeight > 0 ? bannerHeight + gap + (bannerTop - headingTop) : 0;
+      heading?.style.setProperty('top', `${headingTop + shift}px`);
+      viewAll?.style.setProperty('top', `${viewAllTop + shift}px`);
+
+      const spacer = slot?.closest('[data-mobile-frame]')?.querySelector<HTMLElement>(
+        '[data-mobile-frame-spacer]',
+      );
+      if (!spacer) return;
+      const base = Number(spacer.dataset.frameHeight);
+      if (!Number.isFinite(base) || base <= 0) return;
+      const scale = spacer.clientWidth / 440;
+      spacer.style.height = `${(base + shift) * (scale > 0 ? scale : 1)}px`;
+    }
+
+    apply();
+    const observer = new ResizeObserver(apply);
+    observer.observe(slot);
+    return () => observer.disconnect();
+  }, []);
 
   const orbitCategories = useMemo(
     () => buildMobileOrbitCategories(categories, arcTitles, pideLabel, productsHref),
@@ -220,27 +257,38 @@ export function MobileHomeHero({
         </button>
       </div>
 
+      <GroupOrderBannerSlot
+        ref={bannerSlotRef}
+        className="absolute top-[440px] left-4 z-50 w-[408px]"
+      />
+
       {/* Featured title — 260:492 */}
-      <h2 className="font-display absolute top-[432px] left-[calc(50%-203px)] z-20 h-[130px] w-[290px] text-[50px] leading-[0.84] text-white">
+      <h2
+        ref={headingRef}
+        data-home-chat-anchor
+        className="font-display absolute top-[432px] left-[calc(50%-203px)] z-20 h-[130px] w-[290px] text-[50px] leading-[0.84] text-white"
+      >
         <span className="mb-0 block">{titleLine1}</span>
         <span className="block">{titleLine2}</span>
       </h2>
 
       {/* View-all — 260:548 */}
-      <AppLink
-        href={viewAllHref}
-        prefetchPolicy="intent"
-        aria-label={viewAllLabel}
-        className="absolute top-[505px] left-[358px] z-40 flex items-center gap-1 overflow-hidden rounded-[42px] bg-[#ffd54a] px-6 py-4"
-      >
-        <Image
-          src={MOBILE_HOME_ASSETS.viewAllArrow}
-          alt=""
-          width={20}
-          height={20}
-          className="size-5"
-        />
-      </AppLink>
+      <div ref={viewAllRef} className="absolute top-[505px] left-[358px] z-40">
+        <AppLink
+          href={viewAllHref}
+          prefetchPolicy="intent"
+          aria-label={viewAllLabel}
+          className="flex items-center gap-1 overflow-hidden rounded-[42px] bg-[#ffd54a] px-6 py-4"
+        >
+          <Image
+            src={MOBILE_HOME_ASSETS.viewAllArrow}
+            alt=""
+            width={20}
+            height={20}
+            className="size-5"
+          />
+        </AppLink>
+      </div>
     </>
   );
 }

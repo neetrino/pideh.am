@@ -440,7 +440,16 @@ body:has([role='dialog'][aria-modal='true'], [role='alertdialog'][aria-modal='tr
    * the viewport. Sit the chat bubble just above that orange band.
    */
   #tidio-chat-iframe {
-    bottom: calc(176px * 100vw / 440 + env(safe-area-inset-bottom, 0px) + 5rem) !important;
+    bottom: calc(176px * 100vw / 440 + env(safe-area-inset-bottom, 0px) + 9rem) !important;
+  }
+
+  /*
+   * Featured heading starts at top 432px in the 440 frame and ends near x=307.
+   * Keep the bubble above that title until TidioMobileLift measures it.
+   */
+  .storefront-shell:has(.pideh-home-mobile) #tidio-chat-iframe {
+    bottom: calc(100dvh - 420px * 100vw / 440) !important;
+    right: calc(133px * 100vw / 440) !important;
   }
 
   /* Phone + iPad portrait: Figma mobile header + dock. */
