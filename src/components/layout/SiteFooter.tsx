@@ -217,7 +217,7 @@ export function SiteFooter({ dictionary, locale }: SiteFooterProps) {
                         <span key={`copy-${index}`}>
                           {part}
                           <a
-                            href="https://www.neetrino.com/"
+                            href="https://neetrino.com/?utm_source=pideh.am"
                             target="_blank"
                             rel="noopener noreferrer"
                             className="text-[#ff6900] underline-offset-2 hover:underline"

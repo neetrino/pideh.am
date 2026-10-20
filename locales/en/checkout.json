@@ -4,6 +4,8 @@
   "itemsOne": "1 item",
   "itemsMany": "{count} items",
   "removeItem": "Remove item",
+  "previousItems": "Previous items",
+  "nextItems": "Next items",
   "contactInformation": "Contact Information",
   "shippingMethod": "Shipping Method",
   "shippingAddress": "Shipping Address",

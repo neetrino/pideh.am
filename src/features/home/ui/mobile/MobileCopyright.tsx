@@ -1,5 +1,5 @@
 const AGENCY_NAME = 'Neetrino';
-const AGENCY_URL = 'https://www.neetrino.com/';
+const AGENCY_URL = 'https://neetrino.com/?utm_source=pideh.am';
 
 type MobileCopyrightProps = {
   /** Full copyright sentence, year already interpolated. */

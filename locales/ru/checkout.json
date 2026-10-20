@@ -4,6 +4,8 @@
   "itemsOne": "1 товар",
   "itemsMany": "{count} товаров",
   "removeItem": "Удалить товар",
+  "previousItems": "Предыдущие товары",
+  "nextItems": "Следующие товары",
   "contactInformation": "Контактные данные",
   "shippingMethod": "Способ доставки",
   "shippingAddress": "Адрес доставки",

@@ -43,6 +43,8 @@ type CheckoutLabels = {
   itemsOne: string;
   itemsMany: string;
   removeItem: string;
+  previousItems: string;
+  nextItems: string;
   contactInformation: string;
   shippingMethod: string;
   shippingAddress: string;
@@ -527,6 +529,8 @@ export function CheckoutForm({
         itemsOneLabel={labels.itemsOne}
         itemsManyLabel={labels.itemsMany}
         removeItemLabel={labels.removeItem}
+        previousItemsLabel={labels.previousItems}
+        nextItemsLabel={labels.nextItems}
         onCartChanged={clearAppliedCoupon}
       />
 
