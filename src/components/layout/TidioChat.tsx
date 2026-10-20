@@ -4,7 +4,7 @@ import { getEnv } from '@/config/env';
 
 const TIDIO_SCRIPT_BASE_URL = 'https://code.tidio.co';
 
-/** Loads the Tidio live chat widget after the page becomes idle. */
+/** Loads the Tidio live chat widget after the page is interactive. */
 export function TidioChat() {
   const { TIDIO_PUBLIC_KEY } = getEnv();
 
@@ -14,9 +14,9 @@ export function TidioChat() {
 
   return (
     <Script
-      id="tidio-chat"
+      id="tidio-widget"
       src={`${TIDIO_SCRIPT_BASE_URL}/${TIDIO_PUBLIC_KEY}.js`}
-      strategy="lazyOnload"
+      strategy="afterInteractive"
     />
   );
 }
