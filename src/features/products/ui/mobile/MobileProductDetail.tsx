@@ -51,6 +51,7 @@ type MobileProductDetailProps = {
   isSignedIn: boolean;
   wishlistLabel: string;
   backLabel: string;
+  emphasizePhoto?: boolean;
   labels: MobileLabels;
   relatedSlot?: ReactNode;
 };
@@ -82,6 +83,7 @@ export function MobileProductDetail(props: MobileProductDetailProps) {
     isSignedIn,
     wishlistLabel,
     backLabel,
+    emphasizePhoto = false,
     labels,
     relatedSlot,
   } = props;
@@ -124,6 +126,7 @@ export function MobileProductDetail(props: MobileProductDetailProps) {
         inStock={!state.disabled}
         outOfStockLabel={labels.outOfStock}
         backLabel={backLabel}
+        emphasizePhoto={emphasizePhoto}
       />
 
       <MobileProductSheet

@@ -21,6 +21,16 @@ type BuildMobileCatalogSectionsArgs = {
   withSeeAll: boolean;
 };
 
+function isShawarmaSlug(slug: string): boolean {
+  const normalized = slug.trim().toLowerCase();
+  return (
+    normalized.includes('shaur') ||
+    normalized.includes('shawar') ||
+    normalized.includes('shwar') ||
+    normalized.includes('շաուրմ')
+  );
+}
+
 /** Maps catalog blocks to the props the mobile menu grid expects. */
 export function buildMobileCatalogSections({
   locale,
@@ -32,7 +42,7 @@ export function buildMobileCatalogSections({
   seeAllTemplate,
   withSeeAll,
 }: BuildMobileCatalogSectionsArgs): MobileCatalogSectionData[] {
-  function toCard(product: CatalogProduct): MobileGridProduct {
+  function toCard(product: CatalogProduct, categorySlug: string): MobileGridProduct {
     return {
       id: product.id,
       href: `/${locale}/products/${product.translation.slug}`,
@@ -40,6 +50,7 @@ export function buildMobileCatalogSections({
       description: product.translation.description ?? null,
       priceFormatted: formatPrice(product.priceAmount),
       imageUrl: product.imageUrl,
+      tiltPhoto: isShawarmaSlug(categorySlug) || isShawarmaSlug(product.translation.title),
       inStock: product.stockOnHand > 0,
       inWishlist: wishlistIds.has(product.id),
       cartQuantity: cartQuantities[product.id] ?? 0,
@@ -54,6 +65,6 @@ export function buildMobileCatalogSections({
       ? catalogHref(locale, filters, { category: section.slug, page: 1 })
       : null,
     seeAllLabel: seeAllTemplate.replace('{category}', section.title),
-    products: section.products.map(toCard),
+    products: section.products.map((product) => toCard(product, section.slug)),
   }));
 }

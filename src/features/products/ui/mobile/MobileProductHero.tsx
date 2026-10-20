@@ -16,6 +16,7 @@ type MobileProductHeroProps = {
   inStock: boolean;
   outOfStockLabel: string;
   backLabel: string;
+  emphasizePhoto?: boolean;
 };
 
 /**
@@ -31,6 +32,7 @@ export function MobileProductHero({
   inStock,
   outOfStockLabel,
   backLabel,
+  emphasizePhoto = false,
 }: MobileProductHeroProps) {
   const router = useRouter();
 
@@ -41,6 +43,7 @@ export function MobileProductHero({
           src={image.url}
           alt={image.alt || title}
           imageRef={galleryRef}
+          emphasize={emphasizePhoto}
         />
       ) : (
         <div ref={galleryRef} className="absolute inset-0" />

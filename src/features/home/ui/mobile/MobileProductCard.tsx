@@ -14,6 +14,7 @@ type MobileProductCardProps = {
   description?: string | null;
   priceFormatted: string;
   imageUrl: string | null;
+  tiltPhoto?: boolean;
   inStock: boolean;
   locale: Locale;
   productId: string;
@@ -38,6 +39,7 @@ export function MobileProductCard({
   description,
   priceFormatted,
   imageUrl,
+  tiltPhoto = false,
   inStock,
   locale,
   productId,
@@ -63,7 +65,10 @@ export function MobileProductCard({
         tabIndex={-1}
         className="absolute inset-0 z-[1] rounded-[26px]"
       />
-      <div data-node-id="260:513" className="relative z-20 mx-auto h-[120px] w-[164px] shrink-0">
+      <div
+        data-node-id="260:513"
+        className={`relative z-20 mx-auto shrink-0 ${tiltPhoto ? 'h-[148px] w-[176px]' : 'h-[120px] w-[164px]'}`}
+      >
         <AppLink
           href={href}
           prefetchPolicy={priority ? 'intent' : 'auto'}
@@ -78,7 +83,9 @@ export function MobileProductCard({
                 height={120}
                 sizes="164px"
                 priority={priority}
-                className="size-full object-contain object-center"
+                className={`size-full object-contain object-center${
+                  tiltPhoto ? ' origin-center scale-125 -rotate-[18deg]' : ''
+                }`}
               />
             </span>
           ) : (

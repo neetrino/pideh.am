@@ -9,6 +9,16 @@ import type { Dictionary } from '@/lib/i18n/get-dictionary';
 import type { Locale } from '@/lib/i18n/config';
 import type { Currency } from '@/lib/money/currency';
 
+function isShawarmaSlug(slug: string): boolean {
+  const normalized = slug.trim().toLowerCase();
+  return (
+    normalized.includes('shaur') ||
+    normalized.includes('shawar') ||
+    normalized.includes('shwar') ||
+    normalized.includes('շաուրմ')
+  );
+}
+
 type ProductDetailViewProps = {
   locale: Locale;
   currency: Currency;
@@ -73,6 +83,10 @@ export function ProductDetailView({
       <MobileProductDetail
         {...configurator}
         backLabel={dictionary.catalog.back}
+        emphasizePhoto={
+          isShawarmaSlug(product.translation.title) ||
+          product.categories.some((category) => isShawarmaSlug(category.slug) || isShawarmaSlug(category.title))
+        }
         relatedSlot={
           <Suspense fallback={null}>
             <ProductRelatedSection
