@@ -65,7 +65,7 @@ export function MobileBrandBar({
         }}
       >
         <Image
-          src={PIDEH_ASSETS.wordmark}
+          src={PIDEH_ASSETS.mobileWordmark}
           alt={dictionary.brand}
           fill
           sizes="96px"

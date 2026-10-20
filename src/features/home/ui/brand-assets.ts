@@ -6,6 +6,8 @@ export const PIDEH_ASSETS = {
   logo: '/brand/pideh/logo.png',
   /** Footer and navbar mark (777×605). */
   wordmark: '/brand/pideh/footer-wordmark.svg',
+  /** Figma 410:589 — mobile header wordmark. */
+  mobileWordmark: '/brand/pideh/mobile-wordmark.svg',
   foodPide: pidehRasterUrl('food-pide'),
   ctaPide: pidehRasterUrl('cta-pide'),
   ctaDotA: '/brand/pideh/cta-dot-a.svg',
