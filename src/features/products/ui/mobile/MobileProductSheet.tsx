@@ -26,7 +26,7 @@ export function MobileProductSheet({
   return (
     <div
       data-node-id="268:595"
-      className="relative z-10 overflow-clip rounded-t-[30px] bg-white px-[22px] pt-7"
+      className="relative z-10 overflow-clip rounded-[30px] bg-white px-[22px] pt-7"
       style={{ paddingBottom: paddingBottomPx }}
     >
       <div className="flex flex-col">
