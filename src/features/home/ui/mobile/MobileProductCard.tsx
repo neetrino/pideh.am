@@ -126,14 +126,21 @@ export function MobileProductCard({
 
       <div
         data-node-id="260:875"
-        className="mt-auto flex h-[56px] w-full shrink-0 items-center gap-2"
+        className={
+          cartQuantity > 0
+            ? 'relative mt-auto h-[72px] w-full shrink-0'
+            : 'mt-auto flex h-[56px] w-full shrink-0 items-center gap-2'
+        }
       >
         <p
           data-node-id="260:522"
-          className="font-montserrat-arm min-w-0 flex-1 truncate text-[21px] leading-[1.25] font-extrabold text-[#1e1e1e]"
+          className={`font-montserrat-arm min-w-0 truncate text-[21px] leading-[1.25] font-extrabold text-[#1e1e1e] ${
+            cartQuantity > 0 ? 'absolute inset-x-0 top-0' : 'flex-1'
+          }`}
         >
           {priceFormatted}
         </p>
+        <div className={cartQuantity > 0 ? 'absolute right-0 bottom-0' : 'contents'}>
         <ProductCardCartControl
           productId={productId}
           locale={locale}
@@ -143,6 +150,7 @@ export function MobileProductCard({
           inStock={inStock}
           variant="compact"
         />
+        </div>
       </div>
     </article>
   );

@@ -188,7 +188,7 @@ function PillStepper({
 
 function CompactStepper(props: StepperProps) {
   return (
-    <div className="relative z-10 flex shrink-0 -translate-y-3 items-center gap-1">
+    <div className="relative z-10 flex shrink-0 items-center gap-1">
       <OutlineButton label={props.decreaseLabel} disabled={props.pending} onClick={props.onDecrease}>
         −
       </OutlineButton>
@@ -224,7 +224,7 @@ function CompactAdd({
         stopPress(event);
         onAdd();
       }}
-      className="relative z-10 box-border flex h-[56px] w-[59px] shrink-0 -translate-y-3 items-center justify-center overflow-hidden rounded-[42px] border-0 bg-[#ff6b00] p-0 transition enabled:hover:brightness-105 enabled:active:scale-95 disabled:pointer-events-none disabled:opacity-50"
+      className="relative z-10 box-border flex h-[56px] w-[59px] shrink-0 items-center justify-center overflow-hidden rounded-[42px] border-0 bg-[#ff6b00] p-0 transition enabled:hover:brightness-105 enabled:active:scale-95 disabled:pointer-events-none disabled:opacity-50"
     >
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
