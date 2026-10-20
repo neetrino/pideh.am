@@ -5,7 +5,7 @@ import { useEffect, useState, type ReactNode } from 'react';
 import { MOBILE_STOREFRONT_SHELL } from '@/components/layout/page-container';
 
 /** Scroll distance over which the frosted bar eases fully in. */
-const SCROLL_FADE_RANGE_PX = 88;
+const SCROLL_FADE_RANGE_PX = 140;
 
 type MobileHeaderScrollShellProps = {
   children: ReactNode;
@@ -58,7 +58,7 @@ export function MobileHeaderScrollShell({ children }: MobileHeaderScrollShellPro
     >
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 rounded-b-[28px] bg-[#ff6b00]"
+        className="pointer-events-none absolute inset-0 rounded-b-[28px] bg-[#ff6b00] transition-opacity duration-300 ease-out"
         style={{ opacity: progress }}
       />
       <div className="relative z-10">{children}</div>
