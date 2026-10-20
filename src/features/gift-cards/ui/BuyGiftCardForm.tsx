@@ -3,7 +3,6 @@
 import { useMemo, useState, useTransition, type FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
 
-import { Button } from '@/components/ui/Button';
 import { purchaseGiftCardAction } from '@/features/gift-cards/application/admin-actions';
 import {
   CHECKOUT_PAYMENT_METHODS,
@@ -16,6 +15,7 @@ import {
   type PaymentOption,
 } from '@/features/checkout/ui/CheckoutPaymentMethods';
 import type { GiftCardSettings } from '@/features/gift-cards/domain/gift-card-rules';
+import { GiftCardSendDateField } from '@/features/gift-cards/ui/GiftCardSendDateField';
 import type { Locale } from '@/lib/i18n/config';
 import { formatMoneyAmount } from '@/lib/money/format';
 
@@ -246,14 +246,15 @@ export function BuyGiftCardForm({
           className="w-full rounded-lg border border-gray-200 px-3 py-2"
         />
       </label>
-      <label className="block space-y-1 text-sm">
+      <div className="block space-y-1 text-sm">
         <span className="font-medium text-gray-900">{copy.sendDate}</span>
-        <input
+        <GiftCardSendDateField
+          locale={locale}
           name="scheduledSendAt"
-          type="datetime-local"
-          className="h-11 w-full rounded-lg border border-gray-200 px-3"
+          disabled={pending}
+          placeholder={copy.sendDate}
         />
-      </label>
+      </div>
 
       <CheckoutPaymentMethods
         title={copy.paymentMethod}
@@ -274,9 +275,13 @@ export function BuyGiftCardForm({
         </p>
       ) : null}
 
-      <Button type="submit" disabled={pending} className="h-11">
+      <button
+        type="submit"
+        disabled={pending}
+        className="h-11 w-full rounded-full bg-[#ff6b00] text-sm font-bold text-white transition hover:bg-[#e85f00] disabled:cursor-not-allowed disabled:opacity-50"
+      >
         {pending ? copy.submitting : copy.submit}
-      </Button>
+      </button>
     </form>
   );
 }

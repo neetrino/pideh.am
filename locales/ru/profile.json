@@ -121,6 +121,12 @@
       "usedByMe": "Использованные мной карты",
       "boughtForOthers": "Карты, купленные мной для других"
     },
+    "sectionsSwitcher": {
+      "aria": "Разделы подарочных карт",
+      "mine": "Мои",
+      "usedByMe": "Использованные",
+      "boughtForOthers": "Для других"
+    },
     "statuses": {
       "PENDING_PAYMENT": "Ожидает оплаты",
       "ACTIVE": "Активна",

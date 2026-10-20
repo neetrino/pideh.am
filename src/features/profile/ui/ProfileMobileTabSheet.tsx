@@ -251,8 +251,8 @@ export function ProfileMobileTabSheet({
         className={`relative z-[1] flex w-full flex-col overflow-hidden bg-white shadow-2xl ${panelClass}`}
         style={{
           height: `${SHEET_HEIGHT_VH}dvh`,
-          borderTopLeftRadius: 'var(--radius)',
-          borderTopRightRadius: 'var(--radius)',
+          borderTopLeftRadius: 20,
+          borderTopRightRadius: 20,
         }}
         onClick={(event) => event.stopPropagation()}
         onAnimationEnd={handlePanelAnimationEnd}

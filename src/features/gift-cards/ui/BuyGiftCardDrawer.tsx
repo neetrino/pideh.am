@@ -52,13 +52,18 @@ export function BuyGiftCardDrawer({
       open={open}
       onClose={onClose}
       ariaLabel={copy.title}
-      panelClassName="w-full sm:w-1/2"
+      panelClassName="w-[87%] max-w-[420px]"
+      panelInnerClassName="rounded-l-[20px] bg-white shadow-2xl"
       zIndexClassName="z-[200]"
+      backdropBlur
+      closeClassName="bg-[#ff6b00] text-white hover:bg-[#e85f00]"
     >
       <div className="flex h-full min-h-0 flex-col">
-        <div className="shrink-0 border-b border-gray-200 px-5 py-4">
-          <h2 className="text-lg font-semibold text-gray-900">{copy.title}</h2>
-          <p className="mt-1 text-sm text-gray-600">{copy.description}</p>
+        <div className="shrink-0 border-b border-gray-100 px-6 py-5">
+          <h2 className="font-display text-xl leading-none tracking-wide text-[#1e1e1e] uppercase">
+            {copy.title}
+          </h2>
+          <p className="mt-2 text-sm leading-relaxed text-gray-600">{copy.description}</p>
         </div>
         <div className="min-h-0 flex-1 overflow-y-auto px-5 py-5">
           <BuyGiftCardForm

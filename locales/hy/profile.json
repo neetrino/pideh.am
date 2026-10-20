@@ -121,6 +121,12 @@
       "usedByMe": "Իմ կողմից օգտագործված Gift Card-երը",
       "boughtForOthers": "Ուրիշի համար իմ գնած Gift Card-երը"
     },
+    "sectionsSwitcher": {
+      "aria": "Gift Card բաժիններ",
+      "mine": "Իմը",
+      "usedByMe": "Օգտագործված",
+      "boughtForOthers": "Ուրիշի համար"
+    },
     "statuses": {
       "PENDING_PAYMENT": "Սպասում է վճարման",
       "ACTIVE": "Ակտիվ",

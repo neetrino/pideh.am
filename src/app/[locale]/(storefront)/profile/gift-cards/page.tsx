@@ -56,6 +56,7 @@ export default async function MyGiftCardsPage({ params }: PageProps) {
         created: copy.created,
         expires: copy.expires,
         filters: copy.filters,
+        sectionsSwitcher: copy.sectionsSwitcher,
         statuses: copy.statuses,
         buyDrawer: {
           title: buyCopy.title,
