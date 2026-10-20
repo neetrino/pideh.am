@@ -94,7 +94,9 @@ export function MobileHomeHero({
     const gap = 16;
 
     function apply(): void {
-      const bannerHeight = slot?.offsetHeight ?? 0;
+      const card = slot?.firstElementChild;
+      const bannerHeight =
+        card instanceof HTMLElement ? card.offsetHeight : (slot?.offsetHeight ?? 0);
       const shift = bannerHeight > 0 ? bannerHeight + gap + (bannerTop - headingTop) : 0;
       heading?.style.setProperty('top', `${headingTop + shift}px`);
       viewAll?.style.setProperty('top', `${viewAllTop + shift}px`);
@@ -107,12 +109,27 @@ export function MobileHomeHero({
       if (!Number.isFinite(base) || base <= 0) return;
       const scale = spacer.clientWidth / 440;
       spacer.style.height = `${(base + shift) * (scale > 0 ? scale : 1)}px`;
+      const canvas = spacer.firstElementChild;
+      if (canvas instanceof HTMLElement) {
+        canvas.style.height = `${base + shift}px`;
+      }
     }
 
     apply();
-    const observer = new ResizeObserver(apply);
-    observer.observe(slot);
-    return () => observer.disconnect();
+    const resizeObserver = new ResizeObserver(apply);
+    resizeObserver.observe(slot);
+    const mutationObserver = new MutationObserver(() => {
+      apply();
+      const card = slot.firstElementChild;
+      if (card instanceof HTMLElement) resizeObserver.observe(card);
+    });
+    mutationObserver.observe(slot, { childList: true, subtree: true });
+    window.addEventListener('resize', apply);
+    return () => {
+      resizeObserver.disconnect();
+      mutationObserver.disconnect();
+      window.removeEventListener('resize', apply);
+    };
   }, []);
 
   const orbitCategories = useMemo(

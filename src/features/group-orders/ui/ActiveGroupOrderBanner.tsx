@@ -1,6 +1,6 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState, useTransition } from 'react';
 import { createPortal } from 'react-dom';
 import { Users } from 'lucide-react';
@@ -86,9 +86,11 @@ export function ActiveGroupOrderBanner({
   isOrganizer,
 }: ActiveGroupOrderBannerProps) {
   const router = useRouter();
+  const pathname = usePathname();
   const [pending, startTransition] = useTransition();
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [homeSlot, setHomeSlot] = useState<HTMLElement | null>(null);
+  const slotConnected = homeSlot?.isConnected === true;
 
   useEffect(() => {
     const desktop = window.matchMedia(
@@ -101,25 +103,34 @@ export function ActiveGroupOrderBanner({
         '[data-group-order-banner-slot][data-slot-ready="true"]',
       );
       for (const slot of slots) {
-        if (slot.getClientRects().length > 0) return slot;
+        if (slot.isConnected && slot.getClientRects().length > 0) return slot;
       }
       return null;
     }
 
     function sync(): void {
-      setHomeSlot(findVisibleSlot());
+      const next = findVisibleSlot();
+      setHomeSlot((current) => (current === next ? current : next));
     }
 
     sync();
+    const observer = new MutationObserver(sync);
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true,
+      attributes: true,
+      attributeFilter: ['data-slot-ready'],
+    });
     window.addEventListener('resize', sync);
     window.addEventListener(GROUP_ORDER_BANNER_SLOT_READY, sync);
     desktop.addEventListener('change', sync);
     return () => {
+      observer.disconnect();
       window.removeEventListener('resize', sync);
       window.removeEventListener(GROUP_ORDER_BANNER_SLOT_READY, sync);
       desktop.removeEventListener('change', sync);
     };
-  }, []);
+  }, [pathname]);
 
   function leaveSession(): void {
     startTransition(async () => {
@@ -133,7 +144,7 @@ export function ActiveGroupOrderBanner({
     <>
       <GroupOrderSessionWatcher labels={labels} inviteToken={inviteToken} mode="poll" />
       <div className="group-order-banner shrink-0">
-        {homeSlot
+        {slotConnected && homeSlot
           ? createPortal(
               <MobileBannerCard
                 locale={locale}
@@ -146,7 +157,7 @@ export function ActiveGroupOrderBanner({
               homeSlot,
             )
           : null}
-        <div className={`${homeSlot ? 'max-md:hidden' : ''} py-2 ${PAGE_CONTAINER}`}>
+        <div className={`${slotConnected ? 'max-md:hidden' : ''} py-2 ${PAGE_CONTAINER}`}>
           <div className="md:hidden">
             <MobileBannerCard
               locale={locale}
