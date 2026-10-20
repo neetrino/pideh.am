@@ -5,6 +5,18 @@ import { ChevronDown } from 'lucide-react';
 
 export const DROPDOWN_ANIMATION_MS = 280;
 
+/** Shifts a panel so it stays inside the viewport, including its offset shadow. */
+export function alignPanelToViewport(anchor: HTMLElement, panel: HTMLElement): void {
+  const margin = 16;
+  panel.style.right = 'auto';
+  panel.style.left = '0px';
+  const width = panel.getBoundingClientRect().width;
+  const anchorBox = anchor.getBoundingClientRect();
+  const maxLeft = window.innerWidth - margin - width;
+  const desiredLeft = Math.min(Math.max(anchorBox.left, margin), Math.max(margin, maxLeft));
+  panel.style.left = `${desiredLeft - anchorBox.left}px`;
+}
+
 export type SelectDropdownOption = {
   label: string;
   value: string;
@@ -47,6 +59,7 @@ export function SelectDropdown({
   const [open, setOpen] = useState(false);
   const [elevated, setElevated] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
   const pendingChangeRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const listId = useId();
   const isBrand = tone === 'brand';
@@ -70,6 +83,25 @@ export function SelectDropdown({
     const timer = setTimeout(() => setElevated(false), DROPDOWN_ANIMATION_MS);
     return () => clearTimeout(timer);
   }, [open]);
+
+  useEffect(() => {
+    if (!open) return;
+    const anchor = rootRef.current;
+    const panel = panelRef.current;
+    if (!anchor || !panel) return;
+
+    function place(): void {
+      if (anchor && panel) alignPanelToViewport(anchor, panel);
+    }
+
+    place();
+    const frame = requestAnimationFrame(place);
+    window.addEventListener('resize', place);
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener('resize', place);
+    };
+  }, [open, options, allLabel]);
 
   useEffect(() => {
     if (!open) return;
@@ -136,8 +168,9 @@ export function SelectDropdown({
       </button>
 
       <div
-        className={`absolute top-[calc(100%+0.5rem)] z-[100] grid transition-[grid-template-rows,opacity,transform] ease-[cubic-bezier(0.22,1,0.36,1)] ${
-          isBrand ? 'left-0 w-max min-w-full max-w-[min(100vw-2rem,24rem)]' : 'left-0 w-full'
+        ref={panelRef}
+        className={`absolute top-[calc(100%+0.5rem)] left-0 z-[100] grid transition-[grid-template-rows,opacity,transform] ease-[cubic-bezier(0.22,1,0.36,1)] ${
+          isBrand ? 'w-max min-w-full max-w-[min(100vw-2rem,24rem)]' : 'w-full'
         } ${
           open
             ? 'translate-y-0 grid-rows-[1fr] opacity-100'

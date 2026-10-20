@@ -47,6 +47,7 @@ export const PIDEH_ASSETS = {
   shopCatSnack: '/brand/pideh/shop-cat-snack.svg',
   shopCatSauces: '/brand/pideh/shop-cat-sauces.svg',
   shopCatDrinks: '/brand/pideh/shop-cat-drinks.svg',
+  shopCatShawarma: '/brand/pideh/shop-cat-shawarma.png',
   shopFilter: '/brand/pideh/shop-filter.svg',
   shopChevron: '/brand/pideh/shop-chevron.svg',
   shopHeart: '/brand/pideh/shop-heart.svg',
