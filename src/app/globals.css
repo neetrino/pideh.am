@@ -359,23 +359,32 @@ body {
 }
 
 /*
- * Those pages pull the header out of flow. Without this offset the group-order
- * strip starts at the top of the viewport and sits behind the pill.
+ * Overlay the group-order strip on the hero. It must not take flow height,
+ * or the page shifts down under the fixed header.
  * Offset = header padding + pill height + a small gap (h-16 / md:h-20).
  */
 .storefront-shell:has(.pideh-home) .group-order-banner,
 .storefront-shell:has(.pideh-about) .group-order-banner,
 .storefront-shell:has(.pideh-login) .group-order-banner {
-  position: relative;
+  position: fixed;
+  inset-inline: 0;
+  top: calc(0.75rem + 4rem + 0.5rem);
   z-index: 70;
-  margin-top: calc(0.75rem + 4rem + 0.75rem);
+  margin-top: 0;
+  pointer-events: none;
+}
+
+.storefront-shell:has(.pideh-home) .group-order-banner > *,
+.storefront-shell:has(.pideh-about) .group-order-banner > *,
+.storefront-shell:has(.pideh-login) .group-order-banner > * {
+  pointer-events: auto;
 }
 
 @media (min-width: 768px) {
   .storefront-shell:has(.pideh-home) .group-order-banner,
   .storefront-shell:has(.pideh-about) .group-order-banner,
   .storefront-shell:has(.pideh-login) .group-order-banner {
-    margin-top: calc(0.875rem + 5rem + 0.75rem);
+    top: calc(0.875rem + 5rem + 0.5rem);
   }
 }
 
@@ -451,7 +460,11 @@ body:has([role='dialog'][aria-modal='true'], [role='alertdialog'][aria-modal='tr
   .storefront-shell:has(.pideh-home) .group-order-banner,
   .storefront-shell:has(.pideh-about) .group-order-banner,
   .storefront-shell:has(.pideh-login) .group-order-banner {
+    position: relative;
+    inset: auto;
+    top: auto;
     margin-top: 0;
+    pointer-events: auto;
   }
 
   .storefront-shell .storefront-mobile-tree,

@@ -56,7 +56,7 @@ export function ActiveGroupOrderBanner({
       <GroupOrderSessionWatcher labels={labels} inviteToken={inviteToken} mode="poll" />
       <div className="group-order-banner shrink-0">
         <div className={`py-2 ${PAGE_CONTAINER}`}>
-          <div className="flex items-center gap-2.5 rounded-[20px] border border-pideh-ink/10 bg-white px-3 py-2.5 shadow-[0_8px_18px_rgba(31,20,8,0.08)]">
+          <div className="flex items-center gap-2.5 rounded-[20px] border border-pideh-ink/10 bg-white px-3 py-2.5">
             <span className="inline-flex size-9 shrink-0 items-center justify-center rounded-full bg-pideh-orange text-white">
               <Users className="size-4" aria-hidden />
             </span>
@@ -74,7 +74,7 @@ export function ActiveGroupOrderBanner({
               <button
                 type="button"
                 disabled={pending}
-                className="inline-flex h-8 items-center justify-center rounded-full border border-pideh-ink/10 bg-pideh-cream px-3 text-xs font-bold text-pideh-ink transition hover:border-pideh-orange hover:text-pideh-orange disabled:opacity-50"
+                className="inline-flex h-8 items-center justify-center rounded-full border border-pideh-ink/10 bg-white px-3 text-xs font-bold text-pideh-ink transition hover:border-pideh-orange hover:text-pideh-orange disabled:opacity-50"
                 onClick={() => setConfirmOpen(true)}
               >
                 {labels.leaveSession}
