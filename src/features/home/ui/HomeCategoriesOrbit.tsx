@@ -13,11 +13,15 @@ import { ORBIT_MOVE_MS } from '@/features/home/ui/orbit-motion';
 type OrbitItem = {
   id: string;
   imageUrl: string;
+  title: string;
+  href?: string;
 };
 
 type OrbitRiderView = {
   key: string;
   src: string;
+  title: string;
+  href?: string;
   pose: (typeof ORBIT_SLOT_POSES)[number];
   poseIndex: number;
 };
@@ -50,6 +54,8 @@ export function HomeCategoriesOrbit({ items, spin, arcStyle }: HomeCategoriesOrb
         return {
           key: `orbit-rider-${seat.riderId}`,
           src: item.imageUrl,
+          title: item.title,
+          href: item.href,
           pose,
           poseIndex: seat.poseIndex,
         };
@@ -71,6 +77,8 @@ export function HomeCategoriesOrbit({ items, spin, arcStyle }: HomeCategoriesOrb
         <OrbitPide
           key={rider.key}
           src={rider.src}
+          title={rider.title}
+          href={rider.href}
           pose={rider.pose}
           poseIndex={rider.poseIndex}
           reduceMotion={reduceMotion}

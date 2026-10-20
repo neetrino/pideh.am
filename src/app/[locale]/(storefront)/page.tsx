@@ -132,6 +132,7 @@ export default async function HomePage({ params }: HomePageProps) {
           orbitPhotos={orbitPhotos.map((photo) => ({
             imageUrl: photo.url,
             title: photo.title,
+            href: `/${locale}/products/${photo.slug}`,
           }))}
         />
 

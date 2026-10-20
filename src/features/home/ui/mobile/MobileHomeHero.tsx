@@ -1,5 +1,6 @@
 'use client';
 
+import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useRef, useState, type FormEvent } from 'react';
@@ -7,7 +8,6 @@ import { useCallback, useEffect, useMemo, useRef, useState, type FormEvent } fro
 import { AppLink } from '@/components/ui/AppLink';
 import { GroupOrderBannerSlot } from '@/features/group-orders/ui/GroupOrderBannerSlot';
 import {
-  MOBILE_ORBIT_MOVE_MS,
   MobileCategoryOrbit,
   mobileActiveCategoryTitle,
 } from '@/features/home/ui/mobile/MobileCategoryOrbit';
@@ -70,6 +70,7 @@ export function MobileHomeHero({
   viewAllLabel,
 }: MobileHomeHeroProps) {
   const router = useRouter();
+  const reduceMotion = useReducedMotion();
   const searchInputRef = useRef<HTMLInputElement>(null);
   const bannerSlotRef = useRef<HTMLDivElement>(null);
   const headingRef = useRef<HTMLHeadingElement>(null);
@@ -77,10 +78,6 @@ export function MobileHomeHero({
   const productsHref = `/${locale}/products`;
   const [searchQuery, setSearchQuery] = useState('');
   const [spin, setSpin] = useState(0);
-  const [orbitBusy, setOrbitBusy] = useState(false);
-  const unlockTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const orbitBusyRef = useRef(false);
-  orbitBusyRef.current = orbitBusy;
 
   useEffect(() => {
     const slot = bannerSlotRef.current;
@@ -138,31 +135,10 @@ export function MobileHomeHero({
   );
 
   const step = useCallback((delta: number) => {
-    if (orbitBusyRef.current) {
-      return;
-    }
-    orbitBusyRef.current = true;
-    setOrbitBusy(true);
     setSpin((current) => current + delta);
-    if (unlockTimerRef.current) {
-      clearTimeout(unlockTimerRef.current);
-    }
-    unlockTimerRef.current = setTimeout(() => {
-      orbitBusyRef.current = false;
-      setOrbitBusy(false);
-      unlockTimerRef.current = null;
-    }, MOBILE_ORBIT_MOVE_MS);
   }, []);
 
   const { handlers: orbitSwipeHandlers } = useOrbitSwipe(step);
-
-  useEffect(() => {
-    return () => {
-      if (unlockTimerRef.current) {
-        clearTimeout(unlockTimerRef.current);
-      }
-    };
-  }, []);
 
   const activeLabel = mobileActiveCategoryTitle(spin, orbitCategories);
 
@@ -219,11 +195,18 @@ export function MobileHomeHero({
         data-node-id="260:466"
         className="pointer-events-none absolute top-[271px] left-[calc(50%-45px)] z-20 size-[90px] overflow-hidden rounded-full bg-[#ffd54a]"
       >
-        <p
-          className={`absolute inset-x-2 bottom-[7px] z-40 overflow-hidden text-center font-medium text-ellipsis whitespace-nowrap text-[#ff6b00] ${activeCategoryLabelClass(activeLabel)}`}
-        >
-          {activeLabel}
-        </p>
+        <AnimatePresence mode="popLayout" initial={false}>
+          <motion.p
+            key={activeLabel}
+            className={`absolute inset-x-2 bottom-[7px] z-40 overflow-hidden text-center font-medium text-ellipsis whitespace-nowrap text-[#ff6b00] ${activeCategoryLabelClass(activeLabel)}`}
+            initial={reduceMotion ? false : { opacity: 0, y: -16 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={reduceMotion ? undefined : { opacity: 0, y: 14 }}
+            transition={{ duration: reduceMotion ? 0.12 : 0.65, ease: [0.22, 1, 0.36, 1] }}
+          >
+            {activeLabel}
+          </motion.p>
+        </AnimatePresence>
       </div>
 
       {/* Drag/swipe anywhere below search (arrows and view-all stay on top). */}
@@ -245,8 +228,7 @@ export function MobileHomeHero({
         <button
           type="button"
           aria-label={prevLabel}
-          disabled={orbitBusy}
-          className="relative size-[51px] touch-manipulation transition active:scale-95 disabled:pointer-events-none disabled:opacity-70"
+          className="relative size-[51px] touch-manipulation transition active:scale-95"
           onClick={() => step(-1)}
         >
           <Image
@@ -260,8 +242,7 @@ export function MobileHomeHero({
         <button
           type="button"
           aria-label={nextLabel}
-          disabled={orbitBusy}
-          className="relative size-[51px] touch-manipulation transition active:scale-95 disabled:pointer-events-none disabled:opacity-70"
+          className="relative size-[51px] touch-manipulation transition active:scale-95"
           onClick={() => step(1)}
         >
           <Image

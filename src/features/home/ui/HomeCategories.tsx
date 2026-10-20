@@ -1,14 +1,14 @@
 'use client';
 
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 
 import { PidehPillButton } from '@/components/brand/PidehPillButton';
 import { PAGE_CONTAINER, pageColumnRow } from '@/components/layout/page-container';
 import { RevealOnView } from '@/components/motion/RevealOnView';
 import { pillPop, titleSweep } from '@/components/motion/presets';
 import { PIDEH_ASSETS } from '@/features/home/ui/brand-assets';
-import { HomeCategoriesOrbit, ORBIT_MOVE_MS } from '@/features/home/ui/HomeCategoriesOrbit';
+import { HomeCategoriesOrbit } from '@/features/home/ui/HomeCategoriesOrbit';
 import { HomeYellowWave } from '@/features/home/ui/HomeYellowWave';
 import { OrbitNavButton } from '@/features/home/ui/OrbitNavButton';
 import { CATEGORY_FRAME, categoryFigmaBox } from '@/features/home/ui/category-orbit-slots';
@@ -33,19 +33,16 @@ export function HomeCategories({
   orbitPhotos = [],
 }: HomeCategoriesProps) {
   const [spin, setSpin] = useState(0);
-  const [orbitBusy, setOrbitBusy] = useState(false);
-  const orbitUnlockTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const orbitBusyRef = useRef(false);
   const reduceMotion = useReducedMotion();
-  orbitBusyRef.current = orbitBusy;
 
   const orbitItems = useMemo(() => {
     const photos = uniqueOrbitItems(orbitPhotos);
     if (photos.length > 0) {
-      return photos.map((photo, index) => ({
+        return photos.map((photo, index) => ({
         id: `orbit-photo-${index}`,
         imageUrl: photo.imageUrl,
         title: photo.title,
+        href: photo.href,
       }));
     }
 
@@ -61,36 +58,9 @@ export function HomeCategories({
   const activeIndex = featuredOrbitPoolIndex(spin, orbitItems.length);
   const active = orbitItems[activeIndex] ?? orbitItems[0] ?? null;
 
-  useEffect(() => {
-    return () => {
-      if (orbitUnlockTimerRef.current) {
-        clearTimeout(orbitUnlockTimerRef.current);
-      }
-    };
+  const go = useCallback((delta: number) => {
+    setSpin((current) => current + delta);
   }, []);
-
-  const go = useCallback(
-    (delta: number) => {
-      if (orbitBusyRef.current) {
-        return;
-      }
-      orbitBusyRef.current = true;
-      setOrbitBusy(true);
-      setSpin((current) => current + delta);
-      if (orbitUnlockTimerRef.current) {
-        clearTimeout(orbitUnlockTimerRef.current);
-      }
-      orbitUnlockTimerRef.current = setTimeout(
-        () => {
-          orbitBusyRef.current = false;
-          setOrbitBusy(false);
-          orbitUnlockTimerRef.current = null;
-        },
-        reduceMotion ? 0 : ORBIT_MOVE_MS,
-      );
-    },
-    [reduceMotion],
-  );
 
   return (
     <section
@@ -141,8 +111,8 @@ export function HomeCategories({
                 />
               </RevealOnView>
               {active ? (
-                <div className="relative min-h-14 min-w-0 max-w-[26rem] flex-1">
-                  <AnimatePresence mode="wait" initial={false}>
+                <div className="relative min-h-14 min-w-0 max-w-[26rem] flex-1 overflow-hidden">
+                  <AnimatePresence mode="popLayout" initial={false}>
                     <motion.p
                       key={active.id}
                       className="font-display flex min-h-14 items-center text-balance break-words text-[#1e1e1e]"
@@ -150,11 +120,11 @@ export function HomeCategories({
                         fontSize: 'clamp(1.75rem, 3.73vw, 3.375rem)',
                         lineHeight: 1,
                       }}
-                      initial={reduceMotion ? false : { opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={reduceMotion ? undefined : { opacity: 0 }}
+                      initial={reduceMotion ? false : { opacity: 0, y: '-100%' }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={reduceMotion ? undefined : { opacity: 0, y: '70%' }}
                       transition={{
-                        duration: reduceMotion ? 0.15 : 0.4,
+                        duration: reduceMotion ? 0.15 : 0.7,
                         ease: ORBIT_MOVE_EASE,
                       }}
                     >
@@ -179,14 +149,14 @@ export function HomeCategories({
           style={categoryFigmaBox(1296.57, 440, 108, 51)}
         >
           <OrbitNavButton
-            disabled={orbitBusy}
+            disabled={false}
             reduceMotion={reduceMotion}
             src={PIDEH_ASSETS.arrowLeft}
             label="Previous product"
             onClick={() => go(1)}
           />
           <OrbitNavButton
-            disabled={orbitBusy}
+            disabled={false}
             reduceMotion={reduceMotion}
             src={PIDEH_ASSETS.arrowRight}
             label="Next product"

@@ -19,6 +19,7 @@ export function uniqueOrbitPhotos(urls: readonly (string | null | undefined)[]):
 export type OrbitPhotoItem = {
   imageUrl: string;
   title: string;
+  href?: string;
 };
 
 /** Unique orbit cutouts, first title wins for a repeated file. */
