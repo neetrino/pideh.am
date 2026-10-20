@@ -43,6 +43,7 @@ type ProductDetailConfiguratorProps = {
   isSignedIn: boolean;
   wishlistLabel: string;
   labels: ConfiguratorLabels;
+  emphasizePhoto?: boolean;
 };
 
 export function ProductDetailConfigurator(props: ProductDetailConfiguratorProps) {
@@ -64,6 +65,7 @@ export function ProductDetailConfigurator(props: ProductDetailConfiguratorProps)
     isSignedIn,
     wishlistLabel,
     labels,
+    emphasizePhoto = false,
   } = props;
   const galleryRef = useRef<HTMLDivElement>(null);
   const state = useProductConfigurator({
@@ -93,6 +95,7 @@ export function ProductDetailConfigurator(props: ProductDetailConfiguratorProps)
             discountPercent={discountPercent}
             inStock={!state.disabled}
             outOfStockLabel={labels.outOfStock}
+            emphasize={emphasizePhoto}
           />
         </div>
         <ModifierBlocks

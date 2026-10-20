@@ -58,6 +58,11 @@ export function ProductDetailView({
     specialRequests: labels.specialRequests,
     specialRequestsPlaceholder: labels.specialRequestsPlaceholder,
   };
+  const emphasizePhoto =
+    isShawarmaSlug(product.translation.title) ||
+    product.categories.some(
+      (category) => isShawarmaSlug(category.slug) || isShawarmaSlug(category.title),
+    );
   const configurator = {
     locale,
     currency,
@@ -83,10 +88,7 @@ export function ProductDetailView({
       <MobileProductDetail
         {...configurator}
         backLabel={dictionary.catalog.back}
-        emphasizePhoto={
-          isShawarmaSlug(product.translation.title) ||
-          product.categories.some((category) => isShawarmaSlug(category.slug) || isShawarmaSlug(category.title))
-        }
+        emphasizePhoto={emphasizePhoto}
         relatedSlot={
           <Suspense fallback={null}>
             <ProductRelatedSection
@@ -103,7 +105,7 @@ export function ProductDetailView({
       <article className={`${STOREFRONT_DESKTOP_FLEX} flex-col`}>
         <div className="pt-6 pb-20 md:pt-8 md:pb-28">
           <div className={PAGE_CONTAINER}>
-            <ProductDetailConfigurator {...configurator} />
+            <ProductDetailConfigurator {...configurator} emphasizePhoto={emphasizePhoto} />
 
             {relatedSlot}
           </div>

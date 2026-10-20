@@ -216,7 +216,7 @@ export function MobileProductDetail(props: MobileProductDetailProps) {
               tone="onCream"
               titleSize="sm"
             />
-            <p className="font-noto-armenian mt-2 text-sm leading-[22.75px] text-[#555]">
+            <p className="font-noto-armenian mt-0.5 text-sm leading-5 text-[#555]">
               {description}
             </p>
           </div>

@@ -10,6 +10,16 @@ import {
 } from '@/features/home/ui/product-image-motion';
 import { useProductImageMotion } from '@/features/home/ui/use-product-image-motion';
 
+function isShawarmaTitle(title: string): boolean {
+  const normalized = title.trim().toLowerCase();
+  return (
+    normalized.includes('shaur') ||
+    normalized.includes('shawar') ||
+    normalized.includes('shwar') ||
+    normalized.includes('շաուրմ')
+  );
+}
+
 type ProductCardPhotoProps = {
   href: string;
   title: string;
@@ -61,7 +71,11 @@ export function ProductCardPhoto({
                 quality={90}
                 priority={priority}
                 draggable={false}
-                className="object-contain select-none"
+                className={
+                  isShawarmaTitle(title)
+                    ? 'origin-center scale-125 -rotate-[18deg] object-contain select-none'
+                    : 'object-contain select-none'
+                }
               />
             </span>
           </motion.span>
