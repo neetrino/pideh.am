@@ -1,7 +1,7 @@
 /** Marks the cart icon that add-to-cart animations fly into. */
 export const CART_TARGET_ATTR = 'data-cart-target';
 
-const FLY_DURATION_MS = 820;
+const FLY_DURATION_MS = 520;
 const BUMP_DURATION_MS = 380;
 /** Height of the arc the image rises through before dropping into the cart. */
 const ARC_LIFT_PX = 90;
