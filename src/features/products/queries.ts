@@ -367,7 +367,7 @@ function pickRandomIds(ids: string[], limit: number): string[] {
 }
 
 /** Sauces and drinks shown under a product. The current product is left out. */
-export async function getRelatedProducts(
+export const getRelatedProducts = cache(async function getRelatedProducts(
   locale: Locale,
   productId: string,
 ): Promise<CatalogProduct[]> {
@@ -406,4 +406,4 @@ export async function getRelatedProducts(
   });
 
   return enrichCatalogProducts(ordered, locale);
-}
+});

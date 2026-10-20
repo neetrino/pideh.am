@@ -175,7 +175,7 @@ export function SiteHeaderMainNav({
           <nav
             ref={navRef}
             aria-label="Primary"
-            className="relative hidden flex-1 items-center justify-center gap-2 md:flex"
+            className="relative hidden flex-1 items-center justify-center gap-0.5 md:flex"
           >
             {pill ? (
               <span
@@ -199,8 +199,8 @@ export function SiteHeaderMainNav({
                   aria-current={active ? 'page' : undefined}
                   className={
                     active
-                      ? 'relative z-10 inline-flex h-12 items-center rounded-[72px] px-6 text-base font-bold whitespace-nowrap text-white transition-colors duration-300 motion-reduce:transition-none'
-                      : 'relative z-10 inline-flex h-12 items-center rounded-[72px] px-6 text-base font-bold whitespace-nowrap text-[#364153] transition-colors duration-300 hover:text-[#ff6b00] motion-reduce:transition-none'
+                      ? 'relative z-10 inline-flex h-12 items-center rounded-[72px] px-4 text-base font-bold whitespace-nowrap text-white transition-colors duration-300 motion-reduce:transition-none'
+                      : 'relative z-10 inline-flex h-12 items-center rounded-[72px] px-4 text-base font-bold whitespace-nowrap text-[#364153] transition-colors duration-300 hover:text-[#ff6b00] motion-reduce:transition-none'
                   }
                 >
                   {item.label}

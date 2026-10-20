@@ -88,17 +88,19 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
   const locale: Locale = rawLocale;
   const dictionary = getDictionary(locale);
-  const product = await getProductDetailBySlug(locale, slug);
+  const [product, user, currency] = await Promise.all([
+    getProductDetailBySlug(locale, slug),
+    getCurrentUser(),
+    getSelectedCurrency(),
+  ]);
   if (!product) {
     notFound();
   }
 
-  const [user, currency, inWishlist] = await Promise.all([
-    getCurrentUser(),
-    getSelectedCurrency(),
+  const [inWishlist, formatPrice] = await Promise.all([
     isProductInWishlist(product.id),
+    createDisplayPriceFormatter(locale, currency),
   ]);
-  const formatPrice = await createDisplayPriceFormatter(locale, currency);
   const price = formatPrice(product.priceAmount);
 
   const jsonLd = buildProductJsonLd({
