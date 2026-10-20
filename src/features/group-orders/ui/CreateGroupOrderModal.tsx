@@ -99,7 +99,7 @@ function CreateGroupOrderDialog({
 
   return (
     <motion.div
-      className="fixed inset-0 z-[220] flex items-center justify-center p-4"
+      className="fixed inset-0 z-[220] flex items-center justify-center px-2 py-4 sm:p-4"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
@@ -107,7 +107,7 @@ function CreateGroupOrderDialog({
     >
       <button
         type="button"
-        className="absolute inset-0 bg-pideh-ink/40 backdrop-blur-[2px]"
+        className="absolute inset-0 bg-transparent backdrop-blur-[6px] sm:bg-pideh-ink/40"
         aria-label={labels.close}
         onClick={onClose}
       />
@@ -120,7 +120,7 @@ function CreateGroupOrderDialog({
         animate={{ opacity: 1, y: 0, scale: 1 }}
         exit={reduceMotion ? { opacity: 0 } : { opacity: 0, y: 14, scale: 0.98 }}
         transition={{ duration: 0.32, ease: PANEL_EASE }}
-        className="relative z-[1] flex max-h-[min(92dvh,calc(100dvh-2rem))] w-full min-w-0 max-w-[min(440px,calc(100%-2rem))] flex-col overflow-hidden rounded-[28px] border-2 border-pideh-ink bg-pideh-cream shadow-[8px_8px_0_#1e1e1e]"
+        className="relative z-[1] flex max-h-[min(92dvh,calc(100dvh-2rem))] w-full min-w-0 max-w-none flex-col overflow-hidden rounded-[28px] border-2 border-pideh-ink bg-pideh-cream shadow-none sm:max-w-[min(440px,calc(100%-2rem))] sm:shadow-[8px_8px_0_#1e1e1e]"
       >
         <div className="relative border-b-2 border-pideh-ink/10 bg-pideh-yellow/35 px-6 pt-5 pb-4">
           <CloseButton label={labels.close} onClose={onClose} />
