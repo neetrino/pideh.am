@@ -50,6 +50,7 @@ export function CheckoutPaymentMethods({
           const logos = option.logos.filter((src) => !logoErrors[src]);
           const showFallback = logos.length === 0;
           const labelAboveLogos = option.id === 'arca';
+          const framelessIcon = option.id === 'cash_on_delivery' || option.id === 'terminal';
 
           return (
             <div key={option.id} className="space-y-3">
@@ -101,13 +102,17 @@ export function CheckoutPaymentMethods({
                     {logos.map((src) => (
                       <span
                         key={src}
-                        className="flex h-11 w-11 items-center justify-center overflow-hidden rounded-xl border border-[#ff6b00]/15 bg-white"
+                        className={
+                          framelessIcon
+                            ? 'flex h-12 w-12 items-center justify-center'
+                            : 'flex h-11 w-11 items-center justify-center overflow-hidden rounded-xl border border-[#ff6b00]/15 bg-white'
+                        }
                       >
                         {/* eslint-disable-next-line @next/next/no-img-element -- payment logos */}
                         <img
                           src={src}
                           alt=""
-                          className="h-full w-full object-contain p-1"
+                          className={framelessIcon ? 'h-full w-full object-contain' : 'h-full w-full object-contain p-1'}
                           loading="lazy"
                           onError={() => setLogoErrors((prev) => ({ ...prev, [src]: true }))}
                         />

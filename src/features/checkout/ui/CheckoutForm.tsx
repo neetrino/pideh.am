@@ -245,7 +245,7 @@ export function CheckoutForm({
         id: 'cash_on_delivery',
         name: labels.cashOnDelivery,
         description: labels.cashOnDeliveryDescription,
-        logos: ['/assets/payments/cash-bag.png'],
+        logos: ['/assets/payments/cash.png'],
       },
       {
         id: 'idram',

@@ -4,8 +4,9 @@ import { CalendarDays, Download } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState, useTransition, type FormEvent } from 'react';
 
+import { DateField } from '@/components/ui/DateField';
 import { SelectDropdown } from '@/components/ui/SelectDropdown';
-import { ADMIN_INPUT, ADMIN_LABEL } from '@/features/admin/ui/admin-form-classes';
+import { ADMIN_LABEL } from '@/features/admin/ui/admin-form-classes';
 import {
   ANALYTICS_PERIOD_PRESETS,
   formatAnalyticsDisplayDate,
@@ -109,11 +110,11 @@ export function AnalyticsPeriodCard({
             <form onSubmit={onCustomSubmit} className="mt-3 flex flex-wrap items-end gap-3">
               <label className="min-w-0 w-full flex-1 sm:min-w-[140px]">
                 <span className={ADMIN_LABEL}>{copy.analytics.period.from}</span>
-                <input name="from" type="date" defaultValue={from} className={ADMIN_INPUT} />
+                <DateField locale={locale} name="from" defaultValue={from} placeholder={copy.analytics.period.from} />
               </label>
               <label className="min-w-0 w-full flex-1 sm:min-w-[140px]">
                 <span className={ADMIN_LABEL}>{copy.analytics.period.to}</span>
-                <input name="to" type="date" defaultValue={to} className={ADMIN_INPUT} />
+                <DateField locale={locale} name="to" defaultValue={to} placeholder={copy.analytics.period.to} />
               </label>
               <button
                 type="submit"

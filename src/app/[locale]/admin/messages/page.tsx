@@ -2,8 +2,9 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
 import { Button } from '@/components/ui/Button';
+import { FormSelect } from '@/components/ui/FormSelect';
 import { Card } from '@/components/ui/Card';
-import { ADMIN_INPUT, ADMIN_LABEL, ADMIN_SELECT } from '@/features/admin/ui/admin-form-classes';
+import { ADMIN_INPUT, ADMIN_LABEL } from '@/features/admin/ui/admin-form-classes';
 import { AdminPageHeading } from '@/features/admin/ui/AdminPageHeading';
 import {
   ADMIN_TABLE,
@@ -95,14 +96,13 @@ export default async function AdminMessagesPage({ params, searchParams }: AdminM
           </label>
           <label className="min-w-0 w-full sm:w-auto sm:min-w-[140px]">
             <span className={ADMIN_LABEL}>{t.status}</span>
-            <select name="status" defaultValue={filters.status ?? ''} className={ADMIN_SELECT}>
-              <option value="">{t.all}</option>
-              {CONTACT_STATUSES.map((status) => (
-                <option key={status} value={status}>
-                  {status}
-                </option>
-              ))}
-            </select>
+            <FormSelect
+              name="status"
+              ariaLabel={t.status}
+              allLabel={t.all}
+              defaultValue={filters.status ?? ''}
+              options={CONTACT_STATUSES.map((status) => ({ value: status, label: status }))}
+            />
           </label>
           <Button type="submit" size="sm">
             {t.filter}

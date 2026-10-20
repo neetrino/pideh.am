@@ -15,7 +15,8 @@ import {
   type PaymentOption,
 } from '@/features/checkout/ui/CheckoutPaymentMethods';
 import type { GiftCardSettings } from '@/features/gift-cards/domain/gift-card-rules';
-import { GiftCardSendDateField } from '@/features/gift-cards/ui/GiftCardSendDateField';
+import { DateTimeField } from '@/components/ui/DateTimeField';
+import { SelectDropdown } from '@/components/ui/SelectDropdown';
 import type { Locale } from '@/lib/i18n/config';
 import { formatMoneyAmount } from '@/lib/money/format';
 
@@ -84,7 +85,7 @@ export function BuyGiftCardForm({
         id: 'cash_on_delivery',
         name: copy.cashOnDelivery,
         description: copy.cashOnDeliveryDescription,
-        logos: ['/assets/payments/cash-bag.png'],
+        logos: ['/assets/payments/cash.png'],
       },
       {
         id: 'idram',
@@ -155,49 +156,43 @@ export function BuyGiftCardForm({
 
   return (
     <form onSubmit={onSubmit} className="space-y-6">
-      <div>
-        <p className="mb-2 text-sm font-medium text-gray-900">{copy.amount}</p>
-        <div className="flex flex-wrap gap-2">
-          {settings.presets.map((preset) => (
-            <button
-              key={preset}
-              type="button"
-              onClick={() => {
-                setUseCustom(false);
-                setAmount(preset);
-              }}
-              className={
-                !useCustom && amount === preset
-                  ? 'rounded-lg border border-gray-900 bg-gray-900 px-3 py-2 text-sm text-white'
-                  : 'rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-800 hover:border-gray-400'
-              }
-            >
-              {formatMoneyAmount(preset, 'AMD', locale)}
-            </button>
-          ))}
-          <button
-            type="button"
-            onClick={() => setUseCustom(true)}
-            className={
-              useCustom
-                ? 'rounded-lg border border-gray-900 bg-gray-900 px-3 py-2 text-sm text-white'
-                : 'rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-800 hover:border-gray-400'
+      <div className="space-y-1 text-sm">
+        <span className="font-medium text-gray-900">{copy.amount}</span>
+        <SelectDropdown
+          ariaLabel={copy.amount}
+          value={useCustom ? 'custom' : String(amount)}
+          deferChange={false}
+          options={[
+            ...settings.presets.map((preset) => ({
+              value: String(preset),
+              label: formatMoneyAmount(preset, 'AMD', locale),
+            })),
+            { value: 'custom', label: copy.customAmount },
+          ]}
+          onValueChange={(next) => {
+            if (next === 'custom') {
+              setUseCustom(true);
+              return;
             }
-          >
-            {copy.customAmount}
-          </button>
-        </div>
-        {useCustom ? (
-          <input
-            type="number"
-            min={settings.minAmount}
-            max={settings.maxAmount}
-            value={customAmount}
-            onChange={(event) => setCustomAmount(event.target.value)}
-            className="mt-3 h-11 w-full rounded-lg border border-gray-200 px-3 text-sm"
-            required
-          />
-        ) : null}
+            setUseCustom(false);
+            setAmount(Number(next));
+          }}
+          triggerContent={
+            useCustom ? (
+              <input
+                type="number"
+                min={settings.minAmount}
+                max={settings.maxAmount}
+                value={customAmount}
+                onChange={(event) => setCustomAmount(event.target.value)}
+                className="h-full w-full min-w-0 bg-transparent text-sm text-gray-900 outline-none [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                placeholder={copy.customAmount}
+                autoFocus
+                required
+              />
+            ) : undefined
+          }
+        />
       </div>
 
       <label className="block space-y-1 text-sm">
@@ -248,11 +243,12 @@ export function BuyGiftCardForm({
       </label>
       <div className="block space-y-1 text-sm">
         <span className="font-medium text-gray-900">{copy.sendDate}</span>
-        <GiftCardSendDateField
+        <DateTimeField
           locale={locale}
           name="scheduledSendAt"
           disabled={pending}
           placeholder={copy.sendDate}
+          timeLabel={copy.sendDate}
         />
       </div>
 

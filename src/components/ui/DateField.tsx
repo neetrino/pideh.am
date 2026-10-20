@@ -12,11 +12,16 @@ import {
 } from '@/features/checkout/ui/delivery-slot-calendar';
 import { formatYerevanDate } from '@/features/delivery/domain/delivery-schedule';
 
-type GiftCardSendDateFieldProps = {
+type DateFieldProps = {
   locale: string;
-  name: string;
-  disabled?: boolean;
+  /** `YYYY-MM-DD`. Omit with `defaultValue` for an uncontrolled field. */
+  value?: string;
+  defaultValue?: string;
+  onChange?: (value: string) => void;
+  name?: string;
   placeholder: string;
+  disabled?: boolean;
+  className?: string;
 };
 
 const NAV_BUTTON =
@@ -37,22 +42,25 @@ function shiftView(
   return { year: next.getUTCFullYear(), monthIndex: next.getUTCMonth() };
 }
 
-/** Custom date + time field. Value is `YYYY-MM-DDTHH:mm` for the purchase form. */
-export function GiftCardSendDateField({
+/** Site calendar. Posts `YYYY-MM-DD` when `name` is set. */
+export function DateField({
   locale,
+  value,
+  defaultValue = '',
+  onChange,
   name,
-  disabled = false,
   placeholder,
-}: GiftCardSendDateFieldProps) {
+  disabled = false,
+  className = '',
+}: DateFieldProps) {
   const rootRef = useRef<HTMLDivElement>(null);
   const [open, setOpen] = useState(false);
-  const [date, setDate] = useState('');
-  const [time, setTime] = useState('12:00');
+  const [internal, setInternal] = useState(defaultValue);
+  const selected = value ?? internal;
   const today = formatYerevanDate(new Date());
-  const anchor = parseYmd(date || today);
+  const anchor = parseYmd(selected || today);
   const [viewYear, setViewYear] = useState(anchor.year);
   const [viewMonth, setViewMonth] = useState(anchor.monthIndex);
-  const value = date ? `${date}T${time}` : '';
 
   useEffect(() => {
     if (!open) return;
@@ -70,31 +78,33 @@ export function GiftCardSendDateField({
     };
   }, [open]);
 
+  function setSelected(next: string): void {
+    if (value === undefined) setInternal(next);
+    onChange?.(next);
+  }
+
   function openCalendar(): void {
-    const parts = parseYmd(date || today);
+    const parts = parseYmd(selected || today);
     setViewYear(parts.year);
     setViewMonth(parts.monthIndex);
     setOpen((current) => !current);
   }
 
   const cells = buildMonthCells(viewYear, viewMonth);
-  const hours = Array.from({ length: 24 }, (_, hour) => String(hour).padStart(2, '0'));
-  const minutes = ['00', '15', '30', '45'];
-  const [hour = '12', minute = '00'] = time.split(':');
 
   return (
-    <div ref={rootRef} className="relative">
-      <input type="hidden" name={name} value={value} />
+    <div ref={rootRef} className={`relative ${className}`}>
+      {name ? <input type="hidden" name={name} value={selected} /> : null}
       <button
         type="button"
         disabled={disabled}
         aria-expanded={open}
         aria-haspopup="dialog"
         onClick={openCalendar}
-        className="flex h-11 w-full items-center justify-between gap-3 rounded-lg border border-gray-200 px-3 text-left text-sm disabled:opacity-50"
+        className="flex h-11 w-full items-center justify-between gap-3 rounded-lg border border-gray-200 bg-white px-3 text-left text-sm disabled:opacity-50"
       >
-        <span className={date ? 'text-[#1e1e1e]' : 'text-[#1e1e1e]/40'}>
-          {date ? `${formatCalendarDate(date, locale)} ${time}` : placeholder}
+        <span className={selected ? 'text-[#1e1e1e]' : 'text-[#1e1e1e]/40'}>
+          {selected ? formatCalendarDate(selected, locale) : placeholder}
         </span>
         <Calendar className="size-4 shrink-0 text-[#ff6b00]" aria-hidden />
       </button>
@@ -103,7 +113,7 @@ export function GiftCardSendDateField({
         <div
           role="dialog"
           aria-label={placeholder}
-          className="absolute z-30 mt-2 w-full rounded-[22px] border border-[#ff6b00]/15 bg-white p-3 shadow-lg"
+          className="absolute z-30 mt-2 w-[17.5rem] max-w-full rounded-[22px] border border-[#ff6b00]/15 bg-white p-3 shadow-lg"
         >
           <div className="mb-1 flex items-center justify-between gap-1">
             <button
@@ -145,8 +155,11 @@ export function GiftCardSendDateField({
                 <button
                   key={cell}
                   type="button"
-                  onClick={() => setDate(cell)}
-                  className={`mx-auto flex size-8 items-center justify-center rounded-full text-xs transition-colors ${dayClass(date === cell, cell === today)}`}
+                  onClick={() => {
+                    setSelected(cell);
+                    setOpen(false);
+                  }}
+                  className={`mx-auto flex size-8 items-center justify-center rounded-full text-xs transition-colors ${dayClass(selected === cell, cell === today)}`}
                 >
                   {Number(cell.slice(-2))}
                 </button>
@@ -154,32 +167,6 @@ export function GiftCardSendDateField({
                 <div key={`blank-${index}`} className="size-8" />
               ),
             )}
-          </div>
-          <div className="mt-3 flex gap-2">
-            <select
-              aria-label={placeholder}
-              value={hour}
-              onChange={(event) => setTime(`${event.target.value}:${minute}`)}
-              className="h-9 flex-1 rounded-lg border border-gray-200 px-2 text-sm"
-            >
-              {hours.map((item) => (
-                <option key={item} value={item}>
-                  {item}
-                </option>
-              ))}
-            </select>
-            <select
-              aria-label={placeholder}
-              value={minutes.includes(minute) ? minute : '00'}
-              onChange={(event) => setTime(`${hour}:${event.target.value}`)}
-              className="h-9 flex-1 rounded-lg border border-gray-200 px-2 text-sm"
-            >
-              {minutes.map((item) => (
-                <option key={item} value={item}>
-                  {item}
-                </option>
-              ))}
-            </select>
           </div>
         </div>
       ) : null}

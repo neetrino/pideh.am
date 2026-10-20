@@ -2,7 +2,8 @@
 
 import { useState } from 'react';
 
-import { ADMIN_CHECKBOX, ADMIN_INPUT, ADMIN_LABEL } from '@/features/admin/ui/admin-form-classes';
+import { TimeField } from '@/components/ui/TimeField';
+import { ADMIN_CHECKBOX, ADMIN_LABEL } from '@/features/admin/ui/admin-form-classes';
 import { formatCalendarDate } from '@/features/checkout/ui/delivery-slot-calendar';
 import { AdminDateField } from '@/features/delivery/ui/AdminDateField';
 import type {
@@ -188,31 +189,19 @@ export function AdminDeliveryScheduleEditor({
                     />
                   </td>
                   <td className="px-3 py-2">
-                    <input
-                      type="time"
+                    <TimeField
+                      ariaLabel={weekdayLabels[day]}
                       value={hours.openTime}
-                      max={hours.closeTime}
                       disabled={disabled || !hours.isOpen}
-                      className={ADMIN_INPUT}
-                      onChange={(event) =>
-                        updateWeekly(day, {
-                          openTime: toHHmm(event.target.value),
-                        })
-                      }
+                      onChange={(next) => updateWeekly(day, { openTime: toHHmm(next) })}
                     />
                   </td>
                   <td className="px-3 py-2">
-                    <input
-                      type="time"
+                    <TimeField
+                      ariaLabel={weekdayLabels[day]}
                       value={hours.closeTime}
-                      min={hours.openTime}
                       disabled={disabled || !hours.isOpen}
-                      className={ADMIN_INPUT}
-                      onChange={(event) =>
-                        updateWeekly(day, {
-                          closeTime: toHHmm(event.target.value),
-                        })
-                      }
+                      onChange={(next) => updateWeekly(day, { closeTime: toHHmm(next) })}
                     />
                   </td>
                 </tr>
