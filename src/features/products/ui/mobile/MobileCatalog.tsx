@@ -68,7 +68,7 @@ export function MobileCatalog({
       />
 
       {sections.length === 0 ? (
-        <div className="mx-6 mt-10 rounded-[26px] bg-white px-6 py-16 text-center shadow-[0px_12px_14px_rgba(31,20,8,0.11)]">
+        <div className="mx-6 mt-10 rounded-[26px] bg-white px-6 py-16 text-center">
           <h2 className="text-lg font-semibold text-[#1e1e1e]">{catalog.emptyTitle}</h2>
           <p className="font-noto-armenian mt-2 text-sm text-[#6b6b6b]">
             {catalog.emptyDescription}

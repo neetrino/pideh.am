@@ -69,7 +69,7 @@ export function HomeProductCard({
       transition={PRODUCT_CARD_SPRING}
       whileTap={reduceMotion ? undefined : PRODUCT_CARD_TAP}
     >
-      <article className="pideh-product-card relative flex h-full w-full flex-col items-start gap-[11px] overflow-visible rounded-[26px] bg-white px-4 pt-[27px] pb-4 shadow-[0px_12px_14px_rgba(31,20,8,0.11)]">
+      <article className="pideh-product-card relative flex h-full w-full flex-col items-start gap-[11px] overflow-visible rounded-[26px] bg-white px-4 pt-[27px] pb-4 shadow-none min-[1200px]:shadow-[0px_12px_14px_rgba(31,20,8,0.11)]">
         <AppLink
           href={href}
           prefetchPolicy={priority ? "intent" : "auto"}

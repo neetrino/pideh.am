@@ -59,12 +59,20 @@
   --radius-4xl: 15px;
 }
 
-html {
+html,
+body,
+.storefront-shell,
+.storefront-shell * {
   scrollbar-width: none;
 }
 
-html::-webkit-scrollbar {
+html::-webkit-scrollbar,
+body::-webkit-scrollbar,
+.storefront-shell::-webkit-scrollbar,
+.storefront-shell *::-webkit-scrollbar {
   display: none;
+  width: 0;
+  height: 0;
 }
 
 body {
@@ -436,6 +444,29 @@ body:has([role='dialog'][aria-modal='true'], [role='alertdialog'][aria-modal='tr
 @media (max-width: 767px), (orientation: portrait) and (max-width: 1199px) {
   html {
     touch-action: manipulation;
+    scrollbar-width: none;
+  }
+
+  html,
+  body,
+  .storefront-shell,
+  .storefront-main {
+    scrollbar-width: none;
+  }
+
+  html::-webkit-scrollbar,
+  body::-webkit-scrollbar,
+  .storefront-shell::-webkit-scrollbar,
+  .storefront-main::-webkit-scrollbar {
+    display: none;
+    width: 0;
+    height: 0;
+  }
+
+  .pideh-home-mobile article,
+  .pideh-shop-mobile article,
+  .pideh-product-card {
+    box-shadow: none;
   }
 
   /* iOS zooms the page when a focused field is under 16px. */
@@ -538,6 +569,8 @@ body:has([role='dialog'][aria-modal='true'], [role='alertdialog'][aria-modal='tr
 
   .pideh-shop-mobile .shop-chips-scroll::-webkit-scrollbar {
     display: none;
+    width: 0;
+    height: 0;
   }
 
   /* Figma mobile home (259:369) uses in-page chrome instead of site header. */
