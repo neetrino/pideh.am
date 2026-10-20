@@ -228,7 +228,7 @@ export function MobileProductDetail(props: MobileProductDetailProps) {
           additionIds={state.additionIds}
           exceptionIds={state.exceptionIds}
           extraHint={extraHint}
-          disabled={state.disabled || state.pending}
+          disabled={state.disabled}
           labels={labels}
           onToggleAddition={(id) => state.setAdditionIds((cur) => toggleModifierId(cur, id))}
           onToggleException={(id) => state.setExceptionIds((cur) => toggleModifierId(cur, id))}

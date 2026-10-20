@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState, useTransition } from 'react';
+import { useMemo, useState } from 'react';
 
 import { beginCartBadgeAdd } from '@/features/cart/ui/cart-badge-count';
 import { addProductToActiveCart } from '@/features/group-orders/application/add-to-active';
@@ -43,7 +43,6 @@ export function useProductConfigurator({
   const [exceptionIds, setExceptionIds] = useState<string[]>([]);
   const [customerNote, setCustomerNote] = useState('');
   const [error, setError] = useState<string | null>(null);
-  const [pending, startTransition] = useTransition();
 
   const additionExtras = useMemo(() => {
     const byId = new Map(additions.map((row) => [row.id, row.priceAmount]));
@@ -74,33 +73,38 @@ export function useProductConfigurator({
   }
 
   function handleAdd(): void {
-    if (disabled || pending || quantity < 1) return;
+    if (disabled || quantity < 1) return;
     clearStatus();
-    // Both run before the server call, so the animation and the badge react to
-    // the click itself instead of to the round-trip.
     onAdded();
     const settleBadge = beginCartBadgeAdd(quantity);
-    startTransition(async () => {
-      try {
-        const result = await addProductToActiveCart(productId, quantity, {
-          modifierIds: [...additionIds, ...exceptionIds],
-          customerNote,
-        });
-        if (!result.ok) {
-          settleBadge(null);
-          if (alertIfSpendLimitExceeded(locale, result)) {
+    const addedQuantity = quantity;
+    const modifierIds = [...additionIds, ...exceptionIds];
+    const note = customerNote;
+    setCustomerNote('');
+    window.setTimeout(() => {
+      void (async () => {
+        try {
+          const result = await addProductToActiveCart(productId, addedQuantity, {
+            modifierIds,
+            customerNote: note,
+          });
+          if (!result.ok) {
+            settleBadge(null);
+            setCustomerNote(note);
+            if (alertIfSpendLimitExceeded(locale, result)) {
+              return;
+            }
+            setError(result.error);
             return;
           }
-          setError(result.error);
-          return;
+          settleBadge(result.itemCount);
+        } catch {
+          settleBadge(null);
+          setCustomerNote(note);
+          setError(errorLabel);
         }
-        settleBadge(result.itemCount);
-        setCustomerNote('');
-      } catch {
-        settleBadge(null);
-        setError(errorLabel);
-      }
-    });
+      })();
+    }, 0);
   }
 
   const qty = Math.max(quantity, 1);
@@ -116,7 +120,7 @@ export function useProductConfigurator({
     customerNote,
     setCustomerNote,
     error,
-    pending,
+    pending: false,
     extraHintPrice,
     formatAmount,
     unitPriceFormatted: formatAmount(basePriceAmount),

@@ -93,6 +93,7 @@ function CartDrawerLine({
               alt={item.title}
               fill
               sizes="96px"
+              priority
               className="object-contain p-1"
             />
           ) : (

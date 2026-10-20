@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import { useEffect, useRef, useState, useTransition, type MouseEvent, type ReactNode } from 'react';
+import { useEffect, useRef, useState, type MouseEvent, type ReactNode } from 'react';
 
 import { PidehPillButton } from '@/components/brand/PidehPillButton';
 import { beginCartBadgeAdd } from '@/features/cart/ui/cart-badge-count';
@@ -37,11 +37,10 @@ function useCardQuantity(
   initialQuantity: number,
   maxQuantity: number,
   inStock: boolean,
-): { quantity: number; pending: boolean; commit: (next: number) => void } {
+): { quantity: number; commit: (next: number) => void } {
   const [quantity, setQuantity] = useState(initialQuantity);
-  const [pending, startTransition] = useTransition();
   const quantityRef = useRef(initialQuantity);
-  const busyRef = useRef(false);
+  const requestRef = useRef(0);
 
   useEffect(() => {
     quantityRef.current = initialQuantity;
@@ -49,23 +48,29 @@ function useCardQuantity(
   }, [initialQuantity, productId]);
 
   function commit(next: number): void {
-    if (busyRef.current || !inStock || next === quantityRef.current) return;
+    if (!inStock || next === quantityRef.current) return;
     if (next < 0 || next > maxQuantity) return;
-    busyRef.current = true;
     const previous = quantityRef.current;
     quantityRef.current = next;
     setQuantity(next);
     const settle = beginCartBadgeAdd(next - previous);
-    startTransition(async () => {
-      try {
-        await saveQuantity(productId, locale, previous, next, settle, quantityRef, setQuantity);
-      } finally {
-        busyRef.current = false;
-      }
-    });
+    const requestId = ++requestRef.current;
+    // Paint the new count first. The database write can finish later.
+    window.setTimeout(() => {
+      void saveQuantity(
+        productId,
+        locale,
+        previous,
+        next,
+        settle,
+        () => requestRef.current === requestId,
+        quantityRef,
+        setQuantity,
+      );
+    }, 0);
   }
 
-  return { quantity, pending, commit };
+  return { quantity, commit };
 }
 
 async function saveQuantity(
@@ -74,11 +79,13 @@ async function saveQuantity(
   previous: number,
   next: number,
   settle: (count: number | null) => void,
+  isLatest: () => boolean,
   quantityRef: { current: number },
   setQuantity: (value: number) => void,
 ): Promise<void> {
   try {
     const result = await setActiveCartProductQuantity(productId, next);
+    if (!isLatest()) return;
     if (!result.ok) {
       quantityRef.current = previous;
       setQuantity(previous);
@@ -90,6 +97,7 @@ async function saveQuantity(
     setQuantity(result.quantity);
     settle(result.itemCount);
   } catch {
+    if (!isLatest()) return;
     quantityRef.current = previous;
     setQuantity(previous);
     settle(null);
@@ -110,7 +118,7 @@ export function ProductCardCartControl({
   variant,
 }: ProductCardCartControlProps) {
   const labels = QUANTITY_LABELS[locale];
-  const { quantity, pending, commit } = useCardQuantity(
+  const { quantity, commit } = useCardQuantity(
     productId,
     locale,
     initialQuantity,
@@ -120,7 +128,7 @@ export function ProductCardCartControl({
 
   if (quantity < 1) {
     return variant === 'compact' ? (
-      <CompactAdd label={orderLabel} disabled={!inStock || pending} onAdd={() => commit(1)} />
+      <CompactAdd label={orderLabel} disabled={!inStock} onAdd={() => commit(1)} />
     ) : (
       <PidehPillButton
         label={orderLabel}
@@ -128,15 +136,15 @@ export function ProductCardCartControl({
           stopPress(event);
           commit(1);
         }}
-        disabled={!inStock || pending}
-        className="w-full"
+        disabled={!inStock}
+        className="shrink-0"
       />
     );
   }
 
   const stepperProps = {
     quantity,
-    pending,
+    pending: false,
     maxQuantity,
     decreaseLabel: labels.decreaseQuantity,
     increaseLabel: labels.increaseQuantity,
@@ -167,7 +175,7 @@ function PillStepper({
   onIncrease,
 }: StepperProps) {
   return (
-    <div className="flex h-[58px] w-full items-center justify-between rounded-[42px] border border-[rgba(255,107,0,0.43)] bg-[#ff6b00] px-2 text-white">
+    <div className="flex h-[58px] shrink-0 items-center justify-between gap-2 rounded-[42px] border border-[rgba(255,107,0,0.43)] bg-[#ff6b00] px-2 text-white">
       <RoundButton label={decreaseLabel} disabled={pending} onClick={onDecrease} tone="ghost">
         <Image src={PIDEH_ASSETS.pdpQtyMinus} alt="" width={14} height={14} className="size-[14px]" />
       </RoundButton>
@@ -192,7 +200,7 @@ function CompactStepper(props: StepperProps) {
       <OutlineButton label={props.decreaseLabel} disabled={props.pending} onClick={props.onDecrease}>
         −
       </OutlineButton>
-      <span className="w-5 text-center text-sm font-bold text-[#1e1e1e]" aria-live="polite">
+      <span className="w-6 text-center text-lg leading-none font-bold text-[#1e1e1e]" aria-live="polite">
         {props.quantity}
       </span>
       <OutlineButton
