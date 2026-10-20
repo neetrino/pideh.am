@@ -64,13 +64,6 @@ function patchBundleQuantity(
   return source === 'group' ? { ...bundle, group: nextView } : { ...bundle, personal: nextView };
 }
 
-function formatItemCount(count: number, labels: Dictionary['cartDrawer']): string {
-  if (count === 1) {
-    return labels.itemsOne;
-  }
-  return labels.itemsMany.replace('{count}', String(count));
-}
-
 export function CartDrawer({
   locale,
   currency,
@@ -226,9 +219,16 @@ export function CartDrawer({
         backdropBlur
       >
         <div className="border-b border-[#ff6b00]/15 px-6 py-5">
-          <h2 className="font-display text-3xl leading-[0.9] text-[#1e1e1e] uppercase">
-            {labels.title}
-          </h2>
+          <div className="flex items-center justify-between gap-3">
+            <h2 className="font-display text-3xl leading-[0.9] text-[#1e1e1e] uppercase">
+              {labels.title}
+            </h2>
+            {hasItems ? (
+              <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-[#ff6b00] text-sm font-bold text-white">
+                {badgeCount}
+              </span>
+            ) : null}
+          </div>
           {bundle?.group ? (
             <CartOrderModeSwitch
               mode={orderMode === 'group' ? 'group' : 'personal'}
@@ -238,9 +238,6 @@ export function CartDrawer({
               disabled={pending}
               onChange={chooseOrderMode}
             />
-          ) : null}
-          {hasItems ? (
-            <p className="mt-2 text-sm text-[#1e1e1e]/55">{formatItemCount(badgeCount, labels)}</p>
           ) : null}
         </div>
 
@@ -269,6 +266,7 @@ export function CartDrawer({
               pending={false}
               onQuantity={changeQuantity}
               onRemove={removeCartItem}
+              onOpenProduct={closeDrawer}
             />
           )}
         </div>

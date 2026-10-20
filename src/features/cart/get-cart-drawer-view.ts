@@ -21,6 +21,8 @@ import { formatMoneyAmount } from '@/lib/money/format';
 export type CartDrawerItemView = {
   id: string;
   title: string;
+  /** Product page. Null when the line has no storefront slug. */
+  href: string | null;
   quantity: number;
   imageUrl: string | null;
   unitPriceFormatted: string;
@@ -161,6 +163,7 @@ async function buildPersonalCartDrawerView(
     items.push({
       id: item.id,
       title: translation?.title ?? product.sku,
+      href: translation?.slug ? `/${locale}/products/${translation.slug}` : null,
       quantity: item.quantity,
       imageUrl: images.get(product.id) ?? null,
       unitPriceFormatted: convertDisplayAmount(unitAmount, quote.rate, currency, locale).formatted,

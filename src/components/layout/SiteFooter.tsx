@@ -50,12 +50,12 @@ export function SiteFooter({ dictionary, locale }: SiteFooterProps) {
             >
               <StaggerItem variants={footerColumn}>
                 <Image
-                  src={PIDEH_ASSETS.logo}
+                  src="/brand/pideh/footer-wordmark.png"
                   alt={dictionary.brand}
-                  width={2024}
-                  height={1720}
-                  quality={90}
-                  sizes="280px"
+                  width={636}
+                  height={540}
+                  unoptimized
+                  sizes="212px"
                   className="mt-[21px] h-[180px] w-auto max-w-full object-contain"
                 />
               </StaggerItem>

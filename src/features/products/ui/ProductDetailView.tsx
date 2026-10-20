@@ -68,7 +68,7 @@ export function ProductDetailView({
     currency,
     fxRate,
     productId: product.id,
-    title: product.translation.title,
+    title: product.translation.title.replace(/շաուրմա/g, 'Շաուրմա'),
     description: product.translation.description,
     images: product.images,
     discountPercent: product.discountPercent,

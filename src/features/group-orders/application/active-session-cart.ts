@@ -148,6 +148,7 @@ export async function getActiveGroupSessionCartView(
     return {
       id: row.item.id,
       title: translation?.title ?? row.product.sku,
+      href: translation?.slug ? `/${locale}/products/${translation.slug}` : null,
       quantity: row.item.quantity,
       imageUrl: imageByProduct.get(row.product.id) ?? null,
       unitPriceFormatted: convertDisplayAmount(row.item.unitAmount, quote.rate, currency, locale)
