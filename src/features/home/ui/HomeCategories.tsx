@@ -77,7 +77,7 @@ export function HomeCategories({
       />
 
       <div
-        className="relative z-10 mx-auto w-full max-w-[1448px]"
+        className="relative z-10 mx-auto w-full"
         style={{ aspectRatio: '1448 / 850' }}
       >
         <div className="absolute inset-x-0 z-10" style={pageColumnRow(92, 218, CATEGORY_FRAME.h)}>
