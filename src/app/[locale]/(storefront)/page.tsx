@@ -112,7 +112,6 @@ export default async function HomePage({ params }: HomePageProps) {
         dictionary={dictionary}
         categories={categoryCards}
         products={featuredCards}
-        currency={currency}
         isSignedIn={Boolean(user)}
       />
 

@@ -50,7 +50,7 @@ export function SiteFooter({ dictionary, locale }: SiteFooterProps) {
             >
               <StaggerItem variants={footerColumn}>
                 <Image
-                  src="/brand/pideh/footer-wordmark.svg"
+                  src={PIDEH_ASSETS.wordmark}
                   alt={dictionary.brand}
                   width={777}
                   height={605}

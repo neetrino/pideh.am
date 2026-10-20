@@ -55,7 +55,7 @@ export function MobileBrandBar({
       <AppLink
         href={`/${locale}`}
         prefetchPolicy="intent"
-        className="relative h-[75px] w-[88px] shrink-0"
+        className="relative h-[75px] w-[96px] shrink-0"
         aria-label={dictionary.brand}
         onClick={(event) => {
           if (pathname === `/${locale}`) {
@@ -65,11 +65,11 @@ export function MobileBrandBar({
         }}
       >
         <Image
-          src={PIDEH_ASSETS.logo}
+          src={PIDEH_ASSETS.wordmark}
           alt={dictionary.brand}
           fill
-          sizes="264px"
-          quality={100}
+          sizes="96px"
+          unoptimized
           className="object-contain"
           priority
         />

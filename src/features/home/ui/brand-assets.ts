@@ -4,6 +4,8 @@ import { pidehRasterUrl } from '@/lib/media/r2-public-asset-url';
 export const PIDEH_ASSETS = {
   /** 8× master of the navbar wordmark, so retina layouts downscale instead of stretching the small source. */
   logo: '/brand/pideh/logo.png',
+  /** Footer and navbar mark (777×605). */
+  wordmark: '/brand/pideh/footer-wordmark.svg',
   foodPide: pidehRasterUrl('food-pide'),
   ctaPide: pidehRasterUrl('cta-pide'),
   ctaDotA: '/brand/pideh/cta-dot-a.svg',

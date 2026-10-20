@@ -1,4 +1,5 @@
 import { MobileBrandBar } from '@/components/layout/MobileBrandBar';
+import { MobileHeaderScrollShell } from '@/components/layout/MobileHeaderScrollShell';
 import { MobileHeaderSearch } from '@/components/layout/MobileHeaderSearch';
 import {
   MOBILE_STOREFRONT_COLUMN,
@@ -18,7 +19,7 @@ type MobileStorefrontHeaderProps = {
 
 /**
  * Shared mobile chrome for every storefront page (Figma 366:464 header band):
- * brand row plus the back / search row. Hidden on landscape tablets and
+ * brand row plus search. Hidden on landscape tablets and
  * desktop, where {@link import("./SiteHeader").SiteHeader} takes over.
  */
 export async function MobileStorefrontHeader({
@@ -30,26 +31,28 @@ export async function MobileStorefrontHeader({
   const user = await getCurrentUser();
 
   return (
-    <div className={`${MOBILE_STOREFRONT_SHELL} mobile-storefront-header`}>
-      <div className={`${MOBILE_STOREFRONT_COLUMN} px-6 pt-6`}>
-        <MobileBrandBar
-          locale={locale}
-          dictionary={dictionary}
-          currency={currency}
-          isSignedIn={Boolean(user)}
-          phoneHref={toTelHref(contact.storePhone)}
-          phoneLabel={contact.callTitle}
-          className="flex items-end justify-between gap-4"
-        />
-        <div className="pt-4">
-          <MobileHeaderSearch
+    <>
+      <MobileHeaderScrollShell>
+        <div className={`${MOBILE_STOREFRONT_COLUMN} px-6 pt-6 pb-2`}>
+          <MobileBrandBar
             locale={locale}
-            backLabel={dictionary.catalog.back}
-            searchLabel={dictionary.catalog.searchLabel}
-            searchPlaceholder={dictionary.home.searchPlaceholder}
+            dictionary={dictionary}
+            currency={currency}
+            isSignedIn={Boolean(user)}
+            phoneHref={toTelHref(contact.storePhone)}
+            phoneLabel={contact.callTitle}
+            className="flex items-center justify-between gap-4"
           />
         </div>
+      </MobileHeaderScrollShell>
+      <div className={`${MOBILE_STOREFRONT_SHELL} storefront-mobile-tree mobile-header-search px-6 pt-4 pb-2`}>
+        <MobileHeaderSearch
+          locale={locale}
+          backLabel={dictionary.catalog.back}
+          searchLabel={dictionary.catalog.searchLabel}
+          searchPlaceholder={dictionary.home.searchPlaceholder}
+        />
       </div>
-    </div>
+    </>
   );
 }

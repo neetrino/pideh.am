@@ -152,7 +152,7 @@ export function SiteHeaderMainNav({
             href={`/${locale}`}
             prefetchPolicy="intent"
             data-header-logo
-            className="relative h-12 w-[56px] shrink-0 md:h-16 md:w-[75px]"
+            className="relative h-12 w-[62px] shrink-0 md:h-16 md:w-[82px]"
             aria-label={dictionary.brand}
             onClick={(event) => {
               if (pathname === `/${locale}`) {
@@ -162,11 +162,11 @@ export function SiteHeaderMainNav({
             }}
           >
             <Image
-              src={PIDEH_ASSETS.logo}
+              src={PIDEH_ASSETS.wordmark}
               alt={dictionary.brand}
               fill
-              sizes="225px"
-              quality={100}
+              sizes="82px"
+              unoptimized
               className="object-contain"
               priority
             />

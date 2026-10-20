@@ -517,12 +517,13 @@ body:has([role='dialog'][aria-modal='true'], [role='alertdialog'][aria-modal='tr
     display: block !important;
   }
 
-  /* Pages that ship their own in-page chrome opt out of the shared bar. */
-  .storefront-shell:has(.pideh-home-mobile) .mobile-storefront-header,
-  .storefront-shell:has(.profile-mobile-page) .mobile-storefront-header,
-  .storefront-shell:has(.pideh-pdp-mobile) .mobile-storefront-header,
-  .storefront-shell:has(.pideh-login) .mobile-storefront-header {
-    display: none !important;
+  .storefront-shell:has(.pideh-home-mobile) .storefront-main {
+    margin-top: -11rem;
+  }
+
+  /* Shell orange (#fc8521) was showing as a strip above the #ff6b00 home. */
+  .storefront-shell:has(.pideh-home-mobile) {
+    background: #ff6b00;
   }
 
   .storefront-shell:has(.pideh-home) .storefront-main,
@@ -937,8 +938,10 @@ body:has([role='dialog'][aria-modal='true'], [role='alertdialog'][aria-modal='tr
  * Keep the bottom tab bar so people can leave the profile for home, shop, or cart.
  */
 @media (max-width: 767px), (orientation: portrait) and (max-width: 1199px) {
-  .storefront-shell:has(.profile-mobile-page) .site-header {
-    display: none;
+  .storefront-shell:has(.profile-mobile-page) .site-header,
+  .storefront-shell:has(.profile-mobile-page) .mobile-storefront-header,
+  .storefront-shell:has(.profile-mobile-page) .mobile-header-search {
+    display: none !important;
   }
 
   .storefront-shell:has(.profile-mobile-page) .storefront-main {
