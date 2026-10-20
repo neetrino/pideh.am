@@ -483,22 +483,6 @@ export function GroupOrderPageClient({
             ) : null}
           </div>
 
-          <div className="space-y-2 border-t border-pideh-orange/15 pt-4">
-            <p className="text-xs leading-relaxed text-pideh-muted">{labels.closeJoinsHint}</p>
-            <GhostPillButton
-              className="w-full sm:w-auto"
-              onClick={() =>
-                run(async () =>
-                  setJoinsClosedAction({
-                    inviteToken,
-                    joinsClosed: !view.joinsClosed,
-                  }),
-                )
-              }
-            >
-              {view.joinsClosed ? labels.openJoins : labels.closeJoins}
-            </GhostPillButton>
-          </div>
         </section>
       ) : null}
 
@@ -672,11 +656,49 @@ export function GroupOrderPageClient({
                 {labels.itemsReadyDoneHint}
               </p>
             </div>
+          ) : isOrganizer ? (
+            <div className="grid grid-cols-2 gap-3">
+              <PidehPillButton
+                label={labels.itemsReady}
+                showArrow={false}
+                disabled={pending}
+                className="w-full max-w-none"
+                onClick={() => {
+                  setError(null);
+                  startTransition(async () => {
+                    const result = await markItemsReadyAction({ inviteToken });
+                    if (!result.ok) {
+                      setError(result.error ?? labels.errorGeneric);
+                      return;
+                    }
+                    setView((prev) => {
+                      if (!prev?.currentParticipantId) return prev;
+                      return {
+                        ...prev,
+                        participants: prev.participants.map((participant) =>
+                          participant.id === prev.currentParticipantId
+                            ? { ...participant, itemsReady: true }
+                            : participant,
+                        ),
+                      };
+                    });
+                    router.refresh();
+                  });
+                }}
+              />
+              <GhostPillButton
+                className="w-full text-red-700"
+                disabled={pending}
+                onClick={() => setCancelOpen(true)}
+              >
+                {labels.cancelOrder}
+              </GhostPillButton>
+            </div>
           ) : (
             <PidehPillButton
               label={labels.itemsReady}
               disabled={pending}
-              className="w-full"
+              className="w-full max-w-none"
               onClick={() => {
                 setError(null);
                 startTransition(async () => {
@@ -708,9 +730,42 @@ export function GroupOrderPageClient({
             label={labels.lockAndContinue}
             tone="dark"
             disabled={pending}
-            className="w-full"
+            className="w-full max-w-none"
             onClick={() => run(async () => lockGroupOrderAction({ inviteToken }))}
           />
+        ) : null}
+
+        {isOrganizer && canEdit ? (
+          <PidehPillButton
+            label={view.joinsClosed ? labels.openJoins : labels.closeJoins}
+            tone="yellow"
+            showArrow={false}
+            disabled={pending}
+            className="w-full max-w-none !whitespace-normal"
+            onClick={() =>
+              run(async () =>
+                setJoinsClosedAction({
+                  inviteToken,
+                  joinsClosed: !view.joinsClosed,
+                }),
+              )
+            }
+          />
+        ) : null}
+
+        {isOrganizer &&
+        (iAmReady || !canEdit) &&
+        view.status !== 'CANCELLED' &&
+        view.status !== 'COMPLETED' &&
+        view.status !== 'PAID' &&
+        view.status !== 'PREPARING' ? (
+          <GhostPillButton
+            className="w-full text-red-700"
+            disabled={pending}
+            onClick={() => setCancelOpen(true)}
+          >
+            {labels.cancelOrder}
+          </GhostPillButton>
         ) : null}
 
         {isOrganizer && view.status === 'CHECKOUT' ? (
@@ -767,16 +822,6 @@ export function GroupOrderPageClient({
           <p className="rounded-[22px] border-2 border-pideh-yellow bg-pideh-yellow/40 px-4 py-3 text-center text-sm font-semibold text-pideh-ink">
             {labels.statusAwaitingCardPayments}
           </p>
-        ) : null}
-
-        {isOrganizer &&
-        view.status !== 'CANCELLED' &&
-        view.status !== 'COMPLETED' &&
-        view.status !== 'PAID' &&
-        view.status !== 'PREPARING' ? (
-          <GhostPillButton className="w-full" disabled={pending} onClick={() => setCancelOpen(true)}>
-            {labels.cancelOrder}
-          </GhostPillButton>
         ) : null}
           </div>
         }
