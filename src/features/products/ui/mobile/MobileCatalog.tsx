@@ -79,9 +79,6 @@ export function MobileCatalog({
           <MobileCatalogSection
             key={section.key}
             locale={locale}
-            title={section.title}
-            seeAllHref={section.seeAllHref}
-            seeAllLabel={section.seeAllLabel}
             products={section.products}
             isSignedIn={isSignedIn}
             wishlistLabel={dictionary.nav.wishlist}
