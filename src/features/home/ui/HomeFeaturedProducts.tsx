@@ -100,7 +100,7 @@ export function HomeFeaturedProducts({
             className="grid grid-cols-2 items-stretch gap-[13px] overflow-visible lg:grid-cols-3 xl:grid-cols-4"
             stagger={0.14}
           >
-            {products.slice(0, 4).map((product, index) => (
+            {products.slice(0, 4).map((product) => (
               <StaggerItem
                 key={product.id}
                 variants={cardShelf}
@@ -114,7 +114,6 @@ export function HomeFeaturedProducts({
                   compareAtFormatted={product.compareAtFormatted}
                   imageUrl={product.imageUrl}
                   inStock={product.inStock}
-                  priority={index < 4}
                   locale={locale}
                   productId={product.id}
                   inWishlist={product.inWishlist ?? false}

@@ -99,6 +99,8 @@ export function HomeFeatures({ titleLine1, titleLine2, items }: HomeFeaturesProp
                 alt=""
                 width={1928}
                 height={542}
+                loading="lazy"
+                decoding="async"
                 className="block size-full max-w-none"
               />
             </div>

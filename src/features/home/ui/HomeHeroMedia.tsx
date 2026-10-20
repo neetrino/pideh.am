@@ -71,7 +71,7 @@ export function HomeHeroMedia({
               muted
               loop
               playsInline
-              preload="auto"
+              preload="metadata"
               poster={stillSrc}
               src={videoSrc ?? undefined}
               width={HERO_VIDEO_WIDTH}

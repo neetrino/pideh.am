@@ -38,7 +38,7 @@ export function MobileHomeFeatured({
         isSignedIn={isSignedIn}
         wishlistLabel={wishlistLabel}
         addLabel={addLabel}
-        priorityCount={2}
+        priorityCount={0}
       />
     </section>
   );

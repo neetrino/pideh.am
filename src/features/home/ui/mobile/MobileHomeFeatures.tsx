@@ -169,6 +169,8 @@ export function MobileHomeFeatures({ titleLine1, titleLine2, items }: MobileHome
               <img
                 src={item.imageSrc}
                 alt=""
+                loading="lazy"
+                decoding="async"
                 className="pointer-events-none absolute max-w-none"
                 style={{
                   top: item.crop.top,
