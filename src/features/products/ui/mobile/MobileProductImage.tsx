@@ -22,8 +22,8 @@ export function MobileProductImage({ src, alt, imageRef, emphasize = false }: Mo
       data-node-id="268:594"
       className={
         emphasize
-          ? 'pointer-events-none absolute inset-x-0 top-14 bottom-0 z-0'
-          : 'pointer-events-none absolute inset-x-1 top-16 bottom-1 z-0'
+          ? 'pointer-events-none absolute inset-x-0 top-10 bottom-0 z-0'
+          : 'pointer-events-none absolute inset-x-1 top-12 bottom-1 z-0'
       }
     >
       <Image
@@ -34,8 +34,8 @@ export function MobileProductImage({ src, alt, imageRef, emphasize = false }: Mo
         priority
         className={
           emphasize
-            ? 'origin-center scale-[1.55] -rotate-[18deg] object-contain object-center'
-            : 'origin-center scale-110 object-contain object-center'
+            ? 'origin-center scale-[1.35] -rotate-[18deg] object-contain object-center'
+            : 'origin-center scale-100 object-contain object-center'
         }
       />
     </div>

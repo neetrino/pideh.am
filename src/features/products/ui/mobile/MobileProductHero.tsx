@@ -64,7 +64,7 @@ export function MobileProductHero({
         type="button"
         aria-label={backLabel}
         onClick={() => router.back()}
-        className="absolute top-[47px] left-[23px] z-20 flex h-[52px] shrink-0 items-center rounded-[42px] bg-[#ffd54a] px-6 transition active:scale-95"
+        className="absolute top-3 left-[23px] z-20 flex h-[52px] shrink-0 items-center rounded-[42px] bg-[#ffd54a] px-6 transition active:scale-95"
       >
         <Image
           src={MOBILE_HOME_ASSETS.viewAllArrow}

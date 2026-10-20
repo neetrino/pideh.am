@@ -583,6 +583,11 @@ body:has([role='dialog'][aria-modal='true'], [role='alertdialog'][aria-modal='tr
     display: none;
   }
 
+  .storefront-shell:has(.pideh-pdp-mobile) .mobile-storefront-header,
+  .storefront-shell:has(.pideh-pdp-mobile) .mobile-header-search {
+    display: none !important;
+  }
+
   .storefront-shell:has(.pideh-pdp-mobile) .storefront-main {
     max-width: none;
     padding: 0;
@@ -590,8 +595,8 @@ body:has([role='dialog'][aria-modal='true'], [role='alertdialog'][aria-modal='tr
 
   /* Orange photo band. Leave the title and price above the dock on open. */
   .pideh-pdp-mobile-hero {
-    height: 20rem;
-    height: clamp(12rem, calc(100svh - 28rem), 24rem);
+    height: 26rem;
+    height: clamp(18rem, calc(100svh - 22rem), 30rem);
   }
 
   .storefront-shell:has(.pideh-pdp-mobile) .storefront-footer {
