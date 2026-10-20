@@ -175,15 +175,15 @@ export function SiteHeaderMainNav({
           <nav
             ref={navRef}
             aria-label="Primary"
-            className="relative hidden flex-1 items-center justify-center gap-[26px] md:flex"
+            className="relative hidden flex-1 items-center justify-center gap-2 md:flex"
           >
             {pill ? (
               <span
                 aria-hidden
                 className={
                   motionReady
-                    ? 'pointer-events-none absolute top-1/2 left-0 z-0 h-12 -translate-y-1/2 rounded-[72px] bg-[#ff6b00] transition-[transform,width] duration-300 ease-in-out motion-reduce:transition-none'
-                    : 'pointer-events-none absolute top-1/2 left-0 z-0 h-12 -translate-y-1/2 rounded-[72px] bg-[#ff6b00]'
+                    ? 'pointer-events-none absolute top-1/2 left-0 z-0 h-12 rounded-[72px] bg-[#ff6b00] transition-[transform,width] duration-300 ease-in-out motion-reduce:transition-none'
+                    : 'pointer-events-none absolute top-1/2 left-0 z-0 h-12 rounded-[72px] bg-[#ff6b00]'
                 }
                 style={{ width: pill.width, transform: `translate(${pill.left}px, -50%)` }}
               />
