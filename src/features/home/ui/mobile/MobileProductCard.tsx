@@ -1,6 +1,7 @@
 'use client';
 
 import Image from 'next/image';
+import { useEffect, useState } from 'react';
 
 import { AppLink } from '@/components/ui/AppLink';
 import { ProductCardCartControl } from '@/features/home/ui/ProductCardCartControl';
@@ -51,6 +52,11 @@ export function MobileProductCard({
   maxQuantity,
   priority = false,
 }: MobileProductCardProps) {
+  const [liveQuantity, setLiveQuantity] = useState(cartQuantity ?? 0);
+
+  useEffect(() => {
+    setLiveQuantity(cartQuantity ?? 0);
+  }, [cartQuantity, productId]);
   const summary = description?.trim() ?? "";
 
   return (
@@ -126,30 +132,29 @@ export function MobileProductCard({
 
       <div
         data-node-id="260:875"
-        className={
-          cartQuantity > 0
-            ? 'relative mt-auto h-[72px] w-full shrink-0'
-            : 'mt-auto flex h-[56px] w-full shrink-0 items-center gap-2'
-        }
+        className={`relative mt-auto w-full shrink-0 transition-[height] duration-200 ease-out ${
+          liveQuantity > 0 ? 'h-[72px]' : 'h-14'
+        }`}
       >
         <p
           data-node-id="260:522"
-          className={`font-montserrat-arm min-w-0 truncate text-[21px] leading-[1.25] font-extrabold text-[#1e1e1e] ${
-            cartQuantity > 0 ? 'absolute inset-x-0 top-0' : 'flex-1'
+          className={`font-montserrat-arm absolute left-0 max-w-[calc(100%-4.5rem)] truncate text-[21px] leading-[1.25] font-extrabold text-[#1e1e1e] transition-[top,transform] duration-200 ease-out ${
+            liveQuantity > 0 ? 'top-0 translate-y-0' : 'top-1/2 -translate-y-1/2'
           }`}
         >
           {priceFormatted}
         </p>
-        <div className={cartQuantity > 0 ? 'absolute right-0 bottom-0' : 'contents'}>
-        <ProductCardCartControl
-          productId={productId}
-          locale={locale}
-          orderLabel={addLabel}
-          initialQuantity={cartQuantity}
-          maxQuantity={maxQuantity}
-          inStock={inStock}
-          variant="compact"
-        />
+        <div className="absolute right-0 bottom-0">
+          <ProductCardCartControl
+            productId={productId}
+            locale={locale}
+            orderLabel={addLabel}
+            initialQuantity={cartQuantity}
+            maxQuantity={maxQuantity}
+            inStock={inStock}
+            variant="compact"
+            onQuantityChange={setLiveQuantity}
+          />
         </div>
       </div>
     </article>

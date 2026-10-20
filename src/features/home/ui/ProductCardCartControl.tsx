@@ -25,6 +25,8 @@ type ProductCardCartControlProps = {
   maxQuantity?: number;
   inStock: boolean;
   variant: 'pill' | 'compact';
+  /** Fires as soon as the count changes, before the cart request finishes. */
+  onQuantityChange?: (quantity: number) => void;
 };
 
 function stopPress(event: MouseEvent<HTMLElement>): void {
@@ -38,10 +40,19 @@ function useCardQuantity(
   initialQuantity: number,
   maxQuantity: number,
   inStock: boolean,
+  onQuantityChange?: (quantity: number) => void,
 ): { quantity: number; commit: (next: number) => void } {
   const [quantity, setQuantity] = useState(initialQuantity);
   const quantityRef = useRef(initialQuantity);
   const requestRef = useRef(0);
+  const onQuantityChangeRef = useRef(onQuantityChange);
+  onQuantityChangeRef.current = onQuantityChange;
+
+  function paintQuantity(next: number): void {
+    quantityRef.current = next;
+    setQuantity(next);
+    onQuantityChangeRef.current?.(next);
+  }
 
   useEffect(() => {
     quantityRef.current = initialQuantity;
@@ -55,8 +66,7 @@ function useCardQuantity(
     if (next > previous) {
       flyToCart(origin?.closest('article') ?? null);
     }
-    quantityRef.current = next;
-    setQuantity(next);
+    paintQuantity(next);
     const settle = beginCartBadgeAdd(next - previous);
     const requestId = ++requestRef.current;
     // Paint the new count first. The database write can finish later.
@@ -68,8 +78,7 @@ function useCardQuantity(
         next,
         settle,
         () => requestRef.current === requestId,
-        quantityRef,
-        setQuantity,
+        paintQuantity,
       );
     }, 0);
   }
@@ -84,26 +93,22 @@ async function saveQuantity(
   next: number,
   settle: (count: number | null) => void,
   isLatest: () => boolean,
-  quantityRef: { current: number },
-  setQuantity: (value: number) => void,
+  paintQuantity: (quantity: number) => void,
 ): Promise<void> {
   try {
     const result = await setActiveCartProductQuantity(productId, next);
     if (!isLatest()) return;
     if (!result.ok) {
-      quantityRef.current = previous;
-      setQuantity(previous);
+      paintQuantity(previous);
       settle(null);
       alertIfSpendLimitExceeded(locale, result);
       return;
     }
-    quantityRef.current = result.quantity;
-    setQuantity(result.quantity);
+    paintQuantity(result.quantity);
     settle(result.itemCount);
   } catch {
     if (!isLatest()) return;
-    quantityRef.current = previous;
-    setQuantity(previous);
+    paintQuantity(previous);
     settle(null);
   }
 }
@@ -120,6 +125,7 @@ export function ProductCardCartControl({
   maxQuantity = 99,
   inStock,
   variant,
+  onQuantityChange,
 }: ProductCardCartControlProps) {
   const labels = QUANTITY_LABELS[locale];
   const { quantity, commit } = useCardQuantity(
@@ -128,6 +134,7 @@ export function ProductCardCartControl({
     initialQuantity,
     maxQuantity,
     inStock,
+    onQuantityChange,
   );
 
   if (quantity < 1) {
