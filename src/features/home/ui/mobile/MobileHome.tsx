@@ -1,4 +1,4 @@
-import { NAV_DOCK_HEIGHT_PX } from '@/components/layout/NavEllipse3469';
+import { MOBILE_COPYRIGHT_NAV_CLEARANCE_PX } from '@/components/layout/NavEllipse3469';
 import {
   MOBILE_STOREFRONT_COLUMN,
   MOBILE_STOREFRONT_SHELL,
@@ -22,9 +22,6 @@ import type { Locale } from '@/lib/i18n/config';
  * Includes drip, chrome, arc, arrows, featured title + view-all CTA.
  */
 const MOBILE_TOP_BAND_HEIGHT = 588;
-
-/** Gap under the copyright so the raised home button and dock stay fully visible. */
-const COPYRIGHT_NAV_CLEARANCE_PX = NAV_DOCK_HEIGHT_PX - 24;
 
 type FeaturedItem = {
   id: string;
@@ -109,7 +106,7 @@ export function MobileHome({
     <div
       className={`${MOBILE_STOREFRONT_SHELL} pideh-home-mobile overflow-x-clip bg-[#ff6b00] [overflow-clip-margin:28px]`}
       style={{
-        paddingBottom: COPYRIGHT_NAV_CLEARANCE_PX,
+        paddingBottom: MOBILE_COPYRIGHT_NAV_CLEARANCE_PX,
       }}
     >
       <div className={MOBILE_STOREFRONT_COLUMN}>

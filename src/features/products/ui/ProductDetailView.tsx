@@ -89,6 +89,7 @@ export function ProductDetailView({
         {...configurator}
         backLabel={dictionary.catalog.back}
         emphasizePhoto={emphasizePhoto}
+        copyrightText={dictionary.footer.copyrightMobile.replace('{year}', String(new Date().getFullYear()))}
         relatedSlot={
           <Suspense fallback={null}>
             <ProductRelatedSection

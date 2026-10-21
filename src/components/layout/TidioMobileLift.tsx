@@ -3,8 +3,11 @@
 import { useEffect } from 'react';
 
 const MOBILE_QUERY = '(max-width: 767px), (orientation: portrait) and (max-width: 1199px)';
-/** Profile icon top in the 440px frame, then scaled. Home sits higher in the center. */
-const LIFT = 'translateY(calc(-1 * (108px * 100vw / 440 + env(safe-area-inset-bottom, 0px))))';
+/**
+ * 440px frame: profile icon top (~108) plus the 43px glyph and a gap,
+ * so the bubble sits above the profile icon. Home sits higher in the center.
+ */
+const LIFT = 'translateY(calc(-1 * (168px * 100vw / 440 + env(safe-area-inset-bottom, 0px))))';
 
 const OVERLAY_QUERY =
   '[role="dialog"][aria-modal="true"], [role="alertdialog"][aria-modal="true"]';

@@ -111,12 +111,12 @@ export function HomeProductCard({
         </p>
 
         <div className="relative z-10 mt-auto flex w-full items-center justify-between gap-3 pt-4">
-          <div className="flex min-w-0 shrink items-baseline gap-2 overflow-hidden">
-            <p className="text-[21px] leading-[1.25] font-extrabold text-[#1e1e1e]">
+          <div className="flex shrink-0 items-baseline gap-2">
+            <p className="whitespace-nowrap text-[21px] leading-[1.25] font-extrabold text-[#1e1e1e]">
               {priceFormatted}
             </p>
             {compareAtFormatted ? (
-              <p className="text-sm text-[#6b6b6b] line-through">
+              <p className="whitespace-nowrap text-sm text-[#6b6b6b] line-through">
                 {compareAtFormatted}
               </p>
             ) : null}

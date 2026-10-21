@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation';
 import { MobileBottomNavIsland } from '@/components/layout/MobileBottomNavIsland';
 import { MobileStorefrontHeader } from '@/components/layout/MobileStorefrontHeader';
 import { PAGE_CONTAINER } from '@/components/layout/page-container';
+import { MobileStorefrontCopyright } from '@/components/layout/MobileStorefrontCopyright';
 import { SiteFooter } from '@/components/layout/SiteFooter';
 import { SiteHeader } from '@/components/layout/SiteHeader';
 import { MaintenanceGate } from '@/components/layout/MaintenanceGate';
@@ -61,6 +62,7 @@ export default async function StorefrontLayout({ children, params }: StorefrontL
       <main className={`storefront-main min-w-0 flex-1 py-10 pb-24 lg:pb-10 ${PAGE_CONTAINER}`}>
         <MaintenanceGate>{children}</MaintenanceGate>
       </main>
+      <MobileStorefrontCopyright dictionary={dictionary} />
       <SiteFooter dictionary={dictionary} locale={locale} />
       <MobileBottomNavIsland locale={locale} currency={currency} dictionary={dictionary} />
       <PromoPopupIsland closeLabel={dictionary.nav.closeMenu} />

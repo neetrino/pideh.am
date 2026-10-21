@@ -21,7 +21,10 @@ export default async function LoginPage({ params }: LoginPageProps) {
   const { auth } = dictionary;
 
   return (
-    <LoginScene title={auth.loginTitle}>
+    <LoginScene
+      title={auth.loginTitle}
+      copyrightText={dictionary.footer.copyrightMobile.replace('{year}', String(new Date().getFullYear()))}
+    >
       <Suspense fallback={<p className="text-sm text-[#1e1e1e]/50">…</p>}>
         <LoginForm locale={rawLocale} dictionary={auth} />
       </Suspense>

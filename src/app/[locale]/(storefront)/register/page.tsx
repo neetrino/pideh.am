@@ -23,6 +23,7 @@ export default async function RegisterPage({ params }: RegisterPageProps) {
     <LoginScene
       title={auth.registerTitle}
       mobileBackgroundSrc="/brand/pideh/register-food-bg-mobile.png"
+      copyrightText={dictionary.footer.copyrightMobile.replace('{year}', String(new Date().getFullYear()))}
     >
       <RegisterForm locale={rawLocale} dictionary={auth} />
     </LoginScene>

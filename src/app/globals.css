@@ -482,15 +482,15 @@ body:has([role='dialog'][aria-modal='true'], [role='alertdialog'][aria-modal='tr
 
   /*
    * The launcher iframe is pinned to the full viewport, so `bottom` does not
-   * move the bubble. Shift it up to the profile icon, not the raised home button.
+   * move the bubble. Sit it above the profile icon, clear of the raised home button.
    */
   #tidio-chat-iframe {
-    transform: translateY(calc(-1 * (108px * 100vw / 440 + env(safe-area-inset-bottom, 0px)))) !important;
+    transform: translateY(calc(-1 * (168px * 100vw / 440 + env(safe-area-inset-bottom, 0px)))) !important;
   }
 
-  /* Phone + iPad portrait: Figma mobile header + dock. */
+  /* Phone + iPad portrait: dock clearance lives under the copyright line. */
   .storefront-shell .storefront-main {
-    padding-bottom: calc(16rem + env(safe-area-inset-bottom, 0px));
+    padding-bottom: 0;
   }
 
   /* The group-order actions sit in the page flow so the dock does not cover them. */
@@ -526,13 +526,11 @@ body:has([role='dialog'][aria-modal='true'], [role='alertdialog'][aria-modal='tr
     background: #ff6b00;
   }
 
-  .storefront-shell:has(.pideh-home) .storefront-main,
-  .storefront-shell:has(.pideh-about) .storefront-main,
-  .storefront-shell:has(.pideh-login) .storefront-main,
-  .storefront-shell:has(.pideh-shop) .storefront-main,
-  .storefront-shell:has(.pideh-pdp) .storefront-main {
-    /* Room for the fixed nav dock and the raised home button. */
-    padding-bottom: calc(16rem + env(safe-area-inset-bottom, 0px));
+  .storefront-shell:has(.pideh-home-mobile) .mobile-page-copyright,
+  .storefront-shell:has(.pideh-shop-mobile) .mobile-page-copyright,
+  .storefront-shell:has(.pideh-pdp-mobile) .mobile-page-copyright,
+  .storefront-shell:has(.pideh-login) .mobile-page-copyright {
+    display: none;
   }
 
   /* Mobile home: dock clearance lives on .pideh-home-mobile (see MobileHome). */
@@ -966,8 +964,7 @@ input[type="checkbox"]:disabled {
 
   .storefront-shell:has(.profile-mobile-page) .storefront-main {
     padding-top: 0.5rem;
-    /* Clear the fixed orange dock (same band as the rest of the storefront). */
-    padding-bottom: calc(16rem + env(safe-area-inset-bottom, 0px));
+    padding-bottom: 0;
   }
 
   .profile-mobile-tab-sheet-scroll {
