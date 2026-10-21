@@ -86,16 +86,22 @@ export function AdminDeliveryLocations({ locale, locations, copy }: AdminDeliver
               <thead className={ADMIN_TABLE_THEAD}>
                 <tr>
                   <th className={ADMIN_TABLE_TH}>{copy.delivery.locationDrawer.city}</th>
-                  <th className={ADMIN_TABLE_TH}>{copy.delivery.locationDrawer.area}</th>
-                  <th className={ADMIN_TABLE_TH_CENTER}>{copy.delivery.locationDrawer.priceAmd}</th>
-                  <th className={ADMIN_TABLE_TH_CENTER}>{copy.common.actions}</th>
+                  <th className={`${ADMIN_TABLE_TH_CENTER} !text-center`}>
+                    {copy.delivery.locationDrawer.area}
+                  </th>
+                  <th className={`${ADMIN_TABLE_TH_CENTER} !text-center`}>
+                    {copy.delivery.locationDrawer.priceAmd}
+                  </th>
+                  <th className={`${ADMIN_TABLE_TH_CENTER} !text-center`}>
+                    {copy.common.actions}
+                  </th>
                 </tr>
               </thead>
               <tbody className={ADMIN_TABLE_TBODY}>
                 {locations.map((location) => (
                   <tr key={location.id} className={ADMIN_TABLE_ROW}>
                     <td className={ADMIN_TABLE_TD}>{location.city}</td>
-                    <td className={ADMIN_TABLE_TD}>{location.area}</td>
+                    <td className={`${ADMIN_TABLE_TD_CENTER} !text-center`}>{location.area}</td>
                     <td className={ADMIN_TABLE_TD_CENTER}>
                       {formatMoneyAmount(location.priceAmount, 'AMD', locale)}
                     </td>

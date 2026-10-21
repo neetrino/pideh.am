@@ -125,7 +125,7 @@ export function AdminDeliveryScheduleEditor({
         <h2 className="text-base font-semibold text-gray-900">{copy.title}</h2>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2">
+      <div className="grid gap-4 sm:grid-cols-2 sm:items-end">
         <label>
           <span className={ADMIN_LABEL}>{copy.slotLength}</span>
           <input

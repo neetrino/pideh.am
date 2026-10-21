@@ -113,7 +113,7 @@ export function DateField({
         <div
           role="dialog"
           aria-label={placeholder}
-          className="absolute z-30 mt-2 w-[17.5rem] max-w-full rounded-[22px] border border-[#ff6b00]/15 bg-white p-3 shadow-lg"
+          className="absolute z-30 mt-2 w-[20.5rem] rounded-[22px] border border-[#ff6b00]/15 bg-white p-3 shadow-lg"
         >
           <div className="mb-1 flex items-center justify-between gap-1">
             <button
@@ -128,7 +128,7 @@ export function DateField({
             >
               <ChevronLeft className="size-3.5" aria-hidden />
             </button>
-            <p className="font-display text-sm leading-none text-[#1e1e1e] uppercase">
+            <p className="font-display min-w-0 flex-1 text-center text-sm !leading-tight whitespace-nowrap text-[#1e1e1e] uppercase">
               {monthLabel(viewYear, viewMonth, locale)}
             </p>
             <button
@@ -146,7 +146,7 @@ export function DateField({
           </div>
           <div className="grid grid-cols-7 text-center">
             {weekdayLabels(locale).map((label) => (
-              <div key={label} className="py-1 text-[10px] font-bold text-[#1e1e1e]/45">
+              <div key={label} className="py-1 text-[11px] font-bold whitespace-nowrap text-[#1e1e1e]/45">
                 {label}
               </div>
             ))}

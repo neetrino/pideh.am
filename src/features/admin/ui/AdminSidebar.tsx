@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { useEffect, useRef, useState } from 'react';
 import { usePathname } from 'next/navigation';
 
 import {
@@ -52,6 +53,29 @@ export function AdminSidebar({ locale, shell, nav }: AdminSidebarProps) {
   );
   const alerts = useAdminOrderAlertsOptional();
   const unseenCount = alerts?.unseenCount ?? 0;
+  const navRef = useRef<HTMLElement>(null);
+  const [indicator, setIndicator] = useState<{ top: number; height: number } | null>(null);
+
+  useEffect(() => {
+    function measure(): void {
+      const nav = navRef.current;
+      const active = nav?.querySelector<HTMLElement>('[data-nav-active="true"]');
+      if (!nav || !active) {
+        setIndicator(null);
+        return;
+      }
+      const navBox = nav.getBoundingClientRect();
+      const itemBox = active.getBoundingClientRect();
+      setIndicator({
+        top: itemBox.top - navBox.top + nav.scrollTop,
+        height: itemBox.height,
+      });
+    }
+
+    measure();
+    window.addEventListener('resize', measure);
+    return () => window.removeEventListener('resize', measure);
+  }, [pathname, collapsed, productsNestedExpanded, unseenCount]);
 
   const asideWidthClass = collapsed ? 'lg:w-16' : 'lg:w-64';
 
@@ -69,7 +93,19 @@ export function AdminSidebar({ locale, shell, nav }: AdminSidebarProps) {
         <AdminSidebarBackdrop />
         <div className="relative z-10 flex min-h-0 flex-1 flex-col">
           <AdminSidebarBrand locale={locale} shell={shell} />
-          <nav className={`${ADMIN_SIDEBAR_NAV} ${collapsed ? 'px-1' : 'px-2'}`}>
+          <nav
+            ref={navRef}
+            className={`${ADMIN_SIDEBAR_NAV} !space-y-0 gap-1 ${collapsed ? 'px-1' : 'px-2'}`}
+          >
+            {indicator ? (
+              <span
+                aria-hidden
+                className={`pointer-events-none absolute top-0 rounded-full bg-[#ff6b00] shadow-[0_8px_24px_rgba(255,107,0,0.45)] transition-[transform,height] duration-300 ease-in-out motion-reduce:transition-none ${
+                  collapsed ? 'right-1 left-1' : 'right-2 left-2'
+                }`}
+                style={{ height: indicator.height, transform: `translateY(${indicator.top}px)` }}
+              />
+            ) : null}
             {tabs.map((tab) => {
               if (!isNestedVisible(tab, pathname, locale, collapsed, productsNestedExpanded)) {
                 return null;
@@ -84,11 +120,11 @@ export function AdminSidebar({ locale, shell, nav }: AdminSidebarProps) {
                     ariaLabel={shell.newOrdersBadgeAria}
                   />
                 ) : null;
-              const rowClasses = `relative flex w-full shrink-0 items-center rounded-full text-sm font-bold transition-all ${
+              const rowClasses = `relative z-[1] flex w-full shrink-0 items-center rounded-full text-sm font-bold transition-colors ${
                 collapsed ? 'justify-center px-0 py-3' : 'gap-3 px-4 py-3'
               } ${tab.isSubCategory && !collapsed ? 'pl-12' : ''} ${
                 isActive
-                  ? 'bg-[#ff6b00] text-white shadow-[0_8px_24px_rgba(255,107,0,0.45)]'
+                  ? 'text-white'
                   : 'text-white/80 hover:bg-white/12 hover:text-white'
               }`;
 
@@ -96,10 +132,9 @@ export function AdminSidebar({ locale, shell, nav }: AdminSidebarProps) {
                 return (
                   <div
                     key={tab.id}
-                    className={`flex w-full min-w-0 shrink-0 overflow-hidden rounded-full ${
-                      isActive
-                        ? 'bg-[#ff6b00] text-white shadow-[0_8px_24px_rgba(255,107,0,0.45)]'
-                        : 'bg-transparent'
+                    data-nav-active={isActive ? 'true' : undefined}
+                    className={`relative z-[1] flex w-full min-w-0 shrink-0 overflow-hidden rounded-full ${
+                      isActive ? 'text-white' : 'bg-transparent'
                     }`}
                   >
                     <Link
@@ -151,7 +186,13 @@ export function AdminSidebar({ locale, shell, nav }: AdminSidebarProps) {
               }
 
               return (
-                <Link key={tab.id} href={tab.href} title={tab.label} className={rowClasses}>
+                <Link
+                  key={tab.id}
+                  href={tab.href}
+                  title={tab.label}
+                  data-nav-active={isActive ? 'true' : undefined}
+                  className={rowClasses}
+                >
                   <span className={`shrink-0 ${isActive ? 'text-white' : 'text-white/45'}`}>
                     {tab.icon}
                   </span>
