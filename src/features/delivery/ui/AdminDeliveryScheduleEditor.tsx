@@ -3,7 +3,7 @@
 import { useState } from 'react';
 
 import { TimeField } from '@/components/ui/TimeField';
-import { ADMIN_CHECKBOX, ADMIN_LABEL } from '@/features/admin/ui/admin-form-classes';
+import { ADMIN_CHECKBOX, ADMIN_INPUT, ADMIN_LABEL } from '@/features/admin/ui/admin-form-classes';
 import { formatCalendarDate } from '@/features/checkout/ui/delivery-slot-calendar';
 import { AdminDateField } from '@/features/delivery/ui/AdminDateField';
 import type {

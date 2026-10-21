@@ -152,7 +152,7 @@ export function SiteHeaderMainNav({
             href={`/${locale}`}
             prefetchPolicy="intent"
             data-header-logo
-            className="relative h-12 w-[62px] shrink-0 md:h-16 md:w-[82px]"
+            className="relative h-12 w-[62px] shrink-0 md:h-14 md:w-[72px]"
             aria-label={dictionary.brand}
             onClick={(event) => {
               if (pathname === `/${locale}`) {
@@ -165,7 +165,7 @@ export function SiteHeaderMainNav({
               src={PIDEH_ASSETS.wordmark}
               alt={dictionary.brand}
               fill
-              sizes="82px"
+              sizes="72px"
               unoptimized
               className="object-contain"
               priority
@@ -223,18 +223,20 @@ export function SiteHeaderMainNav({
                 languageLabel={dictionary.header.language}
                 compact
               />
-              <HeaderSearch locale={locale} currency={currency} labels={searchLabels} />
-              <WishlistHeaderLink
-                locale={locale}
-                label={dictionary.nav.wishlist}
-                count={wishlistCount}
-              />
-              <CartDrawer
-                locale={locale}
-                currency={currency}
-                dictionary={dictionary}
-                itemCount={cartItemCount}
-              />
+              <div className="flex items-center [&>*+*]:-ml-2.5">
+                <HeaderSearch locale={locale} currency={currency} labels={searchLabels} />
+                <WishlistHeaderLink
+                  locale={locale}
+                  label={dictionary.nav.wishlist}
+                  count={wishlistCount}
+                />
+                <CartDrawer
+                  locale={locale}
+                  currency={currency}
+                  dictionary={dictionary}
+                  itemCount={cartItemCount}
+                />
+              </div>
             </div>
 
             <div className="hidden items-center gap-[19px] md:flex">

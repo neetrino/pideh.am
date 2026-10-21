@@ -24,7 +24,7 @@ import {
   ADMIN_TABLE_THEAD,
 } from '@/features/admin/ui/admin-table-classes';
 import { bulkArchiveOrdersAction } from '@/features/orders/application/bulk-archive-orders';
-import { formatYerevanDateTime } from '@/features/delivery/domain/delivery-schedule';
+import { formatYerevanDate, formatYerevanTime } from '@/features/delivery/domain/delivery-schedule';
 import { adminPaymentMethodLabel } from '@/features/orders/domain/payment-method-label';
 import { AdminCustomerCommentBell } from '@/features/orders/ui/AdminCustomerCommentBell';
 import { AdminInlineStatusSelect } from '@/features/orders/ui/AdminInlineStatusSelect';
@@ -57,6 +57,27 @@ type BulkChangeOrderStatusFormProps = {
 
 function formatMoney(amount: number, currency: string): string {
   return `${amount.toLocaleString('en-US')} ${currency}`;
+}
+
+function StackedColumnTitle({ label }: { label: string }) {
+  const space = label.indexOf(' ');
+  if (space === -1) return label;
+  return (
+    <span className="block text-center leading-tight">
+      <span className="block">{label.slice(0, space)}</span>
+      <span className="block">{label.slice(space + 1)}</span>
+    </span>
+  );
+}
+
+function PlacedAtCell({ placedAt }: { placedAt: string | Date }) {
+  const value = placedAt instanceof Date ? placedAt : new Date(placedAt);
+  return (
+    <span className="block text-center text-xs leading-snug text-gray-500">
+      <span className="block text-gray-900">{formatYerevanDate(value)}</span>
+      <span className="block">{formatYerevanTime(value)}</span>
+    </span>
+  );
 }
 
 export function BulkChangeOrderStatusForm({
@@ -133,20 +154,22 @@ export function BulkChangeOrderStatusForm({
 
   return (
     <div className="flex flex-col gap-4">
-      <Card className="flex flex-wrap items-center justify-between gap-3 p-4">
-        <p className="text-sm text-gray-700">{selectedCountLabel}</p>
-        <Button
-          type="button"
-          size="sm"
-          variant="danger"
-          disabled={isPending || selected.size === 0}
-          onClick={deleteSelected}
-        >
-          {isPending ? copy.common.deleting : copy.orders.bulk.deleteSelected}
-        </Button>
-        {error ? <p className="w-full text-sm text-red-700">{error}</p> : null}
-        {message ? <p className="w-full text-sm text-green-700">{message}</p> : null}
-      </Card>
+      {selected.size > 0 ? (
+        <Card className="flex flex-wrap items-center justify-between gap-3 p-4">
+          <p className="text-sm text-gray-700">{selectedCountLabel}</p>
+          <Button
+            type="button"
+            size="sm"
+            variant="danger"
+            disabled={isPending}
+            onClick={deleteSelected}
+          >
+            {isPending ? copy.common.deleting : copy.orders.bulk.deleteSelected}
+          </Button>
+        </Card>
+      ) : null}
+      {error ? <p className="text-sm text-red-700">{error}</p> : null}
+      {message ? <p className="text-sm text-green-700">{message}</p> : null}
 
       <Card className={ADMIN_TABLE_CARD}>
         <div className={ADMIN_TABLE_OUTER_SCROLL}>
@@ -169,7 +192,9 @@ export function BulkChangeOrderStatusForm({
                 <th className={ADMIN_TABLE_TH_METRIC}>{copy.orders.table.payment}</th>
                 <th className={ADMIN_TABLE_TH_METRIC}>{copy.orders.table.total}</th>
                 <th className={ADMIN_TABLE_TH_METRIC}>{copy.orders.table.paymentMethod}</th>
-                <th className={ADMIN_TABLE_TH}>{copy.orders.table.placed}</th>
+                <th className={`${ADMIN_TABLE_TH} !whitespace-normal !text-center`}>
+                  <StackedColumnTitle label={copy.orders.table.placed} />
+                </th>
               </tr>
             </thead>
             <tbody className={ADMIN_TABLE_TBODY}>
@@ -286,10 +311,8 @@ export function BulkChangeOrderStatusForm({
                       )}
                     </span>
                   </td>
-                  <td className={ADMIN_TABLE_TD}>
-                    <span className="text-xs text-gray-500">
-                      {formatYerevanDateTime(order.placedAt)}
-                    </span>
+                  <td className={`${ADMIN_TABLE_TD} !text-center`}>
+                    <PlacedAtCell placedAt={order.placedAt} />
                   </td>
                 </tr>
               ))}

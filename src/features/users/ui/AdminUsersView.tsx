@@ -193,30 +193,29 @@ export function AdminUsersView({ locale, users, total, q, role, copy }: AdminUse
 
       {error ? <p className="mb-3 text-sm text-red-700">{error}</p> : null}
 
-      <Card className="mb-4 flex flex-wrap items-center justify-between gap-3 p-4">
-        <p className="text-sm text-gray-700">
-          {copy.common.selectedCount
-            .replace('{count}', String(selected.size))
-            .replace(
-              '{entity}',
-              selected.size === 1
-                ? copy.common.entitySingular.user
-                : copy.common.entitySingular.users,
-            )}
-        </p>
-        <Button
-          type="button"
-          size="sm"
-          variant="danger"
-          disabled={isPending || selected.size === 0}
-          onClick={() => {
-            if (selected.size === 0) return;
-            setConfirmOpen(true);
-          }}
-        >
-          {copy.users.deleteSelected}
-        </Button>
-      </Card>
+      {selected.size > 0 ? (
+        <Card className="mb-4 flex flex-wrap items-center justify-between gap-3 p-4">
+          <p className="text-sm text-gray-700">
+            {copy.common.selectedCount
+              .replace('{count}', String(selected.size))
+              .replace(
+                '{entity}',
+                selected.size === 1
+                  ? copy.common.entitySingular.user
+                  : copy.common.entitySingular.users,
+              )}
+          </p>
+          <Button
+            type="button"
+            size="sm"
+            variant="danger"
+            disabled={isPending}
+            onClick={() => setConfirmOpen(true)}
+          >
+            {copy.users.deleteSelected}
+          </Button>
+        </Card>
+      ) : null}
 
       <Card className={ADMIN_TABLE_CARD}>
         {users.length === 0 ? (
