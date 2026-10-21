@@ -1,4 +1,4 @@
-import { NAV_DOCK_HEIGHT_PX } from '@/components/layout/NavEllipse3469';
+import { MOBILE_COPYRIGHT_NAV_CLEARANCE_PX } from '@/components/layout/NavEllipse3469';
 import {
   MOBILE_STOREFRONT_COLUMN,
   MOBILE_STOREFRONT_SHELL,
@@ -10,9 +10,6 @@ import { ShopCategoryChips } from '@/features/products/ui/ShopCategoryChips';
 import { MobileCatalogSection } from '@/features/products/ui/mobile/MobileCatalogSection';
 import type { Locale } from '@/lib/i18n/config';
 import type { Dictionary } from '@/lib/i18n/get-dictionary';
-
-/** Gap under the copyright so the raised home button and dock stay fully visible. */
-const COPYRIGHT_NAV_CLEARANCE_PX = NAV_DOCK_HEIGHT_PX - 24;
 
 export type MobileCatalogSectionData = {
   key: string;
@@ -55,7 +52,7 @@ export function MobileCatalog({
   return (
     <div
       className={`${MOBILE_STOREFRONT_SHELL} pideh-shop-mobile overflow-x-clip bg-[#ff6b00]`}
-      style={{ paddingBottom: COPYRIGHT_NAV_CLEARANCE_PX }}
+      style={{ paddingBottom: MOBILE_COPYRIGHT_NAV_CLEARANCE_PX }}
     >
       <div className={MOBILE_STOREFRONT_COLUMN}>
       <ShopCategoryChips

@@ -14,6 +14,8 @@ const DOCK_LENGTH_SCALE = (DOCK_WIDTH / CRESCENT_H) * 1.5;
 const DOCK_THICKNESS_SCALE = (DOCK_WIDTH / CRESCENT_H) * 1.1;
 /** Scaled band height after rotation — shared with icon layout. */
 export const NAV_DOCK_HEIGHT_PX = Math.round(CRESCENT_W * DOCK_THICKNESS_SCALE);
+/** Space under the mobile copyright so the raised home button stays clear. */
+export const MOBILE_COPYRIGHT_NAV_CLEARANCE_PX = NAV_DOCK_HEIGHT_PX - 24;
 /** Nudge the band slightly toward the bottom of the screen. */
 const DOCK_OFFSET_Y_PX = 6;
 

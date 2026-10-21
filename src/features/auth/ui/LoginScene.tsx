@@ -2,20 +2,20 @@
 
 import type { CSSProperties, ReactNode } from 'react';
 
-import { NAV_DOCK_HEIGHT_PX } from '@/components/layout/NavEllipse3469';
+import { MOBILE_COPYRIGHT_NAV_CLEARANCE_PX } from '@/components/layout/NavEllipse3469';
 import { LoginHeat } from '@/features/auth/ui/LoginHeat';
+import { MobileCopyright } from '@/features/home/ui/mobile/MobileCopyright';
 
 type LoginSceneProps = {
   title: string;
   children: ReactNode;
   mobileBackgroundSrc?: string;
+  copyrightText: string;
 };
 
-const AUTH_NAV_GAP_PX = 20;
-
-export function LoginScene({ title, children, mobileBackgroundSrc }: LoginSceneProps) {
+export function LoginScene({ title, children, mobileBackgroundSrc, copyrightText }: LoginSceneProps) {
   const mobileClearance = {
-    '--auth-nav-clearance': `${NAV_DOCK_HEIGHT_PX + AUTH_NAV_GAP_PX}px`,
+    '--auth-nav-clearance': `${MOBILE_COPYRIGHT_NAV_CLEARANCE_PX}px`,
   } as CSSProperties;
 
   return (
@@ -31,6 +31,7 @@ export function LoginScene({ title, children, mobileBackgroundSrc }: LoginSceneP
           </h1>
           <div className="mt-8 min-w-0">{children}</div>
         </div>
+        <MobileCopyright className="mt-8 lg:hidden" text={copyrightText} />
       </div>
     </div>
   );

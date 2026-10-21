@@ -3,13 +3,14 @@
 import Image from 'next/image';
 import { useRef, type ReactNode } from 'react';
 
-import { NAV_DOCK_HEIGHT_PX } from '@/components/layout/NavEllipse3469';
+import { MOBILE_COPYRIGHT_NAV_CLEARANCE_PX } from '@/components/layout/NavEllipse3469';
 import {
   MOBILE_STOREFRONT_COLUMN,
   MOBILE_STOREFRONT_SHELL,
 } from '@/components/layout/page-container';
 import { flyToCart } from '@/features/cart/ui/fly-to-cart';
 import { PIDEH_ASSETS } from '@/features/home/ui/brand-assets';
+import { MobileCopyright } from '@/features/home/ui/mobile/MobileCopyright';
 import type { ProductGalleryImage, ProductModifierChoice } from '@/features/products/types';
 import type { ProductInfoCardLabels } from '@/features/products/ui/ProductInfoCard';
 import {
@@ -54,9 +55,8 @@ type MobileProductDetailProps = {
   emphasizePhoto?: boolean;
   labels: MobileLabels;
   relatedSlot?: ReactNode;
+  copyrightText: string;
 };
-
-const SHEET_PAD_BOTTOM_PX = NAV_DOCK_HEIGHT_PX + 72;
 const MODIFIER_CHIP = 'bg-[rgba(255,107,0,0.09)]';
 
 /**
@@ -86,6 +86,7 @@ export function MobileProductDetail(props: MobileProductDetailProps) {
     emphasizePhoto = false,
     labels,
     relatedSlot,
+    copyrightText,
   } = props;
   const galleryRef = useRef<HTMLDivElement>(null);
   const state = useProductConfigurator({
@@ -115,7 +116,7 @@ export function MobileProductDetail(props: MobileProductDetailProps) {
   return (
     <div
       className={`${MOBILE_STOREFRONT_SHELL} pideh-pdp-mobile overflow-x-clip bg-[#ff6b00]`}
-      style={{ paddingBottom: SHEET_PAD_BOTTOM_PX }}
+      style={{ paddingBottom: MOBILE_COPYRIGHT_NAV_CLEARANCE_PX }}
     >
       <div className={MOBILE_STOREFRONT_COLUMN}>
       <MobileProductHero
@@ -235,6 +236,7 @@ export function MobileProductDetail(props: MobileProductDetailProps) {
         />
       </MobileProductSheet>
       {relatedSlot ? <div className="px-4 pb-6">{relatedSlot}</div> : null}
+      <MobileCopyright className="mt-10" text={copyrightText} />
       </div>
     </div>
   );
