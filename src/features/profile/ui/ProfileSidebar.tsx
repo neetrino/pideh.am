@@ -15,7 +15,7 @@ export function ProfileSidebar({ locale, user, dictionary }: ProfileSidebarProps
 
   return (
     <aside
-      className="flex h-full max-h-full min-h-0 w-full flex-col overflow-hidden rounded-[28px] border border-[#ff6b00]/15 bg-[#fff8e7]"
+      className="flex w-full flex-col overflow-hidden rounded-[28px] border border-[#ff6b00]/15 bg-[#fff8e7]"
       aria-label={dictionary.title}
     >
       <div className="relative shrink-0 overflow-hidden border-b border-[#ff6b00]/12 p-5">

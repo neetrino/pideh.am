@@ -928,6 +928,8 @@ input[type="checkbox"]:disabled {
 
   .profile-desktop-sidebar.profile-sticky-band {
     z-index: 30;
+    height: auto;
+    max-height: none;
   }
 
   .profile-desktop-content {
