@@ -41,6 +41,11 @@ export function OrderDetailsDrawerTotals({
           <span className="font-medium text-gray-900">{shippingLabel}</span>
         </div>
 
+        <div className="flex items-center justify-between gap-4">
+          <span className="text-gray-600">{d.method}</span>
+          <span className="font-medium text-gray-900">{detail.paymentMethod}</span>
+        </div>
+
         {!isGroup && detail.discountAmount > 0 ? (
           <div className="flex items-center justify-between gap-4">
             <span className="text-gray-600">{couponRowLabel}</span>
