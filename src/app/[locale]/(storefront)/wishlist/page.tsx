@@ -65,7 +65,7 @@ export default async function WishlistPage({ params }: WishlistPageProps) {
 
     return (
       <section>
-        <WishlistHeading title={title} />
+        <WishlistHeading title={title} count={0} />
         <RevealOnView variants={fadeUp} delay={0.12} className="mt-8">
           <WishlistEmptyState
             title={copy.signInTitle}

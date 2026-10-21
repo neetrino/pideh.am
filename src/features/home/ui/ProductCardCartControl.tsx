@@ -41,7 +41,7 @@ function useCardQuantity(
   maxQuantity: number,
   inStock: boolean,
   onQuantityChange?: (quantity: number) => void,
-): { quantity: number; commit: (next: number) => void } {
+): { quantity: number; commit: (next: number, origin?: HTMLElement) => void } {
   const [quantity, setQuantity] = useState(initialQuantity);
   const quantityRef = useRef(initialQuantity);
   const requestRef = useRef(0);
@@ -164,7 +164,7 @@ export function ProductCardCartControl({
     decreaseLabel: labels.decreaseQuantity,
     increaseLabel: labels.increaseQuantity,
     onDecrease: () => commit(quantity - 1),
-    onIncrease: (origin) => commit(quantity + 1, origin),
+    onIncrease: (origin: HTMLElement) => commit(quantity + 1, origin),
   };
 
   return variant === 'compact' ? <CompactStepper {...stepperProps} /> : <PillStepper {...stepperProps} />;

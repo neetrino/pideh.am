@@ -51,16 +51,19 @@ export function HomeCategoriesOrbit({ items, spin, arcStyle }: HomeCategoriesOrb
           return null;
         }
 
-        return {
+        const view: OrbitRiderView = {
           key: `orbit-rider-${seat.riderId}`,
           src: item.imageUrl,
           title: item.title,
-          href: item.href,
           pose,
           poseIndex: seat.poseIndex,
         };
+        if (item.href) {
+          view.href = item.href;
+        }
+        return view;
       })
-      .filter((rider): rider is OrbitRiderView => rider != null);
+      .filter((rider): rider is OrbitRiderView => rider !== null);
   }, [items, spin]);
 
   return (

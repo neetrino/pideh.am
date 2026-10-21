@@ -29,7 +29,7 @@ export function TimeField({ value, onChange, disabled = false, ariaLabel, classN
   return (
     <SelectDropdown
       ariaLabel={ariaLabel}
-      value={options.some((item) => item.value === normalized) ? normalized : TIMES[0].value}
+      value={options.some((item) => item.value === normalized) ? normalized : (TIMES[0]?.value ?? normalized)}
       options={options}
       disabled={disabled}
       deferChange={false}

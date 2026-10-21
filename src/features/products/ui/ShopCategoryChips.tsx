@@ -119,6 +119,8 @@ function CategoryChip({ href, label, icon, active, tone }: CategoryChipProps) {
       className={`${BASE_CHIP} ${style.chip}`}
     >
       {icon.plain && !active ? (
+        // Decorative category mark; the link name is the visible label.
+        // eslint-disable-next-line @next/next/no-img-element
         <img
           src={icon.src}
           alt=""
