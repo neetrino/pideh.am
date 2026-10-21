@@ -46,9 +46,9 @@ export function CustomerOrdersTable({
   }
 
   return (
-    <ul className="flex flex-col gap-3">
+    <ul className="grid grid-cols-1 gap-3 md:grid-cols-3">
       {orders.map((order) => (
-        <li key={order.id}>
+        <li key={order.id} className="h-full">
           <OrderCard
             order={order}
             locale={locale}
@@ -85,7 +85,7 @@ function OrderCard({
     <button
       type="button"
       onClick={onOpen}
-      className="w-full rounded-[22px] border border-[#1e1e1e]/10 bg-white p-4 text-left shadow-[0_8px_24px_rgba(31,20,8,0.06)]"
+      className="flex h-full w-full flex-col rounded-[22px] border border-[#1e1e1e]/10 bg-white p-4 text-left shadow-[0_8px_24px_rgba(31,20,8,0.06)]"
     >
       <div className="flex items-start justify-between gap-3">
         <p className="font-display min-w-0 text-[1.35rem] leading-none text-[#1e1e1e] uppercase">
@@ -107,7 +107,7 @@ function OrderCard({
           </span>
         ) : null}
       </div>
-      <div className="mt-4 flex items-center gap-3">
+      <div className="mt-auto flex items-center gap-3 pt-4">
         <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-[#1e1e1e] text-white">
           <Calendar className="size-5" aria-hidden="true" />
         </span>

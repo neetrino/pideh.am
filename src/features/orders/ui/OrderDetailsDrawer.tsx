@@ -172,7 +172,7 @@ function OrderMetaPill({
 }) {
   return (
     <span
-      className="inline-flex items-center gap-1.5 rounded-full bg-[#fff4cc] px-3 py-1.5 text-sm font-bold text-[#8a5a20]"
+      className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-[#fff4cc] px-3 py-1.5 text-sm font-bold whitespace-nowrap text-[#8a5a20]"
       aria-label={ariaLabel}
     >
       <Icon className="size-4 shrink-0" aria-hidden />
