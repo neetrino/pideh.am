@@ -115,7 +115,7 @@ export function MobileBottomNav({
     <nav
       aria-label={dictionary.nav.navigation}
       data-node-id="268:525"
-      className="mobile-bottom-nav pointer-events-none fixed inset-x-0 bottom-0 z-50 overflow-visible md:hidden"
+      className="mobile-bottom-nav pointer-events-none fixed inset-x-0 bottom-0 z-50 overflow-x-clip md:hidden"
     >
       <div className="pointer-events-auto w-full overflow-visible pb-[max(0.2rem,env(safe-area-inset-bottom))]">
         <MobileFrame440 height={NAV_DOCK_HEIGHT_PX} className="overflow-visible">

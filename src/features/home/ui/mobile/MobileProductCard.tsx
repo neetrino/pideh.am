@@ -125,7 +125,8 @@ export function MobileProductCard({
 
       <p
         data-node-id="260:520"
-        className="font-noto-armenian line-clamp-3 h-12 w-full shrink-0 overflow-hidden text-sm leading-[1.14] text-[#6b6b6b]"
+        className="font-noto-armenian line-clamp-3 h-[3.42em] w-full shrink-0 overflow-hidden text-sm leading-[1.14] break-words text-[#6b6b6b]"
+        style={{ display: '-webkit-box', WebkitBoxOrient: 'vertical', WebkitLineClamp: 3 }}
       >
         {summary || '\u00A0'}
       </p>
