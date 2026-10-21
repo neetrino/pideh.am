@@ -482,10 +482,10 @@ body:has([role='dialog'][aria-modal='true'], [role='alertdialog'][aria-modal='tr
 
   /*
    * The launcher iframe is pinned to the full viewport, so `bottom` does not
-   * move the bubble. Shift it up to the profile icon, not the raised home button.
+   * move the bubble. Sit it above the profile icon, clear of the raised home button.
    */
   #tidio-chat-iframe {
-    transform: translateY(calc(-1 * (108px * 100vw / 440 + env(safe-area-inset-bottom, 0px)))) !important;
+    transform: translateY(calc(-1 * (168px * 100vw / 440 + env(safe-area-inset-bottom, 0px)))) !important;
   }
 
   /* Phone + iPad portrait: dock clearance lives under the copyright line. */
