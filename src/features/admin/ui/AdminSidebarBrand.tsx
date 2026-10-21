@@ -17,13 +17,13 @@ export function AdminSidebarBrand({ locale, shell }: AdminSidebarBrandProps) {
   return (
     <div
       className={`relative z-10 flex shrink-0 border-b border-white/15 bg-black/20 pb-3 pt-2 backdrop-blur-md ${
-        collapsed ? 'flex-col items-center gap-2 px-1' : 'items-center justify-center px-2'
+        collapsed ? 'flex-col items-center gap-2 px-1' : 'items-center justify-start pl-3 pr-12'
       }`}
     >
       {collapsed ? (
         <Link
           href={`/${locale}`}
-          className="flex h-9 w-10 items-center justify-center rounded-lg hover:bg-white/10"
+          className="flex h-9 w-10 items-center justify-center"
           title={shell.brandHomeTitle}
         >
           <AdminBrandLogo alt={shell.brandName} size="collapsed" />
@@ -31,7 +31,7 @@ export function AdminSidebarBrand({ locale, shell }: AdminSidebarBrandProps) {
       ) : (
         <Link
           href={`/${locale}`}
-          className="flex items-center justify-center rounded-lg px-2 py-1 hover:bg-white/10"
+          className="flex items-center justify-start py-1"
           title={shell.brandHomeTitle}
         >
           <AdminBrandLogo alt={shell.brandName} size="sidebar" />
