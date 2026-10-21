@@ -361,6 +361,7 @@
     }
   },
   "products": {
+    "title": "Ապրանքներ",
     "addNewProduct": "Ավելացնել նոր ապրանք",
     "filters": {
       "totalProducts": "Ընդամենը ապրանքներ՝ {total}",
@@ -373,8 +374,8 @@
       "filterByCategory": "Զտել ըստ կատեգորիայի",
       "filterByCategoryAria": "Զտել ըստ կատեգորիայի",
       "allCategories": "Բոլոր կատեգորիաները",
-      "filterByStock": "Զտել ըստ պահեստի",
-      "filterByStockAria": "Զտել ըստ պահեստի",
+      "filterByStock": "Զտել ըստ ակտիվության",
+      "filterByStockAria": "Զտել ըստ ակտիվության",
       "allProducts": "Բոլոր ապրանքները",
       "inStock": "Առկա է",
       "outOfStock": "Առկա չէ",
@@ -384,7 +385,7 @@
       "allStatuses": "Բոլոր կարգավիճակները",
       "statusActive": "Միացված",
       "statusInactive": "Անջատված",
-      "statusDraft": "Stop product",
+      "statusDraft": "Stopped Products",
       "statusLowRemaining": "Քիչ է մնացել"
     },
     "table": {

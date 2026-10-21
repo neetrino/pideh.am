@@ -24,6 +24,7 @@ export type OrbitPideImageRow = {
 export type OrbitPidePhoto = {
   url: string;
   title: string;
+  slug: string;
 };
 
 function photoTitle(row: OrbitPideImageRow): string {
@@ -50,7 +51,7 @@ export function resolveOrbitPidePhotos(rows: readonly OrbitPideImageRow[]): Orbi
     if (used.has(row.url)) {
       return;
     }
-    photos.push({ url: row.url, title: photoTitle(row) });
+    photos.push({ url: row.url, title: photoTitle(row), slug: row.slug });
     used.add(row.url);
   };
 

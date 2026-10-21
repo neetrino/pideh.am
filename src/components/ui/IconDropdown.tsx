@@ -2,7 +2,7 @@
 
 import { useEffect, useId, useRef, useState } from 'react';
 
-import { DROPDOWN_ANIMATION_MS } from '@/components/ui/SelectDropdown';
+import { alignPanelToViewport, DROPDOWN_ANIMATION_MS } from '@/components/ui/SelectDropdown';
 
 const HOVER_CLOSE_DELAY_MS = 140;
 
@@ -37,6 +37,7 @@ export function IconDropdown({
   const [open, setOpen] = useState(false);
   const [elevated, setElevated] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
   const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const menuId = useId();
 
@@ -71,6 +72,25 @@ export function IconDropdown({
     }
     const timer = setTimeout(() => setElevated(false), DROPDOWN_ANIMATION_MS);
     return () => clearTimeout(timer);
+  }, [open]);
+
+  useEffect(() => {
+    if (!open) return;
+    const anchor = rootRef.current;
+    const panel = panelRef.current;
+    if (!anchor || !panel) return;
+
+    function place(): void {
+      if (anchor && panel) alignPanelToViewport(anchor, panel);
+    }
+
+    place();
+    const frame = requestAnimationFrame(place);
+    window.addEventListener('resize', place);
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener('resize', place);
+    };
   }, [open]);
 
   useEffect(() => {
@@ -119,7 +139,8 @@ export function IconDropdown({
       </button>
 
       <div
-        className={`absolute right-0 z-[220] grid w-max max-w-[min(100vw-2rem,20rem)] min-w-0 transition-[grid-template-rows,opacity,transform] ease-[cubic-bezier(0.22,1,0.36,1)] ${placementOpen} ${placementGap} ${
+        ref={panelRef}
+        className={`absolute left-0 z-[220] grid w-max max-w-[min(100vw-2rem,20rem)] min-w-0 transition-[grid-template-rows,opacity,transform] ease-[cubic-bezier(0.22,1,0.36,1)] ${placementOpen} ${placementGap} ${
           open
             ? 'translate-y-0 grid-rows-[1fr] opacity-100'
             : `pointer-events-none grid-rows-[0fr] opacity-0 ${placementClosedTransform}`

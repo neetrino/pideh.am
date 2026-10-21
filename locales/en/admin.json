@@ -361,6 +361,7 @@
     }
   },
   "products": {
+    "title": "Products",
     "addNewProduct": "Add New Product",
     "filters": {
       "totalProducts": "Total products: {total}",
@@ -384,7 +385,7 @@
       "allStatuses": "All statuses",
       "statusActive": "Enabled",
       "statusInactive": "Disabled",
-      "statusDraft": "Stop product",
+      "statusDraft": "Stopped Products",
       "statusLowRemaining": "Few left"
     },
     "table": {

@@ -3,6 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState, useTransition } from 'react';
 import { Button } from '@/components/ui/Button';
+import { DateField } from '@/components/ui/DateField';
 import { SelectDropdown } from '@/components/ui/SelectDropdown';
 import { SideSheet } from '@/components/ui/SideSheet';
 import { AdminLocaleTabs } from '@/features/admin/ui/AdminLocaleTabs';
@@ -282,11 +283,11 @@ export function BlogPostDrawer({ locale, open, onClose, post = null, copy }: Blo
             <div className="space-y-4">
               <label className="block">
                 <span className={ADMIN_LABEL}>{copy.blog.drawer.publicationDate}</span>
-                <input
-                  type="date"
+                <DateField
+                  locale={locale}
                   value={publishedAt}
-                  onChange={(event) => setPublishedAt(event.target.value)}
-                  className={ADMIN_INPUT}
+                  onChange={setPublishedAt}
+                  placeholder={copy.blog.drawer.publicationDate}
                   disabled={isPending}
                 />
                 <span className="mt-1 block text-xs text-gray-500">

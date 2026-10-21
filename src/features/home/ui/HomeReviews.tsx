@@ -23,7 +23,10 @@ const WAVE_CREST_RATIO = 168.425 / 1507.5;
  */
 export function HomeReviews({ title, reviews }: HomeReviewsProps) {
   return (
-    <section className="relative z-[15] bg-[#ff6b00] pb-32 lg:pb-44">
+    <section
+      className="relative z-[15] bg-[#ff6b00] pb-32 lg:pb-44"
+      style={{ clipPath: `inset(-${WAVE_OVERHANG_PX}px 0 0 0)` }}
+    >
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-x-0 z-0 w-full"

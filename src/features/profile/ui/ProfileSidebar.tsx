@@ -15,7 +15,7 @@ export function ProfileSidebar({ locale, user, dictionary }: ProfileSidebarProps
 
   return (
     <aside
-      className="flex w-full flex-col overflow-hidden rounded-[28px] border border-[#ff6b00]/15 bg-[#fff8e7] shadow-[0_14px_32px_rgba(30,30,30,0.08)] lg:h-full lg:min-h-0"
+      className="flex w-full flex-col overflow-hidden rounded-[28px] border border-[#ff6b00]/15 bg-[#fff8e7]"
       aria-label={dictionary.title}
     >
       <div className="relative shrink-0 overflow-hidden border-b border-[#ff6b00]/12 p-5">
@@ -39,13 +39,13 @@ export function ProfileSidebar({ locale, user, dictionary }: ProfileSidebarProps
             </p>
             <p className="text-xs font-bold tracking-wide text-[#1e1e1e]/60">{user.lastName}</p>
           </div>
-          <div className="w-full rounded-2xl bg-white/85 px-3.5 py-2.5 text-left text-xs font-medium break-words text-[#1e1e1e]/75 sm:text-sm">
+          <div className="w-max max-w-full rounded-2xl bg-white/85 px-3.5 py-2.5 text-left text-xs font-medium whitespace-nowrap text-[#1e1e1e]/75 sm:text-sm">
             {user.email}
           </div>
         </div>
       </div>
 
-      <div className="profile-sidebar-scroll min-h-0 flex-1 overflow-y-auto overscroll-contain">
+      <div className="profile-sidebar-scroll flex min-h-0 flex-1 flex-col">
         <ProfileSidebarNav
           locale={locale}
           dictionary={dictionary}

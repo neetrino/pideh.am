@@ -1,12 +1,13 @@
 'use client';
 
+import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useRef, useState, type FormEvent } from 'react';
 
 import { AppLink } from '@/components/ui/AppLink';
+import { GroupOrderBannerSlot } from '@/features/group-orders/ui/GroupOrderBannerSlot';
 import {
-  MOBILE_ORBIT_MOVE_MS,
   MobileCategoryOrbit,
   mobileActiveCategoryTitle,
 } from '@/features/home/ui/mobile/MobileCategoryOrbit';
@@ -69,14 +70,64 @@ export function MobileHomeHero({
   viewAllLabel,
 }: MobileHomeHeroProps) {
   const router = useRouter();
+  const reduceMotion = useReducedMotion();
   const searchInputRef = useRef<HTMLInputElement>(null);
+  const bannerSlotRef = useRef<HTMLDivElement>(null);
+  const headingRef = useRef<HTMLHeadingElement>(null);
+  const viewAllRef = useRef<HTMLDivElement>(null);
   const productsHref = `/${locale}/products`;
   const [searchQuery, setSearchQuery] = useState('');
   const [spin, setSpin] = useState(0);
-  const [orbitBusy, setOrbitBusy] = useState(false);
-  const unlockTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const orbitBusyRef = useRef(false);
-  orbitBusyRef.current = orbitBusy;
+
+  useEffect(() => {
+    const slot = bannerSlotRef.current;
+    const heading = headingRef.current;
+    const viewAll = viewAllRef.current;
+    if (!slot || !heading || !viewAll) return;
+
+    const headingTop = 432;
+    const viewAllTop = 505;
+    const bannerTop = 440;
+    const gap = 16;
+
+    function apply(): void {
+      const card = slot?.firstElementChild;
+      const bannerHeight =
+        card instanceof HTMLElement ? card.offsetHeight : (slot?.offsetHeight ?? 0);
+      const shift = bannerHeight > 0 ? bannerHeight + gap + (bannerTop - headingTop) : 0;
+      heading?.style.setProperty('top', `${headingTop + shift}px`);
+      viewAll?.style.setProperty('top', `${viewAllTop + shift}px`);
+
+      const spacer = slot?.closest('[data-mobile-frame]')?.querySelector<HTMLElement>(
+        '[data-mobile-frame-spacer]',
+      );
+      if (!spacer) return;
+      const base = Number(spacer.dataset.frameHeight);
+      if (!Number.isFinite(base) || base <= 0) return;
+      const scale = spacer.clientWidth / 440;
+      spacer.style.height = `${(base + shift) * (scale > 0 ? scale : 1)}px`;
+      const canvas = spacer.firstElementChild;
+      if (canvas instanceof HTMLElement) {
+        canvas.style.height = `${base + shift}px`;
+      }
+    }
+
+    apply();
+    const resizeObserver = new ResizeObserver(apply);
+    resizeObserver.observe(slot);
+    const mutationObserver = new MutationObserver(() => {
+      apply();
+      const card = slot.firstElementChild;
+      if (card instanceof HTMLElement) resizeObserver.observe(card);
+    });
+    mutationObserver.observe(slot, { childList: true, subtree: true });
+    window.addEventListener('resize', apply);
+    return () => {
+      resizeObserver.disconnect();
+      mutationObserver.disconnect();
+      window.removeEventListener('resize', apply);
+    };
+  }, []);
 
   const orbitCategories = useMemo(
     () => buildMobileOrbitCategories(categories, arcTitles, pideLabel, productsHref),
@@ -84,31 +135,10 @@ export function MobileHomeHero({
   );
 
   const step = useCallback((delta: number) => {
-    if (orbitBusyRef.current) {
-      return;
-    }
-    orbitBusyRef.current = true;
-    setOrbitBusy(true);
     setSpin((current) => current + delta);
-    if (unlockTimerRef.current) {
-      clearTimeout(unlockTimerRef.current);
-    }
-    unlockTimerRef.current = setTimeout(() => {
-      orbitBusyRef.current = false;
-      setOrbitBusy(false);
-      unlockTimerRef.current = null;
-    }, MOBILE_ORBIT_MOVE_MS);
   }, []);
 
   const { handlers: orbitSwipeHandlers } = useOrbitSwipe(step);
-
-  useEffect(() => {
-    return () => {
-      if (unlockTimerRef.current) {
-        clearTimeout(unlockTimerRef.current);
-      }
-    };
-  }, []);
 
   const activeLabel = mobileActiveCategoryTitle(spin, orbitCategories);
 
@@ -165,11 +195,18 @@ export function MobileHomeHero({
         data-node-id="260:466"
         className="pointer-events-none absolute top-[271px] left-[calc(50%-45px)] z-20 size-[90px] overflow-hidden rounded-full bg-[#ffd54a]"
       >
-        <p
-          className={`absolute inset-x-2 bottom-[7px] z-40 overflow-hidden text-center font-medium text-ellipsis whitespace-nowrap text-[#ff6b00] ${activeCategoryLabelClass(activeLabel)}`}
-        >
-          {activeLabel}
-        </p>
+        <AnimatePresence mode="popLayout" initial={false}>
+          <motion.p
+            key={activeLabel}
+            className={`absolute inset-x-2 bottom-[7px] z-40 overflow-hidden text-center font-medium text-ellipsis whitespace-nowrap text-[#ff6b00] ${activeCategoryLabelClass(activeLabel)}`}
+            initial={reduceMotion ? false : { opacity: 0, y: -16 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={reduceMotion ? undefined : { opacity: 0, y: 14 }}
+            transition={{ duration: reduceMotion ? 0.12 : 0.65, ease: [0.22, 1, 0.36, 1] }}
+          >
+            {activeLabel}
+          </motion.p>
+        </AnimatePresence>
       </div>
 
       {/* Drag/swipe anywhere below search (arrows and view-all stay on top). */}
@@ -191,8 +228,7 @@ export function MobileHomeHero({
         <button
           type="button"
           aria-label={prevLabel}
-          disabled={orbitBusy}
-          className="relative size-[51px] touch-manipulation transition active:scale-95 disabled:pointer-events-none disabled:opacity-70"
+          className="relative size-[51px] touch-manipulation transition active:scale-95"
           onClick={() => step(-1)}
         >
           <Image
@@ -206,8 +242,7 @@ export function MobileHomeHero({
         <button
           type="button"
           aria-label={nextLabel}
-          disabled={orbitBusy}
-          className="relative size-[51px] touch-manipulation transition active:scale-95 disabled:pointer-events-none disabled:opacity-70"
+          className="relative size-[51px] touch-manipulation transition active:scale-95"
           onClick={() => step(1)}
         >
           <Image
@@ -220,27 +255,37 @@ export function MobileHomeHero({
         </button>
       </div>
 
+      <GroupOrderBannerSlot
+        ref={bannerSlotRef}
+        className="absolute top-[440px] left-4 z-50 w-[408px]"
+      />
+
       {/* Featured title — 260:492 */}
-      <h2 className="font-display absolute top-[432px] left-[calc(50%-203px)] z-20 h-[130px] w-[290px] text-[50px] leading-[0.84] text-white">
+      <h2
+        ref={headingRef}
+        className="font-display absolute top-[432px] left-[calc(50%-203px)] z-20 h-[130px] w-[290px] text-[50px] leading-[0.84] text-white"
+      >
         <span className="mb-0 block">{titleLine1}</span>
         <span className="block">{titleLine2}</span>
       </h2>
 
       {/* View-all — 260:548 */}
-      <AppLink
-        href={viewAllHref}
-        prefetchPolicy="intent"
-        aria-label={viewAllLabel}
-        className="absolute top-[505px] left-[358px] z-40 flex items-center gap-1 overflow-hidden rounded-[42px] bg-[#ffd54a] px-6 py-4"
-      >
-        <Image
-          src={MOBILE_HOME_ASSETS.viewAllArrow}
-          alt=""
-          width={20}
-          height={20}
-          className="size-5"
-        />
-      </AppLink>
+      <div ref={viewAllRef} className="absolute top-[505px] left-[358px] z-40">
+        <AppLink
+          href={viewAllHref}
+          prefetchPolicy="intent"
+          aria-label={viewAllLabel}
+          className="flex items-center gap-1 overflow-hidden rounded-[42px] bg-[#ffd54a] px-6 py-4"
+        >
+          <Image
+            src={MOBILE_HOME_ASSETS.viewAllArrow}
+            alt=""
+            width={20}
+            height={20}
+            className="size-5"
+          />
+        </AppLink>
+      </div>
     </>
   );
 }

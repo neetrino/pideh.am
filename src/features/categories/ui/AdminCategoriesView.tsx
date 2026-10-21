@@ -197,7 +197,7 @@ export function AdminCategoriesView({ locale, categories, copy }: AdminCategorie
                     aria-label={copy.categories.reorderAria}
                   />
                   <th className={ADMIN_TABLE_TH}>{copy.categories.image}</th>
-                  <th className={ADMIN_TABLE_TH}>{copy.categories.categoryTitle}</th>
+                  <th className={ADMIN_TABLE_TH_CENTER}>{copy.categories.categoryTitle}</th>
                   <th className={ADMIN_TABLE_TH}>{copy.categories.category}</th>
                   <th className={ADMIN_TABLE_TH_CENTER}>{copy.common.actions}</th>
                 </tr>
@@ -266,7 +266,7 @@ export function AdminCategoriesView({ locale, categories, copy }: AdminCategorie
                           )}
                         </div>
                       </td>
-                      <td className={ADMIN_TABLE_TD}>
+                      <td className={ADMIN_TABLE_TD_CENTER}>
                         <p className="font-medium text-gray-900">{category.title}</p>
                       </td>
                       <td className={ADMIN_TABLE_TD}>

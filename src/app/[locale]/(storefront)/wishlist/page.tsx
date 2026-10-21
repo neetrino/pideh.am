@@ -23,24 +23,24 @@ type WishlistPageProps = {
 
 function WishlistHeading({
   title,
-  subtitle,
+  count,
 }: {
   title: string;
-  subtitle?: string;
+  count: number;
 }) {
   return (
-    <>
-      <RevealOnView variants={titleSweep}>
-        <h1 className="font-display mt-5 text-[clamp(2.75rem,7vw,4.25rem)] leading-[0.95] text-[#ff6b00]">
+    <RevealOnView variants={titleSweep}>
+      <div className="mt-5 flex items-center justify-between gap-3">
+        <h1 className="font-display text-[clamp(2.75rem,7vw,4.25rem)] leading-[0.95] text-[#ff6b00]">
           {title}
         </h1>
-      </RevealOnView>
-      {subtitle ? (
-        <RevealOnView variants={fadeUp} delay={0.12}>
-          <p className="font-noto-armenian mt-2 text-sm text-[#6b6b6b]">{subtitle}</p>
-        </RevealOnView>
-      ) : null}
-    </>
+        {count > 0 ? (
+          <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-[#ff6b00] text-sm font-bold text-white">
+            {count}
+          </span>
+        ) : null}
+      </div>
+    </RevealOnView>
   );
 }
 
@@ -65,7 +65,7 @@ export default async function WishlistPage({ params }: WishlistPageProps) {
 
     return (
       <section>
-        <WishlistHeading title={title} />
+        <WishlistHeading title={title} count={0} />
         <RevealOnView variants={fadeUp} delay={0.12} className="mt-8">
           <WishlistEmptyState
             title={copy.signInTitle}
@@ -93,15 +93,9 @@ export default async function WishlistPage({ params }: WishlistPageProps) {
     };
   });
 
-  const countLabel =
-    priced.length === 1 ? copy.countOne : copy.countMany.replace('{count}', String(priced.length));
-
   return (
     <section>
-      <WishlistHeading
-        title={title}
-        subtitle={priced.length > 0 ? countLabel : undefined}
-      />
+      <WishlistHeading title={title} count={priced.length} />
 
       <div className="mt-8">
         {priced.length === 0 ? (
@@ -138,7 +132,7 @@ export default async function WishlistPage({ params }: WishlistPageProps) {
             </div>
             <div className={STOREFRONT_DESKTOP_ONLY}>
               <StaggerGroup
-                className="grid grid-cols-1 justify-items-stretch gap-[13px] overflow-visible sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+                className="grid grid-cols-1 justify-items-stretch gap-[13px] overflow-visible sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 [&_.pideh-product-card]:shadow-none"
                 stagger={0.08}
                 delayChildren={0.04}
               >

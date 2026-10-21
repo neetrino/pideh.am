@@ -50,7 +50,7 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
     getStoreIdentity(),
     getGroupOrderCheckoutUiFlags(),
   ]);
-  const [defaultAddress, prices, orderProducts, bonusAvailableBalance] = await Promise.all([
+  const [defaultAddress, prices, bonusAvailableBalance] = await Promise.all([
     user ? getDefaultShippingAddress(user.id) : Promise.resolve(null),
     resolveProductPrices(
       items.map(({ product }) => ({
@@ -59,9 +59,18 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
         compareAtAmount: product.compareAtAmount,
       })),
     ),
-    getCheckoutOrderProducts(rawLocale, items),
     user ? getUserBonusBalance(user.id) : Promise.resolve(null),
   ]);
+  const orderProducts = await getCheckoutOrderProducts(
+    rawLocale,
+    items,
+    new Map(
+      items.map(({ product }) => [
+        product.id,
+        prices.get(product.id)?.unitAmount ?? product.priceAmount,
+      ]),
+    ),
+  );
   const subtotal = items.reduce((sum, { item, product, modifiers }) => {
     const base = prices.get(product.id)?.unitAmount ?? product.priceAmount;
     return sum + item.quantity * cartLineUnitAmount(base, modifiers);
@@ -126,6 +135,8 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
         itemsOne: copy.itemsOne,
         itemsMany: copy.itemsMany,
         removeItem: copy.removeItem,
+        previousItems: copy.previousItems,
+        nextItems: copy.nextItems,
         contactInformation: copy.contactInformation,
         shippingMethod: copy.shippingMethod,
         shippingAddress: copy.shippingAddress,

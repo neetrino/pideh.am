@@ -50,7 +50,7 @@ export function ProductInfoCard({
   }
 
   return (
-    <div className="flex w-full flex-col gap-2.5 rounded-[30px] bg-[#fff8f0] pt-[13px] pr-6 pb-6 pl-[30px]">
+    <div className="flex w-full flex-col gap-2.5 rounded-[30px] bg-[#fff8f0] pt-6 pr-6 pb-6 pl-[30px]">
       <div className="flex items-start justify-between gap-4">
         <h1 className="font-display text-[clamp(2.25rem,5vw,3.125rem)] leading-[1.25] text-[#1e1e1e]">
           {title}
@@ -108,13 +108,15 @@ export function ProductInfoCard({
         error={state.error}
       />
 
-      <ProductSpecialRequestsField
-        label={labels.specialRequests}
-        placeholder={labels.specialRequestsPlaceholder}
-        value={state.customerNote}
-        disabled={state.disabled}
-        onChange={state.setCustomerNote}
-      />
+      <div className="mt-4">
+        <ProductSpecialRequestsField
+          label={labels.specialRequests}
+          placeholder={labels.specialRequestsPlaceholder}
+          value={state.customerNote}
+          disabled={state.disabled}
+          onChange={state.setCustomerNote}
+        />
+      </div>
     </div>
   );
 }

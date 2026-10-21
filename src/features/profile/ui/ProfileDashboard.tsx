@@ -1,17 +1,21 @@
 'use client';
 
+import { Calendar } from 'lucide-react';
+
 import { AppLink } from '@/components/ui/AppLink';
 import { fadeUp } from '@/components/motion/presets';
 import { StaggerGroup, StaggerItem } from '@/components/motion/StaggerGroup';
-import { formatYerevanDateTime } from '@/features/delivery/domain/delivery-schedule';
-import { orderDrawerStatusLabel } from '@/features/orders/ui/order-drawer-format';
+import { orderStatusBadgeClass } from '@/features/admin/ui/status-badge';
+import {
+  formatOrderDrawerMoney,
+  orderDrawerStatusLabel,
+} from '@/features/orders/ui/order-drawer-format';
 import { ProfilePageHeading } from '@/features/profile/ui/ProfilePageHeading';
 import { ProfileStatCard } from '@/features/profile/ui/ProfileStatCard';
-import { PROFILE_LIST_CARD, PROFILE_PANEL } from '@/features/profile/ui/profile-ui-classes';
+import { PROFILE_PANEL } from '@/features/profile/ui/profile-ui-classes';
 import type { ProfileRecentOrder } from '@/features/profile/application/dashboard-queries';
 import type { Dictionary } from '@/lib/i18n/get-dictionary';
 import type { Locale } from '@/lib/i18n/config';
-import { formatMoneyAmount } from '@/lib/money/format';
 
 type ProfileDashboardProps = {
   locale: Locale;
@@ -75,13 +79,16 @@ export function ProfileDashboard({
             {dictionary.noOrders}
           </p>
         ) : (
-          <ul className="flex flex-col gap-3">
+          <ul className="grid grid-cols-1 gap-3 md:grid-cols-3">
             {recentOrders.map((order) => (
-              <li key={order.id}>
+              <li key={order.id} className="h-full">
                 <RecentOrderCard
                   locale={locale}
                   order={order}
                   orderNumberLabel={dictionary.orderNumber}
+                  itemsOneLabel={dictionary.orderItemsOne}
+                  itemsManyLabel={dictionary.orderItemsMany}
+                  placedLabel={dictionary.orderPlaced}
                   statusLabel={orderDrawerStatusLabel(order.status, statusLabels)}
                 />
               </li>
@@ -97,35 +104,70 @@ function RecentOrderCard({
   locale,
   order,
   orderNumberLabel,
+  itemsOneLabel,
+  itemsManyLabel,
+  placedLabel,
   statusLabel,
 }: {
   locale: Locale;
   order: ProfileRecentOrder;
   orderNumberLabel: string;
+  itemsOneLabel: string;
+  itemsManyLabel: string;
+  placedLabel: string;
   statusLabel: string;
 }) {
+  const itemsLabel =
+    order.itemCount === 1
+      ? itemsOneLabel
+      : itemsManyLabel.replace('{count}', String(order.itemCount));
+  const placed = placedLabel.replace('{date}', formatPlacedDate(order.placedAt, locale));
+
   return (
     <AppLink
       href={`/${locale}/profile/orders?order=${encodeURIComponent(order.orderNumber)}`}
       prefetchPolicy="intent"
-      className={`${PROFILE_LIST_CARD} flex items-center justify-between gap-3 transition hover:bg-[#fff8e7]`}
+      className="flex h-full flex-col rounded-[22px] border border-[#1e1e1e]/10 bg-white p-4 text-left shadow-[0_8px_24px_rgba(31,20,8,0.06)] transition hover:bg-[#fff8e7]"
     >
-      <span className="min-w-0">
-        <span className="block font-bold text-[#1e1e1e]">
+      <span className="flex items-start justify-between gap-3">
+        <span className="font-display min-w-0 text-[1.35rem] leading-none text-[#1e1e1e] uppercase">
           {orderNumberLabel} {order.orderNumber}
         </span>
-        <span className="mt-1 block text-sm text-[#1e1e1e]/55">
-          {formatYerevanDateTime(order.placedAt)}
-        </span>
-      </span>
-      <span className="flex shrink-0 flex-col items-end gap-1.5">
-        <span className="rounded-full bg-[#fff8e7] px-2.5 py-1 text-xs font-bold text-[#ff6b00]">
+        <span
+          className={`shrink-0 rounded-full px-3 py-1 text-xs font-bold ${orderStatusBadgeClass(order.status)}`}
+        >
           {statusLabel}
         </span>
-        <span className="text-sm font-bold text-[#1e1e1e]">
-          {formatMoneyAmount(order.totalAmount, 'AMD', locale)}
+      </span>
+      <span className="mt-3 flex items-center justify-between gap-3">
+        <span className="text-[1.65rem] leading-none font-extrabold text-[#1e1e1e]">
+          {formatOrderDrawerMoney(order.totalAmount, order.baseCurrency)}
+        </span>
+        {order.bonusEarnedAmount > 0 ? (
+          <span className="rounded-full bg-[#ff6b00] px-2.5 py-1 text-sm font-bold text-white">
+            +{formatOrderDrawerMoney(order.bonusEarnedAmount, order.baseCurrency)}
+          </span>
+        ) : null}
+      </span>
+      <span className="mt-auto flex items-center gap-3 pt-4">
+        <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-[#1e1e1e] text-white">
+          <Calendar className="size-5" aria-hidden="true" />
+        </span>
+        <span className="min-w-0">
+          <span className="block text-sm font-bold text-[#1e1e1e]">{itemsLabel}</span>
+          <span className="block text-sm text-[#1e1e1e]/55">{placed}</span>
         </span>
       </span>
     </AppLink>
   );
+}
+
+function formatPlacedDate(value: Date, locale: string): string {
+  const tag = locale === 'hy' ? 'hy-AM' : locale === 'ru' ? 'ru-RU' : 'en-US';
+  return new Intl.DateTimeFormat(tag, {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+    timeZone: 'Asia/Yerevan',
+  }).format(value);
 }

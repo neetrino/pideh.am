@@ -9,6 +9,8 @@ export type MobileGridProduct = {
   description?: string | null;
   priceFormatted: string;
   imageUrl: string | null;
+  /** Shawarma photos sit a little larger and tilted, like the pide shots. */
+  tiltPhoto?: boolean;
   inStock: boolean;
   inWishlist?: boolean;
   cartQuantity?: number;
@@ -58,6 +60,7 @@ export function MobileProductGrid({
                 description={product.description}
                 priceFormatted={product.priceFormatted}
                 imageUrl={product.imageUrl}
+                tiltPhoto={product.tiltPhoto}
                 inStock={product.inStock}
                 priority={index < priorityCount}
                 locale={locale}

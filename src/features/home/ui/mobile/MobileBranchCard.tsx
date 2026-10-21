@@ -31,7 +31,7 @@ export function MobileBranchCard({ address, phoneHref, contactLabel }: MobileBra
         alt=""
         width={173}
         height={181}
-        className="pointer-events-none absolute top-[-10px] left-[-27px] z-[1] h-[181px] w-[173px] shrink-0 object-cover"
+        className="pointer-events-none absolute top-[-22px] left-[-14px] z-[1] h-[181px] w-[173px] shrink-0 object-cover"
       />
 
       <a

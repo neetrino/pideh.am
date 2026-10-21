@@ -49,6 +49,8 @@ export function CheckoutPaymentMethods({
           const selected = value === option.id && !unavailable;
           const logos = option.logos.filter((src) => !logoErrors[src]);
           const showFallback = logos.length === 0;
+          const labelAboveLogos = option.id === 'arca';
+          const framelessIcon = option.id === 'cash_on_delivery' || option.id === 'terminal';
 
           return (
             <div key={option.id} className="space-y-3">
@@ -71,7 +73,13 @@ export function CheckoutPaymentMethods({
                 className="mr-3 accent-[#ff6b00] disabled:cursor-not-allowed"
                 disabled={disabled || unavailable}
               />
-              <div className="flex flex-1 items-center gap-3">
+              <div
+                className={`flex flex-1 ${
+                  labelAboveLogos
+                    ? 'flex-col items-start gap-1.5 sm:flex-row sm:items-center sm:gap-3'
+                    : 'items-center gap-3'
+                }`}
+              >
                 {showFallback ? (
                   <div className="relative flex h-12 w-12 flex-shrink-0 items-center justify-center overflow-hidden rounded-xl border border-[#ff6b00]/15 bg-white">
                     <svg
@@ -94,13 +102,17 @@ export function CheckoutPaymentMethods({
                     {logos.map((src) => (
                       <span
                         key={src}
-                        className="flex h-11 w-11 items-center justify-center overflow-hidden rounded-xl border border-[#ff6b00]/15 bg-white"
+                        className={
+                          framelessIcon
+                            ? 'flex h-12 w-12 items-center justify-center'
+                            : 'flex h-11 w-11 items-center justify-center overflow-hidden rounded-xl border border-[#ff6b00]/15 bg-white'
+                        }
                       >
                         {/* eslint-disable-next-line @next/next/no-img-element -- payment logos */}
                         <img
                           src={src}
                           alt=""
-                          className="h-full w-full object-contain p-1"
+                          className={framelessIcon ? 'h-full w-full object-contain' : 'h-full w-full object-contain p-1'}
                           loading="lazy"
                           onError={() => setLogoErrors((prev) => ({ ...prev, [src]: true }))}
                         />
@@ -108,7 +120,7 @@ export function CheckoutPaymentMethods({
                     ))}
                   </div>
                 )}
-                <div className="min-w-0 flex-1">
+                <div className={`min-w-0 flex-1 ${labelAboveLogos ? 'order-first sm:order-none' : ''}`}>
                   <div className="font-bold leading-tight text-[#1e1e1e]">{option.name}</div>
                   {option.id === 'terminal' ? (
                     <div className="mt-0.5 text-sm leading-snug text-[#1e1e1e]/60">

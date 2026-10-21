@@ -4,7 +4,8 @@ import { Calendar } from 'lucide-react';
 import { useEffect, useId, useLayoutEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 
-import { ADMIN_INPUT, ADMIN_LABEL } from '@/features/admin/ui/admin-form-classes';
+import { DateTimeField } from '@/components/ui/DateTimeField';
+import { ADMIN_LABEL } from '@/features/admin/ui/admin-form-classes';
 import type {
   ProductDiscountDraft,
   ProductDiscountType,
@@ -12,6 +13,7 @@ import type {
 import type { Dictionary } from '@/lib/i18n/get-dictionary';
 
 type ProductDrawerDiscountProps = {
+  locale: string;
   value: ProductDiscountDraft | null;
   disabled?: boolean;
   onChange: (next: ProductDiscountDraft | null) => void;
@@ -66,6 +68,7 @@ function schedulePanelStyle(anchor: DOMRect): AnchoredStyle {
 }
 
 export function ProductDrawerDiscount({
+  locale,
   value,
   disabled = false,
   onChange,
@@ -186,32 +189,34 @@ export function ProductDrawerDiscount({
               <span className="mb-1 block text-xs font-bold tracking-wide text-[#ff6b00] uppercase">
                 {copy.starts}
               </span>
-              <input
-                type="datetime-local"
+              <DateTimeField
+                locale={locale}
                 disabled={disabled}
                 value={toLocalInput(startsAt)}
-                onChange={(event) => {
-                  const next = fromLocalInput(event.target.value);
+                placeholder={copy.starts}
+                timeLabel={copy.starts}
+                onChange={(nextValue) => {
+                  const next = fromLocalInput(nextValue);
                   setStartsAt(next);
                   emit(type, amount, next, endsAt);
                 }}
-                className={ADMIN_INPUT}
               />
             </label>
             <label className="block">
               <span className="mb-1 block text-xs font-bold tracking-wide text-[#ff6b00] uppercase">
                 {copy.ends}
               </span>
-              <input
-                type="datetime-local"
+              <DateTimeField
+                locale={locale}
                 disabled={disabled}
                 value={toLocalInput(endsAt)}
-                onChange={(event) => {
-                  const next = fromLocalInput(event.target.value);
+                placeholder={copy.ends}
+                timeLabel={copy.ends}
+                onChange={(nextValue) => {
+                  const next = fromLocalInput(nextValue);
                   setEndsAt(next);
                   emit(type, amount, startsAt, next);
                 }}
-                className={ADMIN_INPUT}
               />
             </label>
             {hasSchedule ? (

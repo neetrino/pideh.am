@@ -16,7 +16,9 @@ import {
   ADMIN_TABLE_STATE_INSET,
   ADMIN_TABLE_TBODY,
   ADMIN_TABLE_TD,
+  ADMIN_TABLE_TD_CENTER,
   ADMIN_TABLE_TH,
+  ADMIN_TABLE_TH_CENTER,
   ADMIN_TABLE_THEAD,
 } from '@/features/admin/ui/admin-table-classes';
 import {
@@ -92,11 +94,11 @@ export function AdminGiftCardsView({ locale, cards, presets, copy }: AdminGiftCa
             <thead className={ADMIN_TABLE_THEAD}>
               <tr>
                 <th className={ADMIN_TABLE_TH}>{copy.giftCards.table.code}</th>
-                <th className={ADMIN_TABLE_TH}>{copy.giftCards.table.balance}</th>
-                <th className={ADMIN_TABLE_TH}>{copy.giftCards.table.status}</th>
-                <th className={ADMIN_TABLE_TH}>{copy.giftCards.table.recipient}</th>
-                <th className={ADMIN_TABLE_TH}>{copy.giftCards.table.purchaser}</th>
-                <th className={ADMIN_TABLE_TH}>{copy.common.actions}</th>
+                <th className={ADMIN_TABLE_TH_CENTER}>{copy.giftCards.table.balance}</th>
+                <th className={ADMIN_TABLE_TH_CENTER}>{copy.giftCards.table.status}</th>
+                <th className={ADMIN_TABLE_TH_CENTER}>{copy.giftCards.table.recipient}</th>
+                <th className={ADMIN_TABLE_TH_CENTER}>{copy.giftCards.table.purchaser}</th>
+                <th className={ADMIN_TABLE_TH_CENTER}>{copy.common.actions}</th>
               </tr>
             </thead>
             <tbody className={ADMIN_TABLE_TBODY}>
@@ -119,7 +121,7 @@ export function AdminGiftCardsView({ locale, cards, presets, copy }: AdminGiftCa
                         </Link>
                       </span>
                     </td>
-                    <td className={ADMIN_TABLE_TD}>
+                    <td className={ADMIN_TABLE_TD_CENTER}>
                       {formatMoneyAmount(card.balanceAmount, 'AMD', locale)}
                       {card.balanceAmount !== card.initialAmount ? (
                         <span className="block text-xs text-gray-500">
@@ -127,19 +129,19 @@ export function AdminGiftCardsView({ locale, cards, presets, copy }: AdminGiftCa
                         </span>
                       ) : null}
                     </td>
-                    <td className={ADMIN_TABLE_TD}>
+                    <td className={ADMIN_TABLE_TD_CENTER}>
                       {copy.giftCards.statuses[card.status] ?? card.status}
                     </td>
-                    <td className={ADMIN_TABLE_TD}>
+                    <td className={ADMIN_TABLE_TD_CENTER}>
                       <div className="text-sm">{card.recipientName}</div>
                       <div className="text-xs text-gray-500">{card.recipientEmail}</div>
                     </td>
-                    <td className={ADMIN_TABLE_TD}>
+                    <td className={ADMIN_TABLE_TD_CENTER}>
                       <div className="text-sm">{card.purchaserName}</div>
                       <div className="text-xs text-gray-500">{card.purchaserEmail ?? '—'}</div>
                     </td>
-                    <td className={ADMIN_TABLE_TD}>
-                      <div className="flex flex-wrap gap-1">
+                    <td className={ADMIN_TABLE_TD_CENTER}>
+                      <div className="flex flex-wrap items-center justify-center gap-1">
                         <Button
                           type="button"
                           variant="secondary"

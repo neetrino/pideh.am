@@ -69,7 +69,7 @@ export function HomeProductCard({
       transition={PRODUCT_CARD_SPRING}
       whileTap={reduceMotion ? undefined : PRODUCT_CARD_TAP}
     >
-      <article className="pideh-product-card relative flex h-full w-full flex-col items-start gap-[11px] overflow-visible rounded-[26px] bg-white px-4 pt-[27px] pb-4 shadow-[0px_12px_14px_rgba(31,20,8,0.11)]">
+      <article className="pideh-product-card relative flex h-full w-full flex-col items-start gap-[11px] overflow-visible rounded-[26px] bg-white px-4 pt-[27px] pb-4 shadow-none min-[1200px]:shadow-[0px_12px_14px_rgba(31,20,8,0.11)]">
         <AppLink
           href={href}
           prefetchPolicy={priority ? "intent" : "auto"}
@@ -110,8 +110,8 @@ export function HomeProductCard({
           {summary || "\u00A0"}
         </p>
 
-        <div className="relative z-10 mt-auto flex w-full flex-col gap-[11px]">
-          <div className="flex h-[26px] w-full shrink-0 items-baseline gap-2 overflow-hidden">
+        <div className="relative z-10 mt-auto flex w-full items-center justify-between gap-3 pt-4">
+          <div className="flex min-w-0 shrink items-baseline gap-2 overflow-hidden">
             <p className="text-[21px] leading-[1.25] font-extrabold text-[#1e1e1e]">
               {priceFormatted}
             </p>
@@ -126,7 +126,7 @@ export function HomeProductCard({
             <p className="text-sm font-semibold text-red-600">{outOfStockLabel}</p>
           ) : null}
 
-          <div className="w-full" onPointerDown={stopCardPress}>
+          <div className="shrink-0" onPointerDown={stopCardPress}>
             <ProductCardCartControl
               productId={productId}
               locale={locale}

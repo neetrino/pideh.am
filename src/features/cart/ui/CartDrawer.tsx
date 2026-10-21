@@ -6,7 +6,7 @@ import { ShoppingCart } from 'lucide-react';
 
 import { SideSheet } from '@/components/ui/SideSheet';
 import { removeItem, updateQuantity } from '@/features/cart/cart';
-import type { CartDrawerBundle } from '@/features/cart/get-cart-drawer-view';
+import type { CartDrawerBundle, CartDrawerView } from '@/features/cart/get-cart-drawer-view';
 import {
   loadCartDrawerViewAction,
   setCartOrderModeAction,
@@ -42,11 +42,26 @@ type CartDrawerProps = {
   renderTrigger?: (args: CartDrawerTriggerArgs) => React.ReactNode;
 };
 
-function formatItemCount(count: number, labels: Dictionary['cartDrawer']): string {
-  if (count === 1) {
-    return labels.itemsOne;
-  }
-  return labels.itemsMany.replace('{count}', String(count));
+function patchBundleQuantity(
+  bundle: CartDrawerBundle | null,
+  source: CartDrawerView['source'],
+  itemId: string,
+  quantity: number,
+): CartDrawerBundle | null {
+  if (!bundle) return bundle;
+  const current = source === 'group' ? bundle.group : bundle.personal;
+  if (!current) return bundle;
+  const items = current.items.flatMap((item) => {
+    if (item.id !== itemId) return [item];
+    if (quantity < 1) return [];
+    return [{ ...item, quantity }];
+  });
+  const nextView: CartDrawerView = {
+    ...current,
+    items,
+    itemCount: items.reduce((sum, item) => sum + item.quantity, 0),
+  };
+  return source === 'group' ? { ...bundle, group: nextView } : { ...bundle, personal: nextView };
 }
 
 export function CartDrawer({
@@ -62,6 +77,7 @@ export function CartDrawer({
   const [orderMode, setOrderMode] = useState<'group' | 'personal'>('group');
   const [loadingView, setLoadingView] = useState(false);
   const [pending, startTransition] = useTransition();
+  const quantityRequestRef = useRef(0);
   const { count: cartCount, adding: cartAdding } = useCartBadge(itemCount);
   const syncedItemCountRef = useRef(cartCount);
   const labels = dictionary.cartDrawer;
@@ -141,22 +157,39 @@ export function CartDrawer({
   }
 
   function changeQuantity(itemId: string, quantity: number): void {
-    startTransition(async () => {
-      if (view?.source === 'group' && view.groupInviteToken) {
-        const result = await updateGroupOrderItemQuantityAction({
-          inviteToken: view.groupInviteToken,
-          itemId,
-          quantity: Math.max(0, quantity),
-        });
-        if (!result.ok) {
-          alertIfSpendLimitExceeded(locale, result);
-          return;
+    const nextQty = Math.max(0, quantity);
+    const source = view?.source;
+    const inviteToken = view?.groupInviteToken ?? null;
+    if (!source) return;
+
+    setBundle((current) => patchBundleQuantity(current, source, itemId, nextQty));
+    const requestId = ++quantityRequestRef.current;
+    window.setTimeout(() => {
+      void (async () => {
+        try {
+          if (source === 'group' && inviteToken) {
+            const result = await updateGroupOrderItemQuantityAction({
+              inviteToken,
+              itemId,
+              quantity: nextQty,
+            });
+            if (!result.ok) {
+              if (quantityRequestRef.current !== requestId) return;
+              alertIfSpendLimitExceeded(locale, result);
+              applyBundle(await loadCartDrawerViewAction(locale, currency));
+              return;
+            }
+          } else {
+            await updateQuantity(itemId, nextQty);
+          }
+          if (quantityRequestRef.current !== requestId) return;
+          applyBundle(await loadCartDrawerViewAction(locale, currency));
+        } catch {
+          if (quantityRequestRef.current !== requestId) return;
+          applyBundle(await loadCartDrawerViewAction(locale, currency));
         }
-      } else {
-        await updateQuantity(itemId, quantity);
-      }
-      applyBundle(await loadCartDrawerViewAction(locale, currency));
-    });
+      })();
+    }, 0);
   }
 
   function removeCartItem(itemId: string): void {
@@ -186,9 +219,16 @@ export function CartDrawer({
         backdropBlur
       >
         <div className="border-b border-[#ff6b00]/15 px-6 py-5">
-          <h2 className="font-display text-3xl leading-[0.9] text-[#1e1e1e] uppercase">
-            {labels.title}
-          </h2>
+          <div className="flex items-center justify-between gap-3">
+            <h2 className="font-display text-3xl leading-[0.9] text-[#1e1e1e] uppercase">
+              {labels.title}
+            </h2>
+            {hasItems ? (
+              <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-[#ff6b00] text-sm font-bold text-white">
+                {badgeCount}
+              </span>
+            ) : null}
+          </div>
           {bundle?.group ? (
             <CartOrderModeSwitch
               mode={orderMode === 'group' ? 'group' : 'personal'}
@@ -199,15 +239,10 @@ export function CartDrawer({
               onChange={chooseOrderMode}
             />
           ) : null}
-          {hasItems ? (
-            <p className="mt-2 text-sm text-[#1e1e1e]/55">{formatItemCount(badgeCount, labels)}</p>
-          ) : null}
         </div>
 
         <div
-          className={`min-h-0 flex-1 overflow-y-auto overscroll-contain px-5 py-4 ${
-            pending || loadingView ? 'opacity-70' : ''
-          }`}
+          className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-5 py-4"
         >
           {loadingView && !view ? (
             <div className="space-y-3">
@@ -228,9 +263,10 @@ export function CartDrawer({
               removeLabel={labels.removeItem}
               decreaseLabel={labels.decreaseQuantity}
               increaseLabel={labels.increaseQuantity}
-              pending={pending}
+              pending={false}
               onQuantity={changeQuantity}
               onRemove={removeCartItem}
+              onOpenProduct={closeDrawer}
             />
           )}
         </div>

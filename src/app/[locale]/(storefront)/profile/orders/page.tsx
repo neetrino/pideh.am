@@ -147,7 +147,7 @@ function OrderKindTabs({
   return (
     <nav
       aria-label={ariaLabel}
-      className="flex w-full items-center justify-between gap-2 rounded-full border border-[#1e1e1e]/10 bg-white p-1"
+      className="flex w-full items-center justify-between gap-1 rounded-full border border-[#1e1e1e]/10 bg-white p-1 md:w-fit md:justify-start"
     >
       {tabs.map((tab) => {
         const active = kind === tab.id;

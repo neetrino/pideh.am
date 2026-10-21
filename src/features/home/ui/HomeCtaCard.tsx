@@ -192,7 +192,13 @@ export function HomeCtaCard({
           >
             {/* Decorative SVG — next/image not used for this asset */}
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={dot.src} alt="" className="block size-full max-w-none" />
+            <img
+              src={dot.src}
+              alt=""
+              loading="lazy"
+              decoding="async"
+              className="block size-full max-w-none"
+            />
           </motion.div>
         ))}
       </div>

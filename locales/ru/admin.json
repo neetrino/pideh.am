@@ -361,6 +361,7 @@
     }
   },
   "products": {
+    "title": "Товары",
     "addNewProduct": "Добавить новый товар",
     "filters": {
       "totalProducts": "Всего товаров: {total}",
@@ -384,7 +385,7 @@
       "allStatuses": "Все статусы",
       "statusActive": "Включён",
       "statusInactive": "Выключен",
-      "statusDraft": "Stop product",
+      "statusDraft": "Stopped Products",
       "statusLowRemaining": "Мало осталось"
     },
     "table": {

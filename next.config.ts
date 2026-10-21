@@ -72,6 +72,9 @@ const r2PublicBase = (process.env.R2_PUBLIC_BASE_URL || process.env.R2_PUBLIC_UR
 );
 
 const nextConfig: NextConfig = {
+  // Phone opens the dev server by LAN IP. Without this, Next blocks dev
+  // resources and the page renders without client JS.
+  allowedDevOrigins: ['192.168.15.204'],
   turbopack: {
     root: projectRoot,
   },

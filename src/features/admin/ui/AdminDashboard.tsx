@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { ClipboardList, Plus, Settings, UserRound, type LucideIcon } from 'lucide-react';
 
 import { fadeUp } from '@/components/motion/presets';
 import { StaggerGroup, StaggerItem } from '@/components/motion/StaggerGroup';
@@ -59,23 +60,32 @@ const QUICK_ACTION_DEFS = [
     href: 'products/new',
     titleKey: 'addProduct' as const,
     subtitleKey: 'addProductSubtitle' as const,
+    icon: Plus,
   },
   {
     href: 'orders',
     titleKey: 'manageOrders' as const,
     subtitleKey: 'manageOrdersSubtitle' as const,
+    icon: ClipboardList,
   },
   {
     href: 'users',
     titleKey: 'manageUsers' as const,
     subtitleKey: 'manageUsersSubtitle' as const,
+    icon: UserRound,
   },
   {
     href: 'settings',
     titleKey: 'settings' as const,
     subtitleKey: 'settingsSubtitle' as const,
+    icon: Settings,
   },
-] as const;
+] as const satisfies ReadonlyArray<{
+  href: string;
+  titleKey: 'addProduct' | 'manageOrders' | 'manageUsers' | 'settings';
+  subtitleKey: 'addProductSubtitle' | 'manageOrdersSubtitle' | 'manageUsersSubtitle' | 'settingsSubtitle';
+  icon: LucideIcon;
+}>;
 
 export function AdminDashboard({
   locale,
@@ -185,10 +195,10 @@ export function AdminDashboard({
               className="flex items-center gap-3 rounded-2xl border-2 border-[#1e1e1e] bg-[#fff8e7] px-4 py-4 transition hover:bg-[#ffd54a]"
             >
               <span
-                className="flex h-10 w-10 items-center justify-center rounded-full bg-[#ff6b00] text-lg font-bold text-white"
+                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#ff6b00] text-white"
                 aria-hidden
               >
-                →
+                <action.icon className="h-5 w-5" strokeWidth={2.25} />
               </span>
               <div className="text-left">
                 <p className="font-bold text-[#1e1e1e]">{dash[action.titleKey]}</p>

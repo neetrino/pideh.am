@@ -67,7 +67,7 @@ async function loadOrbitPideImageRows(locale: Locale): Promise<OrbitPideImageRow
 export async function listOrbitPidePhotos(locale: Locale): Promise<OrbitPidePhoto[]> {
   return unstable_cache(
     async () => resolveOrbitPidePhotos(await loadOrbitPideImageRows(locale)),
-    ['orbit-pide-photos-v1', locale],
+    ['orbit-pide-photos-v2', locale],
     {
       tags: [CACHE_TAGS.products],
       revalidate: PUBLIC_CACHE_REVALIDATE_SECONDS,

@@ -1,6 +1,6 @@
 'use client';
 
-import { useActionState } from 'react';
+import { useActionState, useEffect, useRef } from 'react';
 
 import { AppLink } from '@/components/ui/AppLink';
 import { type AuthActionState } from '@/features/auth/login-action';
@@ -17,37 +17,96 @@ type RegisterFormProps = {
   dictionary: Dictionary['auth'];
 };
 
+function fieldClass(invalid: boolean): string {
+  return invalid ? `${AUTH_INPUT_CLASS} border-red-500` : AUTH_INPUT_CLASS;
+}
+
 export function RegisterForm({ locale, dictionary }: RegisterFormProps) {
   const action = registerAction.bind(null, locale);
   const [state, formAction, isPending] = useActionState(action, initialState);
+  const values = state.values;
+  const invalidField = state.field;
+  const revision = state.revision ?? 0;
+  const formRef = useRef<HTMLFormElement>(null);
+
+  useEffect(() => {
+    const form = formRef.current;
+    if (!form || !values || revision === 0) {
+      return;
+    }
+
+    for (const [name, value] of Object.entries(values)) {
+      const element = form.elements.namedItem(name);
+      if (element instanceof HTMLInputElement) {
+        element.value = value;
+      }
+    }
+
+    if (!invalidField) {
+      return;
+    }
+
+    const invalid = form.elements.namedItem(invalidField);
+    if (invalid instanceof HTMLInputElement) {
+      invalid.focus();
+    }
+  }, [invalidField, revision, values]);
 
   return (
-    <form action={formAction} className="flex flex-col gap-5">
+    <form ref={formRef} action={formAction} className="flex flex-col gap-5">
       <div className="grid grid-cols-1 gap-5 min-[28rem]:grid-cols-2">
         <label className={AUTH_LABEL_CLASS}>
           {dictionary.firstName}
-          <input required name="firstName" autoComplete="given-name" className={AUTH_INPUT_CLASS} />
+          <input
+            key={`firstName-${revision}`}
+            required
+            name="firstName"
+            autoComplete="given-name"
+            defaultValue={values?.firstName ?? ''}
+            aria-invalid={invalidField === 'firstName'}
+            className={fieldClass(invalidField === 'firstName')}
+          />
         </label>
         <label className={AUTH_LABEL_CLASS}>
           {dictionary.lastName}
-          <input required name="lastName" autoComplete="family-name" className={AUTH_INPUT_CLASS} />
+          <input
+            key={`lastName-${revision}`}
+            required
+            name="lastName"
+            autoComplete="family-name"
+            defaultValue={values?.lastName ?? ''}
+            aria-invalid={invalidField === 'lastName'}
+            className={fieldClass(invalidField === 'lastName')}
+          />
         </label>
       </div>
 
       <label className={AUTH_LABEL_CLASS}>
         {dictionary.email}
         <input
+          key={`email-${revision}`}
           required
           name="email"
           type="email"
           autoComplete="email"
-          className={AUTH_INPUT_CLASS}
+          defaultValue={values?.email ?? ''}
+          aria-invalid={invalidField === 'email'}
+          className={fieldClass(invalidField === 'email')}
         />
       </label>
 
       <label className={AUTH_LABEL_CLASS}>
         {dictionary.phone}
-        <input required name="phone" type="tel" autoComplete="tel" className={AUTH_INPUT_CLASS} />
+        <input
+          key={`phone-${revision}`}
+          required
+          name="phone"
+          type="tel"
+          autoComplete="tel"
+          defaultValue={values?.phone ?? ''}
+          aria-invalid={invalidField === 'phone'}
+          className={fieldClass(invalidField === 'phone')}
+        />
       </label>
 
       <PasswordField
@@ -57,6 +116,9 @@ export function RegisterForm({ locale, dictionary }: RegisterFormProps) {
         hidePasswordLabel={dictionary.hidePassword}
         autoComplete="new-password"
         variant="brand"
+        defaultValue={values?.password ?? ''}
+        invalid={invalidField === 'password'}
+        inputKey={`password-${revision}`}
       />
 
       <PasswordField
@@ -66,6 +128,9 @@ export function RegisterForm({ locale, dictionary }: RegisterFormProps) {
         hidePasswordLabel={dictionary.hidePassword}
         autoComplete="new-password"
         variant="brand"
+        defaultValue={values?.confirmPassword ?? ''}
+        invalid={invalidField === 'confirmPassword'}
+        inputKey={`confirmPassword-${revision}`}
       />
 
       {state.error ? (

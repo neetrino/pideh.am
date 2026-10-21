@@ -76,10 +76,10 @@ export function AdminMenuDrawer({ locale, pathname, shell, nav }: AdminMenuDrawe
       >
         <AdminSidebarBackdrop />
         <div id="admin-menu-drawer-panel" className="relative z-10 flex min-h-0 flex-1 flex-col">
-          <div className="flex justify-center border-b border-white/10 px-4 py-4">
+          <div className="flex justify-start border-b border-white/10 px-4 py-4">
             <Link
               href={`/${locale}`}
-              className="inline-flex items-center justify-center"
+              className="inline-flex items-center justify-start"
               title={shell.brandHomeTitle}
               onClick={() => setOpen(false)}
             >

@@ -1,10 +1,11 @@
 'use client';
 
 import Image from 'next/image';
-import { useEffect, useRef, useState, useTransition, type MouseEvent, type ReactNode } from 'react';
+import { useEffect, useRef, useState, type MouseEvent, type ReactNode } from 'react';
 
 import { PidehPillButton } from '@/components/brand/PidehPillButton';
 import { beginCartBadgeAdd } from '@/features/cart/ui/cart-badge-count';
+import { flyToCart } from '@/features/cart/ui/fly-to-cart';
 import { setActiveCartProductQuantity } from '@/features/group-orders/application/add-to-active';
 import { alertIfSpendLimitExceeded } from '@/features/group-orders/ui/alert-spend-limit-exceeded';
 import { PIDEH_ASSETS } from '@/features/home/ui/brand-assets';
@@ -24,6 +25,8 @@ type ProductCardCartControlProps = {
   maxQuantity?: number;
   inStock: boolean;
   variant: 'pill' | 'compact';
+  /** Fires as soon as the count changes, before the cart request finishes. */
+  onQuantityChange?: (quantity: number) => void;
 };
 
 function stopPress(event: MouseEvent<HTMLElement>): void {
@@ -37,35 +40,50 @@ function useCardQuantity(
   initialQuantity: number,
   maxQuantity: number,
   inStock: boolean,
-): { quantity: number; pending: boolean; commit: (next: number) => void } {
+  onQuantityChange?: (quantity: number) => void,
+): { quantity: number; commit: (next: number, origin?: HTMLElement) => void } {
   const [quantity, setQuantity] = useState(initialQuantity);
-  const [pending, startTransition] = useTransition();
   const quantityRef = useRef(initialQuantity);
-  const busyRef = useRef(false);
+  const requestRef = useRef(0);
+  const onQuantityChangeRef = useRef(onQuantityChange);
+  onQuantityChangeRef.current = onQuantityChange;
+
+  function paintQuantity(next: number): void {
+    quantityRef.current = next;
+    setQuantity(next);
+    onQuantityChangeRef.current?.(next);
+  }
 
   useEffect(() => {
     quantityRef.current = initialQuantity;
     setQuantity(initialQuantity);
   }, [initialQuantity, productId]);
 
-  function commit(next: number): void {
-    if (busyRef.current || !inStock || next === quantityRef.current) return;
+  function commit(next: number, origin?: HTMLElement): void {
+    if (!inStock || next === quantityRef.current) return;
     if (next < 0 || next > maxQuantity) return;
-    busyRef.current = true;
     const previous = quantityRef.current;
-    quantityRef.current = next;
-    setQuantity(next);
+    if (next > previous) {
+      flyToCart(origin?.closest('article') ?? null);
+    }
+    paintQuantity(next);
     const settle = beginCartBadgeAdd(next - previous);
-    startTransition(async () => {
-      try {
-        await saveQuantity(productId, locale, previous, next, settle, quantityRef, setQuantity);
-      } finally {
-        busyRef.current = false;
-      }
-    });
+    const requestId = ++requestRef.current;
+    // Paint the new count first. The database write can finish later.
+    window.setTimeout(() => {
+      void saveQuantity(
+        productId,
+        locale,
+        previous,
+        next,
+        settle,
+        () => requestRef.current === requestId,
+        paintQuantity,
+      );
+    }, 0);
   }
 
-  return { quantity, pending, commit };
+  return { quantity, commit };
 }
 
 async function saveQuantity(
@@ -74,24 +92,23 @@ async function saveQuantity(
   previous: number,
   next: number,
   settle: (count: number | null) => void,
-  quantityRef: { current: number },
-  setQuantity: (value: number) => void,
+  isLatest: () => boolean,
+  paintQuantity: (quantity: number) => void,
 ): Promise<void> {
   try {
     const result = await setActiveCartProductQuantity(productId, next);
+    if (!isLatest()) return;
     if (!result.ok) {
-      quantityRef.current = previous;
-      setQuantity(previous);
+      paintQuantity(previous);
       settle(null);
       alertIfSpendLimitExceeded(locale, result);
       return;
     }
-    quantityRef.current = result.quantity;
-    setQuantity(result.quantity);
+    paintQuantity(result.quantity);
     settle(result.itemCount);
   } catch {
-    quantityRef.current = previous;
-    setQuantity(previous);
+    if (!isLatest()) return;
+    paintQuantity(previous);
     settle(null);
   }
 }
@@ -108,40 +125,46 @@ export function ProductCardCartControl({
   maxQuantity = 99,
   inStock,
   variant,
+  onQuantityChange,
 }: ProductCardCartControlProps) {
   const labels = QUANTITY_LABELS[locale];
-  const { quantity, pending, commit } = useCardQuantity(
+  const { quantity, commit } = useCardQuantity(
     productId,
     locale,
     initialQuantity,
     maxQuantity,
     inStock,
+    onQuantityChange,
   );
 
   if (quantity < 1) {
     return variant === 'compact' ? (
-      <CompactAdd label={orderLabel} disabled={!inStock || pending} onAdd={() => commit(1)} />
+      <CompactAdd
+        label={orderLabel}
+        disabled={!inStock}
+        onAdd={(origin) => commit(1, origin)}
+      />
     ) : (
       <PidehPillButton
         label={orderLabel}
         onClick={(event) => {
           stopPress(event);
-          commit(1);
+          commit(1, event.currentTarget);
         }}
-        disabled={!inStock || pending}
-        className="w-full"
+        disabled={!inStock}
+        className="shrink-0"
       />
     );
   }
 
   const stepperProps = {
     quantity,
-    pending,
+    pending: false,
     maxQuantity,
     decreaseLabel: labels.decreaseQuantity,
     increaseLabel: labels.increaseQuantity,
     onDecrease: () => commit(quantity - 1),
-    onIncrease: () => commit(quantity + 1),
+    onIncrease: (origin: HTMLElement) => commit(quantity + 1, origin),
   };
 
   return variant === 'compact' ? <CompactStepper {...stepperProps} /> : <PillStepper {...stepperProps} />;
@@ -154,7 +177,7 @@ type StepperProps = {
   decreaseLabel: string;
   increaseLabel: string;
   onDecrease: () => void;
-  onIncrease: () => void;
+  onIncrease: (origin: HTMLElement) => void;
 };
 
 function PillStepper({
@@ -167,8 +190,13 @@ function PillStepper({
   onIncrease,
 }: StepperProps) {
   return (
-    <div className="flex h-[58px] w-full items-center justify-between rounded-[42px] border border-[rgba(255,107,0,0.43)] bg-[#ff6b00] px-2 text-white">
-      <RoundButton label={decreaseLabel} disabled={pending} onClick={onDecrease} tone="ghost">
+    <div className="flex h-[58px] shrink-0 items-center justify-between gap-2 rounded-[42px] border border-[rgba(255,107,0,0.43)] bg-[#ff6b00] px-2 text-white">
+      <RoundButton
+        label={decreaseLabel}
+        disabled={pending}
+        onClick={() => onDecrease()}
+        tone="ghost"
+      >
         <Image src={PIDEH_ASSETS.pdpQtyMinus} alt="" width={14} height={14} className="size-[14px]" />
       </RoundButton>
       <span className="min-w-6 text-center text-base leading-6 font-bold" aria-live="polite">
@@ -188,11 +216,15 @@ function PillStepper({
 
 function CompactStepper(props: StepperProps) {
   return (
-    <div className="relative z-10 flex shrink-0 -translate-y-3 items-center gap-1">
-      <OutlineButton label={props.decreaseLabel} disabled={props.pending} onClick={props.onDecrease}>
+    <div className="relative z-10 flex shrink-0 items-center gap-1">
+      <OutlineButton
+        label={props.decreaseLabel}
+        disabled={props.pending}
+        onClick={() => props.onDecrease()}
+      >
         −
       </OutlineButton>
-      <span className="w-5 text-center text-sm font-bold text-[#1e1e1e]" aria-live="polite">
+      <span className="w-6 text-center text-lg leading-none font-bold text-[#1e1e1e]" aria-live="polite">
         {props.quantity}
       </span>
       <OutlineButton
@@ -213,7 +245,7 @@ function CompactAdd({
 }: {
   label: string;
   disabled: boolean;
-  onAdd: () => void;
+  onAdd: (origin: HTMLElement) => void;
 }) {
   return (
     <button
@@ -222,9 +254,9 @@ function CompactAdd({
       disabled={disabled}
       onClick={(event) => {
         stopPress(event);
-        onAdd();
+        onAdd(event.currentTarget);
       }}
-      className="relative z-10 box-border flex h-[56px] w-[59px] shrink-0 -translate-y-3 items-center justify-center overflow-hidden rounded-[42px] border-0 bg-[#ff6b00] p-0 transition enabled:hover:brightness-105 enabled:active:scale-95 disabled:pointer-events-none disabled:opacity-50"
+      className="relative z-10 box-border flex h-[56px] w-[59px] shrink-0 items-center justify-center overflow-hidden rounded-[42px] border-0 bg-[#ff6b00] p-0 transition enabled:hover:brightness-105 enabled:active:scale-95 disabled:pointer-events-none disabled:opacity-50"
     >
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
@@ -248,7 +280,7 @@ function RoundButton({
 }: {
   label: string;
   disabled: boolean;
-  onClick: () => void;
+  onClick: (origin: HTMLElement) => void;
   tone: 'ghost' | 'solid';
   children: ReactNode;
 }) {
@@ -261,7 +293,7 @@ function RoundButton({
       disabled={disabled}
       onClick={(event) => {
         stopPress(event);
-        onClick();
+        onClick(event.currentTarget);
       }}
       className={`flex size-10 items-center justify-center rounded-full ${toneClass} transition enabled:hover:brightness-105 enabled:active:scale-95 disabled:opacity-40`}
     >
@@ -278,7 +310,7 @@ function OutlineButton({
 }: {
   label: string;
   disabled: boolean;
-  onClick: () => void;
+  onClick: (origin: HTMLElement) => void;
   children: ReactNode;
 }) {
   return (
@@ -288,7 +320,7 @@ function OutlineButton({
       disabled={disabled}
       onClick={(event) => {
         stopPress(event);
-        onClick();
+        onClick(event.currentTarget);
       }}
       className="flex size-9 items-center justify-center rounded-full border border-[#ff6b00] text-lg leading-none font-bold text-[#ff6b00] transition enabled:active:scale-95 disabled:opacity-40"
     >

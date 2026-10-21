@@ -14,7 +14,7 @@ export function HomeYellowWave({ className = '' }: HomeYellowWaveProps) {
   return (
     <div
       aria-hidden="true"
-      className={`pointer-events-none relative w-full ${className}`}
+      className={`pointer-events-none relative w-full max-h-[1225px] ${className}`}
       style={{ aspectRatio: '1507.5 / 1225' }}
     >
       <div className="absolute inset-0">

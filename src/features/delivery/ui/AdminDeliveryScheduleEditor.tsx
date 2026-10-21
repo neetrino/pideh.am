@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 
+import { TimeField } from '@/components/ui/TimeField';
 import { ADMIN_CHECKBOX, ADMIN_INPUT, ADMIN_LABEL } from '@/features/admin/ui/admin-form-classes';
 import { formatCalendarDate } from '@/features/checkout/ui/delivery-slot-calendar';
 import { AdminDateField } from '@/features/delivery/ui/AdminDateField';
@@ -124,7 +125,7 @@ export function AdminDeliveryScheduleEditor({
         <h2 className="text-base font-semibold text-gray-900">{copy.title}</h2>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2">
+      <div className="grid gap-4 sm:grid-cols-2 sm:items-end">
         <label>
           <span className={ADMIN_LABEL}>{copy.slotLength}</span>
           <input
@@ -167,9 +168,9 @@ export function AdminDeliveryScheduleEditor({
           <thead className="bg-gray-50 text-left text-gray-600">
             <tr>
               <th className="px-3 py-2 font-medium">{copy.day}</th>
-              <th className="px-3 py-2 font-medium">{copy.open}</th>
-              <th className="px-3 py-2 font-medium">{copy.from}</th>
-              <th className="px-3 py-2 font-medium">{copy.to}</th>
+              <th className="px-3 py-2 text-center font-medium">{copy.open}</th>
+              <th className="px-3 py-2 text-center font-medium">{copy.from}</th>
+              <th className="px-3 py-2 text-center font-medium">{copy.to}</th>
             </tr>
           </thead>
           <tbody>
@@ -178,41 +179,29 @@ export function AdminDeliveryScheduleEditor({
               return (
                 <tr key={day} className="border-t border-gray-100">
                   <td className="px-3 py-2 font-medium text-gray-900">{weekdayLabels[day]}</td>
-                  <td className="px-3 py-2">
+                  <td className="px-3 py-2 text-center">
                     <input
                       type="checkbox"
                       checked={hours.isOpen}
                       disabled={disabled}
-                      className={ADMIN_CHECKBOX}
+                      className={`${ADMIN_CHECKBOX} mx-auto`}
                       onChange={(event) => updateWeekly(day, { isOpen: event.target.checked })}
                     />
                   </td>
                   <td className="px-3 py-2">
-                    <input
-                      type="time"
+                    <TimeField
+                      ariaLabel={weekdayLabels[day]}
                       value={hours.openTime}
-                      max={hours.closeTime}
                       disabled={disabled || !hours.isOpen}
-                      className={ADMIN_INPUT}
-                      onChange={(event) =>
-                        updateWeekly(day, {
-                          openTime: toHHmm(event.target.value),
-                        })
-                      }
+                      onChange={(next) => updateWeekly(day, { openTime: toHHmm(next) })}
                     />
                   </td>
                   <td className="px-3 py-2">
-                    <input
-                      type="time"
+                    <TimeField
+                      ariaLabel={weekdayLabels[day]}
                       value={hours.closeTime}
-                      min={hours.openTime}
                       disabled={disabled || !hours.isOpen}
-                      className={ADMIN_INPUT}
-                      onChange={(event) =>
-                        updateWeekly(day, {
-                          closeTime: toHHmm(event.target.value),
-                        })
-                      }
+                      onChange={(next) => updateWeekly(day, { closeTime: toHHmm(next) })}
                     />
                   </td>
                 </tr>

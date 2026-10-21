@@ -1,11 +1,7 @@
 import { MapPin } from 'lucide-react';
 
-import { ADMIN_BADGE, paymentStatusBadgeClass } from '@/features/admin/ui/status-badge';
 import type { AdminOrderDetailView } from '@/features/orders/application/order-detail-view';
-import {
-  formatOrderDrawerMoney,
-  formatOrderStatusLabel,
-} from '@/features/orders/ui/order-drawer-format';
+import { formatOrderDrawerMoney } from '@/features/orders/ui/order-drawer-format';
 import type { Dictionary } from '@/lib/i18n/get-dictionary';
 
 type OrderDetailsDrawerShippingProps = {
@@ -43,8 +39,7 @@ export function OrderDetailsDrawerShipping({
   }
 
   return (
-    <div className="grid gap-4 md:grid-cols-2">
-      <section className="rounded-2xl border border-gray-200 px-5 py-4">
+    <section className="rounded-2xl border border-gray-200 px-5 py-4">
         <h3 className="mb-4 text-base font-semibold text-gray-900">{d.shippingAddress}</h3>
         <dl className="space-y-3 text-sm">
           <div className="flex flex-wrap items-center gap-x-2">
@@ -120,31 +115,6 @@ export function OrderDetailsDrawerShipping({
             <p className="text-xs text-gray-500">{detail.addressHint}</p>
           ) : null}
         </dl>
-      </section>
-
-      <section className="rounded-2xl border border-gray-200 px-5 py-4">
-        <h3 className="mb-4 text-base font-semibold text-gray-900">{d.paymentSection}</h3>
-        <dl className="space-y-3 text-sm">
-          <div className="flex flex-wrap items-center gap-x-2">
-            <dt className="text-gray-500">{d.method}</dt>
-            <dd className="font-medium text-gray-900">{detail.paymentMethod}</dd>
-          </div>
-          <div className="flex flex-wrap items-center gap-x-2">
-            <dt className="text-gray-500">{d.amount}</dt>
-            <dd className="font-medium text-gray-900">
-              {formatOrderDrawerMoney(detail.paymentAmount, detail.baseCurrency)}
-            </dd>
-          </div>
-          <div className="flex flex-wrap items-center gap-x-2">
-            <dt className="text-gray-500">{d.paymentStatus}</dt>
-            <dd>
-              <span className={`${ADMIN_BADGE} ${paymentStatusBadgeClass(detail.paymentStatus)}`}>
-                {formatOrderStatusLabel(detail.paymentStatus)}
-              </span>
-            </dd>
-          </div>
-        </dl>
-      </section>
-    </div>
+    </section>
   );
 }

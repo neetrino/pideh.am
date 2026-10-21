@@ -51,6 +51,7 @@ type MobileProductDetailProps = {
   isSignedIn: boolean;
   wishlistLabel: string;
   backLabel: string;
+  emphasizePhoto?: boolean;
   labels: MobileLabels;
   relatedSlot?: ReactNode;
 };
@@ -82,6 +83,7 @@ export function MobileProductDetail(props: MobileProductDetailProps) {
     isSignedIn,
     wishlistLabel,
     backLabel,
+    emphasizePhoto = false,
     labels,
     relatedSlot,
   } = props;
@@ -124,6 +126,7 @@ export function MobileProductDetail(props: MobileProductDetailProps) {
         inStock={!state.disabled}
         outOfStockLabel={labels.outOfStock}
         backLabel={backLabel}
+        emphasizePhoto={emphasizePhoto}
       />
 
       <MobileProductSheet
@@ -170,7 +173,7 @@ export function MobileProductDetail(props: MobileProductDetailProps) {
         }
         footer={
           <>
-            <div className="mt-6">
+            <div className="mt-10">
               <ProductSpecialRequestsField
                 label={labels.specialRequests}
                 placeholder={labels.specialRequestsPlaceholder}
@@ -213,7 +216,7 @@ export function MobileProductDetail(props: MobileProductDetailProps) {
               tone="onCream"
               titleSize="sm"
             />
-            <p className="font-noto-armenian mt-2 text-sm leading-[22.75px] text-[#555]">
+            <p className="font-noto-armenian mt-0.5 text-sm leading-5 text-[#555]">
               {description}
             </p>
           </div>
@@ -225,7 +228,7 @@ export function MobileProductDetail(props: MobileProductDetailProps) {
           additionIds={state.additionIds}
           exceptionIds={state.exceptionIds}
           extraHint={extraHint}
-          disabled={state.disabled || state.pending}
+          disabled={state.disabled}
           labels={labels}
           onToggleAddition={(id) => state.setAdditionIds((cur) => toggleModifierId(cur, id))}
           onToggleException={(id) => state.setExceptionIds((cur) => toggleModifierId(cur, id))}

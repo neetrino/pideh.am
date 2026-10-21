@@ -1,6 +1,6 @@
 'use client';
 
-import type { ReactNode } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { usePathname } from 'next/navigation';
 import {
   Gift,
@@ -33,14 +33,40 @@ type NavItem = {
 
 function navClassName(active: boolean): string {
   const base =
-    'flex w-full items-center gap-3 rounded-xl border-l-[3px] px-3 py-2 text-left text-sm font-medium transition-colors';
+    'relative z-[1] flex w-full items-center gap-3 rounded-xl border-l-[3px] border-transparent px-3 py-2 text-left text-sm font-medium transition-colors';
   return active
-    ? `${base} border-[#ff6b00] bg-white text-[#1e1e1e] shadow-sm`
-    : `${base} border-transparent text-[#1e1e1e]/65 hover:bg-white/70 hover:text-[#1e1e1e]`;
+    ? `${base} text-[#1e1e1e]`
+    : `${base} text-[#1e1e1e]/65 hover:bg-white/70 hover:text-[#1e1e1e]`;
 }
 
 export function ProfileSidebarNav({ locale, dictionary, logoutAction }: ProfileSidebarNavProps) {
   const pathname = usePathname();
+  const navRef = useRef<HTMLElement>(null);
+  const [indicator, setIndicator] = useState<{ top: number; height: number } | null>(null);
+
+  useEffect(() => {
+    const nav = navRef.current;
+    if (!nav) return;
+
+    function measure(): void {
+      const current = navRef.current;
+      const active = current?.querySelector<HTMLElement>('[aria-current="page"]');
+      if (!current || !active) {
+        setIndicator(null);
+        return;
+      }
+      const navBox = current.getBoundingClientRect();
+      const itemBox = active.getBoundingClientRect();
+      setIndicator({
+        top: itemBox.top - navBox.top + current.scrollTop,
+        height: itemBox.height,
+      });
+    }
+
+    measure();
+    window.addEventListener('resize', measure);
+    return () => window.removeEventListener('resize', measure);
+  }, [pathname]);
 
   const items: NavItem[] = [
     {
@@ -87,8 +113,19 @@ export function ProfileSidebarNav({ locale, dictionary, logoutAction }: ProfileS
   ];
 
   return (
-    <div className="p-2 sm:p-3">
-      <nav className="flex flex-col gap-0.5" aria-label={dictionary.title}>
+    <div className="flex min-h-0 flex-1 flex-col p-2 pb-1 sm:p-3 sm:pb-1.5">
+      <nav
+        ref={navRef}
+        className="profile-sidebar-scroll relative flex min-h-0 flex-1 flex-col gap-0.5 overflow-y-auto overscroll-contain"
+        aria-label={dictionary.title}
+      >
+        {indicator ? (
+          <span
+            aria-hidden
+            className="pointer-events-none absolute right-0 left-0 rounded-xl border-l-[3px] border-[#ff6b00] bg-white shadow-sm transition-[transform,height] duration-300 ease-in-out motion-reduce:transition-none"
+            style={{ height: indicator.height, transform: `translateY(${indicator.top}px)` }}
+          />
+        ) : null}
         {items.map((item) => {
           const active = item.exact
             ? pathname === item.href
@@ -103,11 +140,11 @@ export function ProfileSidebarNav({ locale, dictionary, logoutAction }: ProfileS
               aria-current={active ? 'page' : undefined}
             >
               <span
-                className={
+                className={`flex h-8 w-8 items-center justify-center rounded-lg transition-colors duration-300 ${
                   active
-                    ? 'flex h-8 w-8 items-center justify-center rounded-lg bg-[#ff6b00] text-white shadow-sm'
-                    : 'flex h-8 w-8 items-center justify-center rounded-lg bg-white text-[#ff6b00]'
-                }
+                    ? 'bg-[#ff6b00] text-white shadow-sm'
+                    : 'bg-white text-[#ff6b00]'
+                }`}
               >
                 {item.icon}
               </span>
@@ -117,11 +154,11 @@ export function ProfileSidebarNav({ locale, dictionary, logoutAction }: ProfileS
         })}
       </nav>
 
-      <div className="mt-2 border-t border-[#ff6b00]/12 pt-2">
+      <div className="mt-1 shrink-0 border-t border-[#ff6b00]/12 pt-1">
         <form action={logoutAction}>
           <button
             type="submit"
-            className="flex w-full items-center gap-3 rounded-xl border-l-[3px] border-transparent px-3 py-2 text-left text-sm font-medium text-red-600 transition-colors hover:bg-red-50 hover:text-red-700"
+            className="flex w-full items-center gap-3 rounded-xl border-l-[3px] border-transparent px-3 py-1 text-left text-sm font-medium text-red-600 transition-colors hover:bg-red-50 hover:text-red-700"
           >
             <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-red-50 text-red-500">
               <LogOut className="h-4 w-4" />

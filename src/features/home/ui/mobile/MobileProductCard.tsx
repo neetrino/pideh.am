@@ -1,6 +1,7 @@
 'use client';
 
 import Image from 'next/image';
+import { useEffect, useState } from 'react';
 
 import { AppLink } from '@/components/ui/AppLink';
 import { ProductCardCartControl } from '@/features/home/ui/ProductCardCartControl';
@@ -14,6 +15,7 @@ type MobileProductCardProps = {
   description?: string | null;
   priceFormatted: string;
   imageUrl: string | null;
+  tiltPhoto?: boolean;
   inStock: boolean;
   locale: Locale;
   productId: string;
@@ -38,6 +40,7 @@ export function MobileProductCard({
   description,
   priceFormatted,
   imageUrl,
+  tiltPhoto = false,
   inStock,
   locale,
   productId,
@@ -49,12 +52,17 @@ export function MobileProductCard({
   maxQuantity,
   priority = false,
 }: MobileProductCardProps) {
+  const [liveQuantity, setLiveQuantity] = useState(cartQuantity ?? 0);
+
+  useEffect(() => {
+    setLiveQuantity(cartQuantity ?? 0);
+  }, [cartQuantity, productId]);
   const summary = description?.trim() ?? "";
 
   return (
     <article
       data-node-id="260:512"
-      className="relative box-border flex h-[340px] w-[200px] flex-col gap-2 overflow-visible rounded-[26px] bg-white pt-[27px] pr-4 pb-4 pl-3.5 shadow-[0px_12px_14px_rgba(31,20,8,0.11)]"
+      className="relative box-border flex h-[340px] w-[200px] flex-col gap-2 overflow-visible rounded-[26px] bg-white pt-[27px] pr-4 pb-4 pl-3.5 shadow-none"
     >
       <AppLink
         href={href}
@@ -63,7 +71,10 @@ export function MobileProductCard({
         tabIndex={-1}
         className="absolute inset-0 z-[1] rounded-[26px]"
       />
-      <div data-node-id="260:513" className="relative z-20 mx-auto h-[120px] w-[164px] shrink-0">
+      <div
+        data-node-id="260:513"
+        className={`relative z-20 mx-auto shrink-0 ${tiltPhoto ? 'h-[148px] w-[176px]' : 'h-[120px] w-[164px]'}`}
+      >
         <AppLink
           href={href}
           prefetchPolicy={priority ? 'intent' : 'auto'}
@@ -78,7 +89,9 @@ export function MobileProductCard({
                 height={120}
                 sizes="164px"
                 priority={priority}
-                className="size-full object-contain object-center"
+                className={`size-full object-contain object-center${
+                  tiltPhoto ? ' origin-center scale-125 -rotate-[18deg]' : ''
+                }`}
               />
             </span>
           ) : (
@@ -112,30 +125,38 @@ export function MobileProductCard({
 
       <p
         data-node-id="260:520"
-        className="font-noto-armenian line-clamp-3 h-12 w-full shrink-0 overflow-hidden text-sm leading-[1.14] text-[#6b6b6b]"
+        className="font-noto-armenian line-clamp-3 h-[3.42em] w-full shrink-0 overflow-hidden text-sm leading-[1.14] break-words text-[#6b6b6b]"
+        style={{ display: '-webkit-box', WebkitBoxOrient: 'vertical', WebkitLineClamp: 3 }}
       >
         {summary || '\u00A0'}
       </p>
 
       <div
         data-node-id="260:875"
-        className="mt-auto flex h-[56px] w-full shrink-0 items-center gap-2"
+        className={`relative mt-auto w-full shrink-0 transition-[height] duration-200 ease-out ${
+          liveQuantity > 0 ? 'h-[72px]' : 'h-14'
+        }`}
       >
         <p
           data-node-id="260:522"
-          className="font-montserrat-arm min-w-0 flex-1 truncate text-[21px] leading-[1.25] font-extrabold text-[#1e1e1e]"
+          className={`font-montserrat-arm absolute left-0 max-w-[calc(100%-4.5rem)] truncate text-[21px] leading-[1.25] font-extrabold text-[#1e1e1e] transition-[top,transform] duration-200 ease-out ${
+            liveQuantity > 0 ? 'top-0 translate-y-0' : 'top-1/2 -translate-y-1/2'
+          }`}
         >
           {priceFormatted}
         </p>
-        <ProductCardCartControl
-          productId={productId}
-          locale={locale}
-          orderLabel={addLabel}
-          initialQuantity={cartQuantity}
-          maxQuantity={maxQuantity}
-          inStock={inStock}
-          variant="compact"
-        />
+        <div className="absolute right-0 bottom-0">
+          <ProductCardCartControl
+            productId={productId}
+            locale={locale}
+            orderLabel={addLabel}
+            initialQuantity={cartQuantity}
+            maxQuantity={maxQuantity}
+            inStock={inStock}
+            variant="compact"
+            onQuantityChange={setLiveQuantity}
+          />
+        </div>
       </div>
     </article>
   );

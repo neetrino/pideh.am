@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useRef, useState, type FormEvent } from 'react';
 
 import { MOBILE_HOME_ASSETS } from '@/features/home/ui/mobile/mobile-assets';
@@ -22,6 +22,7 @@ type MobileHeaderSearchProps = {
 /**
  * Figma 366:718 + 366:513 — back pill and rounded search field.
  * Submitting lands on the catalog filtered by the typed query.
+ * The back pill is omitted on the home page.
  */
 export function MobileHeaderSearch({
   locale,
@@ -30,8 +31,16 @@ export function MobileHeaderSearch({
   searchPlaceholder,
 }: MobileHeaderSearchProps) {
   const router = useRouter();
+  const pathname = usePathname() ?? `/${locale}`;
   const inputRef = useRef<HTMLInputElement>(null);
   const [query, setQuery] = useState('');
+  const isHome = pathname === `/${locale}` || pathname === `/${locale}/`;
+  const isMenu = pathname === `/${locale}/products`;
+  const showBack = !isHome;
+
+  if (!isHome && !isMenu) {
+    return null;
+  }
 
   function handleSubmit(event: FormEvent<HTMLFormElement>): void {
     event.preventDefault();
@@ -48,20 +57,22 @@ export function MobileHeaderSearch({
 
   return (
     <div className="flex items-center gap-2">
-      <button
-        type="button"
-        aria-label={backLabel}
-        onClick={() => router.back()}
-        className="flex h-[52px] shrink-0 items-center rounded-[42px] bg-[#ffd54a] px-6 transition active:scale-95"
-      >
-        <Image
-          src={MOBILE_HOME_ASSETS.viewAllArrow}
-          alt=""
-          width={20}
-          height={20}
-          className="size-5 rotate-180"
-        />
-      </button>
+      {showBack ? (
+        <button
+          type="button"
+          aria-label={backLabel}
+          onClick={() => router.back()}
+          className="flex h-[52px] shrink-0 items-center rounded-[42px] bg-[#ffd54a] px-6 transition active:scale-95"
+        >
+          <Image
+            src={MOBILE_HOME_ASSETS.viewAllArrow}
+            alt=""
+            width={20}
+            height={20}
+            className="size-5 rotate-180"
+          />
+        </button>
+      ) : null}
 
       <form
         role="search"

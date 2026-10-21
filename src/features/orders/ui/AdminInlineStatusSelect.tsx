@@ -12,14 +12,13 @@ import { changePaymentStatusAction } from '@/features/orders/application/change-
 import type { Dictionary } from '@/lib/i18n/get-dictionary';
 import {
   ADMIN_ORDER_STATUS_OPTIONS,
-  orderStatusLabel,
   type OrderStatus,
 } from '@/features/orders/domain/order-status';
 import {
   ADMIN_PAYMENT_STATUS_OPTIONS,
-  paymentStatusLabel,
   type PaymentStatus,
 } from '@/features/orders/domain/payment-status';
+import { orderDrawerStatusLabel } from '@/features/orders/ui/order-drawer-format';
 
 type MenuPosition = {
   top: number;
@@ -79,8 +78,8 @@ export function AdminInlineStatusSelect({
 
   const options = kind === 'order' ? ADMIN_ORDER_STATUS_OPTIONS : ADMIN_PAYMENT_STATUS_OPTIONS;
 
-  const currentLabel =
-    kind === 'order' ? orderStatusLabel(displayValue) : paymentStatusLabel(displayValue);
+  const statusLabels = copy.orders.statusLabels;
+  const currentLabel = orderDrawerStatusLabel(displayValue, statusLabels);
 
   const badgeClassName =
     kind === 'order' ? orderStatusBadgeClass(displayValue) : paymentStatusBadgeClass(displayValue);
@@ -205,14 +204,14 @@ export function AdminInlineStatusSelect({
               className="overflow-hidden rounded-2xl border border-gray-100 bg-white py-2"
             >
               {options.map((option) => {
+                const label = orderDrawerStatusLabel(option.value, statusLabels);
                 const selected =
                   option.value === displayValue ||
-                  (kind === 'order' && orderStatusLabel(displayValue) === option.label) ||
-                  (kind === 'payment' && paymentStatusLabel(displayValue) === option.label);
+                  orderDrawerStatusLabel(displayValue, statusLabels) === label;
                 return (
                   <SelectDropdownOptionRow
                     key={option.value}
-                    label={option.label}
+                    label={label}
                     selected={selected}
                     onSelect={() => selectStatus(option.value)}
                   />

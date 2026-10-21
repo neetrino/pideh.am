@@ -1,7 +1,7 @@
 'use client';
 
 import { AnimatePresence, LayoutGroup, motion, useReducedMotion } from 'motion/react';
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown, Globe } from 'lucide-react';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useId, useRef, useState, useTransition } from 'react';
 
@@ -32,7 +32,7 @@ type LocaleCurrencySwitcherProps = {
   currency: Currency;
   currencyLabel: string;
   languageLabel: string;
-  /** Figma header 1:113 — locale code + chevron, currency stays in the menu. */
+  /** Navbar pill: globe, locale, currency, chevron. */
   compact?: boolean;
   /** Always-open columns inside the mobile menu, instead of a floating dropdown. */
   embedded?: boolean;
@@ -343,7 +343,7 @@ export function LocaleCurrencySwitcher({
         type="button"
         className={
           compact
-            ? 'flex h-5 items-center gap-px text-[16px] leading-4 text-[#1e1e1e]'
+            ? 'flex h-11 items-center gap-2 rounded-full bg-[#ffd54a] px-4 text-[15px] leading-none font-bold text-[#1a3a28] shadow-[0_8px_30px_rgba(0,0,0,0.08)]'
             : 'flex h-9 shrink-0 items-center gap-1 rounded-full border-2 border-[#1e1e1e] bg-[#fff8e7] py-0 pr-2.5 pl-3 text-[#1e1e1e] shadow-[2px_2px_0_#1e1e1e] transition hover:bg-[#ffd54a]'
         }
         aria-expanded={open}
@@ -354,11 +354,16 @@ export function LocaleCurrencySwitcher({
       >
         {compact ? (
           <>
-            <span className="font-noto-armenian font-semibold tracking-normal">
+            <Globe className="size-[18px] shrink-0" strokeWidth={2.25} aria-hidden />
+            <span className="font-noto-armenian whitespace-nowrap tracking-normal">
               {localeShortLabels[locale]}
+              <span className="px-1 font-semibold" aria-hidden>
+                /
+              </span>
+              {currency}
             </span>
             <ChevronDown
-              className={`size-[14px] shrink-0 text-[#1e1e1e] transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${open ? 'rotate-180' : ''}`}
+              className={`size-4 shrink-0 transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${open ? 'rotate-180' : ''}`}
               aria-hidden
             />
           </>

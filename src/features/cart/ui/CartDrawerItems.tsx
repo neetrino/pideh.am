@@ -1,11 +1,14 @@
 'use client';
 
+import type { ReactNode } from 'react';
 import Image from 'next/image';
 import { Minus, Plus, X } from 'lucide-react';
 import NumberFlow from '@number-flow/react';
 import { motion } from 'motion/react';
 
 import { fadeUp } from '@/components/motion/presets';
+import { isShawarmaTitle } from '@/features/home/ui/ProductCardPhoto';
+import { AppLink } from '@/components/ui/AppLink';
 import type { CartDrawerItemView } from '@/features/cart/get-cart-drawer-view';
 
 type CartDrawerItemsProps = {
@@ -16,6 +19,7 @@ type CartDrawerItemsProps = {
   pending: boolean;
   onQuantity: (itemId: string, quantity: number) => void;
   onRemove: (itemId: string) => void;
+  onOpenProduct: () => void;
 };
 
 type CartDrawerLineProps = {
@@ -26,7 +30,38 @@ type CartDrawerLineProps = {
   pending: boolean;
   onQuantity: (itemId: string, quantity: number) => void;
   onRemove: (itemId: string) => void;
+  onOpenProduct: () => void;
 };
+
+function ProductLink({
+  href,
+  label,
+  onOpenProduct,
+  className,
+  children,
+}: {
+  href: string | null;
+  label?: string;
+  onOpenProduct: () => void;
+  className?: string;
+  children: ReactNode;
+}) {
+  if (!href) {
+    return <div className={className}>{children}</div>;
+  }
+
+  return (
+    <AppLink
+      href={href}
+      prefetchPolicy="intent"
+      aria-label={label}
+      className={className}
+      onClick={onOpenProduct}
+    >
+      {children}
+    </AppLink>
+  );
+}
 
 function QuantityStepper({
   quantity,
@@ -78,6 +113,7 @@ function CartDrawerLine({
   pending,
   onQuantity,
   onRemove,
+  onOpenProduct,
 }: CartDrawerLineProps) {
   return (
     <motion.li
@@ -86,25 +122,37 @@ function CartDrawerLine({
       className="rounded-[22px] border border-[#ff6b00]/15 bg-white p-3 shadow-[0_8px_20px_rgba(30,30,30,0.06)]"
     >
       <div className="flex gap-3">
-        <div className="relative size-24 shrink-0 overflow-hidden rounded-2xl bg-[#fff8e7]">
+        <ProductLink
+          href={item.href}
+          label={item.title}
+          onOpenProduct={onOpenProduct}
+          className="relative block size-24 shrink-0 overflow-hidden rounded-2xl bg-[#fff8e7]"
+        >
           {item.imageUrl ? (
             <Image
               src={item.imageUrl}
-              alt={item.title}
+              alt=""
               fill
               sizes="96px"
-              className="object-contain p-1"
+              priority
+              className={
+                isShawarmaTitle(item.title)
+                  ? 'origin-center scale-125 -rotate-[18deg] object-contain select-none'
+                  : 'object-contain p-1'
+              }
             />
           ) : (
             <div className="flex h-full w-full items-center justify-center text-xs text-[#1e1e1e]/40">
               —
             </div>
           )}
-        </div>
+        </ProductLink>
         <div className="flex min-w-0 flex-1 flex-col">
           <div className="flex items-start justify-between gap-2">
             <div className="min-w-0">
-              <p className="line-clamp-2 text-sm font-bold text-[#1e1e1e]">{item.title}</p>
+              <ProductLink href={item.href} onOpenProduct={onOpenProduct}>
+                <p className="line-clamp-2 text-sm font-bold text-[#1e1e1e]">{item.title}</p>
+              </ProductLink>
               {item.modifierSummary ? (
                 <p className="mt-0.5 line-clamp-2 text-xs text-[#1e1e1e]/55">
                   {item.modifierSummary}
@@ -146,6 +194,7 @@ export function CartDrawerItems({
   pending,
   onQuantity,
   onRemove,
+  onOpenProduct,
 }: CartDrawerItemsProps) {
   return (
     <motion.ul
@@ -167,6 +216,7 @@ export function CartDrawerItems({
           pending={pending}
           onQuantity={onQuantity}
           onRemove={onRemove}
+          onOpenProduct={onOpenProduct}
         />
       ))}
     </motion.ul>

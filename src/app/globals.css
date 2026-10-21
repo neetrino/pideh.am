@@ -1,6 +1,16 @@
 @import "tailwindcss";
 @import "./storefront-ipad-adaptive.css" source(none);
 
+/* Montserrat Arm draws Շ/շ like a “2”. Use a normal SHA from Noto. */
+@font-face {
+  font-family: "Pideh Sha";
+  src: url("../fonts/NotoSansArmenian.woff2") format("woff2");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0547, U+0577;
+}
+
 :root {
   --background: #f9fafb;
   --foreground: #111827;
@@ -35,10 +45,10 @@
   --color-pideh-slate: var(--pideh-slate);
   --color-pideh-muted: var(--pideh-muted);
   --color-pideh-cream: var(--pideh-cream);
-  --font-sans: var(--font-montserrat-arm), var(--font-montserrat),
+  --font-sans: "Pideh Sha", var(--font-montserrat-arm), var(--font-montserrat),
     var(--font-noto-armenian), ui-sans-serif, sans-serif;
-  --font-display: var(--font-pricehigh), var(--font-noto-armenian), var(--font-montserrat),
-    ui-sans-serif, sans-serif;
+  --font-display: "Pideh Sha", var(--font-pricehigh), var(--font-noto-armenian),
+    var(--font-montserrat), ui-sans-serif, sans-serif;
   --font-mono: var(--font-geist-mono);
   --radius-sm: 15px;
   --radius-md: 15px;
@@ -49,11 +59,28 @@
   --radius-4xl: 15px;
 }
 
+html,
+body,
+.storefront-shell,
+.storefront-shell * {
+  scrollbar-width: none;
+}
+
+html::-webkit-scrollbar,
+body::-webkit-scrollbar,
+.storefront-shell::-webkit-scrollbar,
+.storefront-shell *::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-montserrat-arm), var(--font-montserrat),
+  font-family: "Pideh Sha", var(--font-montserrat-arm), var(--font-montserrat),
     var(--font-noto-armenian), ui-sans-serif, sans-serif;
+  overflow-x: hidden;
 }
 
 .storefront-shell {
@@ -61,7 +88,7 @@ body {
 }
 
 .font-display {
-  font-family: var(--font-pricehigh), var(--font-noto-armenian),
+  font-family: "Pideh Sha", var(--font-pricehigh), var(--font-noto-armenian),
     var(--font-montserrat), ui-sans-serif, sans-serif;
   font-weight: 900;
   letter-spacing: 0;
@@ -70,7 +97,7 @@ body {
 
 /** Figma “Montserrat arm” Black — feature labels (266:455–266:458). */
 .font-montserrat-arm {
-  font-family: var(--font-montserrat-arm), var(--font-noto-armenian),
+  font-family: "Pideh Sha", var(--font-montserrat-arm), var(--font-noto-armenian),
     var(--font-montserrat), ui-sans-serif, sans-serif;
 }
 
@@ -350,23 +377,32 @@ body {
 }
 
 /*
- * Those pages pull the header out of flow. Without this offset the group-order
- * strip starts at the top of the viewport and sits behind the pill.
+ * Overlay the group-order strip on the hero. It must not take flow height,
+ * or the page shifts down under the fixed header.
  * Offset = header padding + pill height + a small gap (h-16 / md:h-20).
  */
 .storefront-shell:has(.pideh-home) .group-order-banner,
 .storefront-shell:has(.pideh-about) .group-order-banner,
 .storefront-shell:has(.pideh-login) .group-order-banner {
-  position: relative;
+  position: fixed;
+  inset-inline: 0;
+  top: calc(0.75rem + 4rem + 0.5rem);
   z-index: 70;
-  margin-top: calc(0.75rem + 4rem + 0.75rem);
+  margin-top: 0;
+  pointer-events: none;
+}
+
+.storefront-shell:has(.pideh-home) .group-order-banner > *,
+.storefront-shell:has(.pideh-about) .group-order-banner > *,
+.storefront-shell:has(.pideh-login) .group-order-banner > * {
+  pointer-events: auto;
 }
 
 @media (min-width: 768px) {
   .storefront-shell:has(.pideh-home) .group-order-banner,
   .storefront-shell:has(.pideh-about) .group-order-banner,
   .storefront-shell:has(.pideh-login) .group-order-banner {
-    margin-top: calc(0.875rem + 5rem + 0.75rem);
+    top: calc(0.875rem + 5rem + 0.5rem);
   }
 }
 
@@ -408,6 +444,35 @@ body:has([role='dialog'][aria-modal='true'], [role='alertdialog'][aria-modal='tr
 @media (max-width: 767px), (orientation: portrait) and (max-width: 1199px) {
   html {
     touch-action: manipulation;
+    scrollbar-width: none;
+    overflow-x: clip;
+  }
+
+  body {
+    overflow-x: clip;
+    max-width: 100%;
+  }
+
+  html,
+  body,
+  .storefront-shell,
+  .storefront-main {
+    scrollbar-width: none;
+  }
+
+  html::-webkit-scrollbar,
+  body::-webkit-scrollbar,
+  .storefront-shell::-webkit-scrollbar,
+  .storefront-main::-webkit-scrollbar {
+    display: none;
+    width: 0;
+    height: 0;
+  }
+
+  .pideh-home-mobile article,
+  .pideh-shop-mobile article,
+  .pideh-product-card {
+    box-shadow: none;
   }
 
   /* iOS zooms the page when a focused field is under 16px. */
@@ -418,11 +483,11 @@ body:has([role='dialog'][aria-modal='true'], [role='alertdialog'][aria-modal='tr
   }
 
   /*
-   * Dock frame is 176px tall inside the 440px mobile frame, then scaled to
-   * the viewport. Sit the chat bubble just above that orange band.
+   * The launcher iframe is pinned to the full viewport, so `bottom` does not
+   * move the bubble. Shift it up to the profile icon, not the raised home button.
    */
   #tidio-chat-iframe {
-    bottom: calc(176px * 100vw / 440 + env(safe-area-inset-bottom, 0px) + 5rem) !important;
+    transform: translateY(calc(-1 * (108px * 100vw / 440 + env(safe-area-inset-bottom, 0px)))) !important;
   }
 
   /* Phone + iPad portrait: Figma mobile header + dock. */
@@ -442,7 +507,11 @@ body:has([role='dialog'][aria-modal='true'], [role='alertdialog'][aria-modal='tr
   .storefront-shell:has(.pideh-home) .group-order-banner,
   .storefront-shell:has(.pideh-about) .group-order-banner,
   .storefront-shell:has(.pideh-login) .group-order-banner {
+    position: relative;
+    inset: auto;
+    top: auto;
     margin-top: 0;
+    pointer-events: auto;
   }
 
   .storefront-shell .storefront-mobile-tree,
@@ -450,12 +519,13 @@ body:has([role='dialog'][aria-modal='true'], [role='alertdialog'][aria-modal='tr
     display: block !important;
   }
 
-  /* Pages that ship their own in-page chrome opt out of the shared bar. */
-  .storefront-shell:has(.pideh-home-mobile) .mobile-storefront-header,
-  .storefront-shell:has(.profile-mobile-page) .mobile-storefront-header,
-  .storefront-shell:has(.pideh-pdp-mobile) .mobile-storefront-header,
-  .storefront-shell:has(.pideh-login) .mobile-storefront-header {
-    display: none !important;
+  .storefront-shell:has(.pideh-home-mobile) .storefront-main {
+    margin-top: -11rem;
+  }
+
+  /* Shell orange (#fc8521) was showing as a strip above the #ff6b00 home. */
+  .storefront-shell:has(.pideh-home-mobile) {
+    background: #ff6b00;
   }
 
   .storefront-shell:has(.pideh-home) .storefront-main,
@@ -494,8 +564,16 @@ body:has([role='dialog'][aria-modal='true'], [role='alertdialog'][aria-modal='tr
     -ms-overflow-style: none;
   }
 
+  /* Trailing inset lives on the row so it survives scroll-end (same 24px as search). */
+  .pideh-shop-mobile .shop-chips-scroll > * {
+    width: max-content;
+    padding-inline: 1.5rem;
+  }
+
   .pideh-shop-mobile .shop-chips-scroll::-webkit-scrollbar {
     display: none;
+    width: 0;
+    height: 0;
   }
 
   /* Figma mobile home (259:369) uses in-page chrome instead of site header. */
@@ -507,6 +585,11 @@ body:has([role='dialog'][aria-modal='true'], [role='alertdialog'][aria-modal='tr
     display: none;
   }
 
+  .storefront-shell:has(.pideh-pdp-mobile) .mobile-storefront-header,
+  .storefront-shell:has(.pideh-pdp-mobile) .mobile-header-search {
+    display: none !important;
+  }
+
   .storefront-shell:has(.pideh-pdp-mobile) .storefront-main {
     max-width: none;
     padding: 0;
@@ -514,8 +597,8 @@ body:has([role='dialog'][aria-modal='true'], [role='alertdialog'][aria-modal='tr
 
   /* Orange photo band. Leave the title and price above the dock on open. */
   .pideh-pdp-mobile-hero {
-    height: 20rem;
-    height: clamp(12rem, calc(100svh - 28rem), 24rem);
+    height: 26rem;
+    height: clamp(18rem, calc(100svh - 22rem), 30rem);
   }
 
   .storefront-shell:has(.pideh-pdp-mobile) .storefront-footer {
@@ -584,6 +667,31 @@ body:has([role='dialog'][aria-modal='true'], [role='alertdialog'][aria-modal='tr
   [aria-disabled="true"] {
     cursor: not-allowed;
   }
+
+}
+
+input[type="checkbox"] {
+  appearance: none;
+  width: 1.45rem;
+  height: 1.45rem;
+  margin: 0;
+  border: 2px solid rgb(30 30 30 / 0.22);
+  border-radius: 0.4rem;
+  background-color: #fff;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 1.28rem;
+  vertical-align: middle;
+}
+
+input[type="checkbox"]:checked {
+  border-color: #ff6b00;
+  background-color: #ff6b00;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none'%3E%3Cpath d='M3.2 8.2 6.4 11.4 12.8 4.6' stroke='%23ffd54a' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+}
+
+input[type="checkbox"]:disabled {
+  opacity: 0.45;
 }
 
 /* Confirm / modal dismiss — same motion as Mobee storefront dialog */
@@ -777,82 +885,72 @@ body:has([role='dialog'][aria-modal='true'], [role='alertdialog'][aria-modal='tr
 }
 
 /**
- * MaMarie-style profile desktop shell:
- * lock viewport height, hide footer, scroll only the content column.
+ * Profile desktop: sticky sidebar and content under the header.
+ * Each column scrolls on its own. After that, the page scrolls to the footer.
  */
 @media (min-width: 768px) and (min-height: 600px) and (orientation: landscape),
   (min-width: 1200px) {
   .storefront-shell:has(.profile-desktop-page) {
-    height: 100dvh;
-    max-height: 100dvh;
-    min-height: 0;
-    overflow: hidden;
+    min-height: 100dvh;
+    height: auto;
+    max-height: none;
+    overflow: visible;
   }
 
   .storefront-shell:has(.profile-desktop-page) .storefront-main {
     display: flex;
-    flex: 1 1 0%;
+    flex: 1 1 auto;
     flex-direction: column;
-    min-height: 0;
-    overflow: hidden;
-    padding-top: 24px;
-    padding-bottom: 20px;
+    --profile-sticky-gap: 1.25rem;
+    --storefront-header-offset: 6.25rem;
+    padding-top: var(--profile-sticky-gap);
+    padding-bottom: var(--profile-sticky-gap);
   }
 
-  .storefront-shell:has(.profile-desktop-page) .storefront-footer {
+  .profile-desktop-page {
+    flex: 1 1 auto;
+    min-height: calc(
+      100dvh - var(--storefront-header-offset) - (var(--profile-sticky-gap) * 2)
+    );
+    align-items: flex-start;
+  }
+
+  .profile-sticky-band {
+    position: sticky;
+    top: calc(var(--storefront-header-offset) + var(--profile-sticky-gap));
+    z-index: 10;
+    height: calc(
+      100dvh - var(--storefront-header-offset) - (var(--profile-sticky-gap) * 2)
+    );
+    max-height: calc(
+      100dvh - var(--storefront-header-offset) - (var(--profile-sticky-gap) * 2)
+    );
+    align-self: flex-start;
+  }
+
+  .profile-desktop-sidebar.profile-sticky-band {
+    z-index: 30;
+    height: auto;
+    max-height: none;
+  }
+
+  .profile-desktop-content {
+    min-width: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior-y: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .profile-desktop-content::-webkit-scrollbar {
     display: none;
   }
 
-  /*
-   * Group-order banner sits above main and steals height from the locked
-   * viewport. Inner columns stay content-sized and swallow the wheel
-   * (overflow: auto + overscroll-behavior: contain), so the shell clips
-   * the profile. Let the shell scroll instead while the banner is up.
-   */
-  .storefront-shell:has(.profile-desktop-page):has(.group-order-banner) {
-    overflow-x: hidden;
-    overflow-y: auto;
-  }
-
-  .storefront-shell:has(.profile-desktop-page):has(.group-order-banner) .storefront-main {
-    display: block;
-    flex: none;
-    min-height: auto;
-    overflow: visible;
-  }
-
-  .storefront-shell:has(.profile-desktop-page):has(.group-order-banner) .profile-desktop-page,
-  .storefront-shell:has(.profile-desktop-page):has(.group-order-banner)
-    .profile-desktop-page
-    > .storefront-desktop-tree {
-    height: auto;
-    max-height: none;
-    min-height: auto;
-    overflow: visible;
-  }
-
-  .storefront-shell:has(.profile-desktop-page):has(.group-order-banner) .profile-desktop-scroll {
-    height: auto;
-    max-height: none;
-    min-height: auto;
-    flex: 1 1 auto;
-    overflow: visible;
-    overscroll-behavior: auto;
-  }
-
-  .storefront-shell:has(.profile-desktop-page):has(.group-order-banner) .profile-sidebar-scroll {
-    height: auto;
-    max-height: none;
-    min-height: auto;
-    flex: none;
-    overflow: visible;
-    overscroll-behavior: auto;
-  }
-
-  .storefront-shell:has(.profile-desktop-page):has(.group-order-banner) .profile-desktop-page aside {
-    height: auto;
-    max-height: none;
-    min-height: auto;
+  .profile-desktop-content > * {
+    display: flex;
+    min-height: 100%;
+    flex-direction: column;
   }
 }
 
@@ -862,8 +960,10 @@ body:has([role='dialog'][aria-modal='true'], [role='alertdialog'][aria-modal='tr
  * Keep the bottom tab bar so people can leave the profile for home, shop, or cart.
  */
 @media (max-width: 767px), (orientation: portrait) and (max-width: 1199px) {
-  .storefront-shell:has(.profile-mobile-page) .site-header {
-    display: none;
+  .storefront-shell:has(.profile-mobile-page) .site-header,
+  .storefront-shell:has(.profile-mobile-page) .mobile-storefront-header,
+  .storefront-shell:has(.profile-mobile-page) .mobile-header-search {
+    display: none !important;
   }
 
   .storefront-shell:has(.profile-mobile-page) .storefront-main {
@@ -940,6 +1040,15 @@ body:has([role='dialog'][aria-modal='true'], [role='alertdialog'][aria-modal='tr
   background: transparent;
   height: 4px;
   border: none;
+}
+
+.admin-shell :is(button, a).bg-gray-900 {
+  background-color: #ff6b00;
+  box-shadow: none;
+}
+
+.admin-shell :is(button, a).bg-gray-900:hover {
+  background-color: #e85f00;
 }
 
 .admin-sidebar-ticket-veil {

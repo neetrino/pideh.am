@@ -148,21 +148,31 @@ export function DeliverySlotPicker({
 
   return (
     <div className="space-y-3">
-      <h3 className="text-base font-bold text-[#1e1e1e]">{labels.title}</h3>
+      <div className="mb-3 flex items-center justify-between gap-3">
+        <h3 className="text-base font-bold text-[#1e1e1e]">{labels.title}</h3>
+        <button
+          type="button"
+          disabled={disabled || availableDays.length === 0}
+          onClick={() => setIsEditing((open) => !open)}
+          className="shrink-0 text-sm font-semibold text-[#ff6b00] transition-opacity hover:opacity-80 disabled:opacity-40 sm:hidden"
+        >
+          {labels.change}
+        </button>
+      </div>
 
       <div className="flex items-center gap-3">
         <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-[#fff1e6]">
           <Calendar className="size-5 text-[#ff6b00]" aria-hidden />
         </div>
         <div className="min-w-0 flex-1">
-          <p className="text-sm font-semibold text-[#1e1e1e]">{labels.deliverTo}</p>
-          <p className="truncate text-sm text-[#1e1e1e]">{summaryValue}</p>
+          <p className="text-sm text-[#1e1e1e]">{labels.deliverTo}</p>
+          <p className="truncate text-sm font-semibold text-[#1e1e1e]">{summaryValue}</p>
         </div>
         <button
           type="button"
           disabled={disabled || availableDays.length === 0}
           onClick={() => setIsEditing((open) => !open)}
-          className="shrink-0 text-sm font-semibold text-[#ff6b00] transition-colors hover:text-[#e85f00] disabled:cursor-not-allowed disabled:opacity-40"
+          className="hidden h-10 shrink-0 items-center rounded-full bg-[#ff6b00] px-6 text-sm font-semibold text-white shadow-md transition-colors hover:bg-[#e85f00] disabled:cursor-not-allowed disabled:opacity-40 sm:inline-flex"
         >
           {labels.change}
         </button>
@@ -174,21 +184,20 @@ export function DeliverySlotPicker({
 
       {isEditing && availableDays.length > 0 ? (
         <div className="overflow-hidden rounded-[22px] border border-[#ff6b00]/15 bg-white">
-          <div className="border-b border-[#ff6b00]/10 bg-[#fff8e7] px-3 py-2.5">
+          <div className="border-b border-[#ff6b00]/10 px-3 pt-3">
             <button
               type="button"
               disabled={disabled}
               onClick={selectAsap}
-              className={`text-sm font-semibold transition-colors ${
+              className={`mb-3 inline-flex h-10 w-full items-center justify-center rounded-full px-4 text-sm font-bold transition-colors disabled:cursor-not-allowed disabled:opacity-40 ${
                 selected == null
-                  ? 'text-[#ff6b00]'
-                  : 'text-[#1e1e1e]/70 hover:text-[#ff6b00]'
+                  ? 'bg-[#ff6b00] text-white'
+                  : 'bg-[#fff8e7] text-[#1e1e1e] hover:bg-[#ffd54a]'
               }`}
             >
               {labels.useAsap}
             </button>
           </div>
-
           <div className="grid items-stretch gap-3 p-3 md:grid-cols-[15.5rem_minmax(0,1fr)]">
             <div className="rounded-2xl bg-[#fff8e7]/80 p-2">
               <p className="mb-2 font-display text-xs leading-none tracking-wide text-[#ff6b00] uppercase">

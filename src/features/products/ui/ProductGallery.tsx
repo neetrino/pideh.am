@@ -11,6 +11,8 @@ type ProductGalleryProps = {
   discountPercent?: number | null;
   inStock: boolean;
   outOfStockLabel: string;
+  /** Same tilt as the mobile shawarma hero. */
+  emphasize?: boolean;
 };
 
 export function ProductGallery({
@@ -19,6 +21,7 @@ export function ProductGallery({
   discountPercent = null,
   inStock,
   outOfStockLabel,
+  emphasize = false,
 }: ProductGalleryProps) {
   const [selectedId, setSelectedId] = useState(images[0]?.id ?? null);
   const selected = images.find((image) => image.id === selectedId) ?? images[0] ?? null;
@@ -33,7 +36,11 @@ export function ProductGallery({
               alt={selected.alt || title}
               fill
               sizes="(max-width: 1024px) 100vw, 657px"
-              className="object-contain"
+              className={
+                emphasize
+                  ? 'origin-center scale-[1.35] -rotate-[18deg] object-contain'
+                  : 'object-contain'
+              }
               priority
             />
           </span>

@@ -3,9 +3,12 @@ import 'server-only';
 import { count, desc, sql } from 'drizzle-orm';
 
 import { getDb } from '@/db/client';
-import { orders } from '@/db/schema';
+import { orderItems, orders } from '@/db/schema';
 import { customerVisibleOrdersWhere } from '@/features/orders/application/customer-order-access';
-import { customerFacingOrderAmountSql } from '@/features/orders/application/customer-facing-order-amount-sql';
+import {
+  customerFacingBonusEarnedSql,
+  customerFacingOrderAmountSql,
+} from '@/features/orders/application/customer-facing-order-amount-sql';
 
 const RECENT_ORDERS_LIMIT = 5;
 
@@ -21,6 +24,9 @@ export type ProfileRecentOrder = {
   orderNumber: string;
   status: (typeof orders.$inferSelect)['status'];
   totalAmount: number;
+  bonusEarnedAmount: number;
+  baseCurrency: string;
+  itemCount: number;
   placedAt: Date;
 };
 
@@ -70,6 +76,13 @@ export async function listRecentProfileOrders(
       orderNumber: orders.orderNumber,
       status: orders.status,
       totalAmount: customerFacingOrderAmountSql(userId),
+      bonusEarnedAmount: customerFacingBonusEarnedSql(userId),
+      baseCurrency: orders.baseCurrency,
+      itemCount: sql<number>`coalesce((
+        select sum(${orderItems.quantity})
+        from ${orderItems}
+        where ${orderItems.orderId} = ${orders.id}
+      ), 0)`.mapWith(Number),
       placedAt: orders.placedAt,
     })
     .from(orders)

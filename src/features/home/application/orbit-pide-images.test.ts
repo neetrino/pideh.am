@@ -69,8 +69,8 @@ describe('resolveOrbitPidePhotos', () => {
         { slug: 'shpinat', url: 'https://cdn/spinach.webp', title: 'Սպանախ' },
       ]),
     ).toEqual([
-      { url: 'https://cdn/pepperoni.webp', title: 'Պեպպերոնի' },
-      { url: 'https://cdn/spinach.webp', title: 'Սպանախ' },
+      { url: 'https://cdn/pepperoni.webp', title: 'Պեպպերոնի', slug: 'pepperoni-pide' },
+      { url: 'https://cdn/spinach.webp', title: 'Սպանախ', slug: 'shpinat' },
     ]);
   });
 });

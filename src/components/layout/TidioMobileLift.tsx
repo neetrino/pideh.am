@@ -3,8 +3,8 @@
 import { useEffect } from 'react';
 
 const MOBILE_QUERY = '(max-width: 767px), (orientation: portrait) and (max-width: 1199px)';
-/** Dock is 176px in the 440px frame, then scaled to the viewport, plus a gap. */
-const LIFT = 'calc(176px * 100vw / 440 + env(safe-area-inset-bottom, 0px) + 5rem)';
+/** Profile icon top in the 440px frame, then scaled. Home sits higher in the center. */
+const LIFT = 'translateY(calc(-1 * (108px * 100vw / 440 + env(safe-area-inset-bottom, 0px))))';
 
 const OVERLAY_QUERY =
   '[role="dialog"][aria-modal="true"], [role="alertdialog"][aria-modal="true"]';
@@ -13,12 +13,11 @@ const BELOW_OVERLAY_Z = '30';
 
 function liftBubble(iframe: HTMLElement): void {
   const wanted = LIFT.replaceAll(/\s/g, '');
-  const current = iframe.style.getPropertyValue('bottom').replaceAll(/\s/g, '');
-  if (current === wanted && iframe.style.getPropertyPriority('bottom') === 'important') {
+  const current = iframe.style.getPropertyValue('transform').replaceAll(/\s/g, '');
+  if (current === wanted && iframe.style.getPropertyPriority('transform') === 'important') {
     return;
   }
-  iframe.style.setProperty('bottom', LIFT, 'important');
-  iframe.style.setProperty('top', 'auto', 'important');
+  iframe.style.setProperty('transform', LIFT, 'important');
 }
 
 function stackUnderOverlay(node: HTMLElement, covered: boolean): void {
@@ -31,6 +30,10 @@ function stackUnderOverlay(node: HTMLElement, covered: boolean): void {
     return;
   }
   if (sunk) node.style.removeProperty('z-index');
+}
+
+function resetDesktopPlacement(iframe: HTMLElement): void {
+  iframe.style.removeProperty('transform');
 }
 
 /** Keeps the chat above the mobile dock, and behind open modals and side sheets. */
@@ -46,7 +49,11 @@ export function TidioMobileLift() {
       if (host instanceof HTMLElement) stackUnderOverlay(host, covered);
       if (!(iframe instanceof HTMLElement)) return;
       stackUnderOverlay(iframe, covered);
-      if (media.matches) liftBubble(iframe);
+      if (media.matches) {
+        liftBubble(iframe);
+      } else {
+        resetDesktopPlacement(iframe);
+      }
       if (styleObserver) return;
       styleObserver = new MutationObserver(apply);
       styleObserver.observe(iframe, { attributes: true, attributeFilter: ['style'] });
@@ -60,10 +67,12 @@ export function TidioMobileLift() {
     apply();
     document.addEventListener('tidioChat-ready', apply);
     media.addEventListener('change', apply);
+    window.addEventListener('resize', apply);
 
     return () => {
       document.removeEventListener('tidioChat-ready', apply);
       media.removeEventListener('change', apply);
+      window.removeEventListener('resize', apply);
       mountObserver.disconnect();
       styleObserver?.disconnect();
     };

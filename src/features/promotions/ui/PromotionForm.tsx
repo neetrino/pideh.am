@@ -5,13 +5,14 @@ import { useMemo, useState, useTransition } from 'react';
 
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
+import { DateTimeField } from '@/components/ui/DateTimeField';
+import { FormSelect } from '@/components/ui/FormSelect';
 import {
   ADMIN_CHECKBOX,
   ADMIN_CHECKBOX_LABEL,
   ADMIN_INPUT,
   ADMIN_LABEL,
   ADMIN_SECTION_TITLE,
-  ADMIN_SELECT,
 } from '@/features/admin/ui/admin-form-classes';
 import {
   createPromotionAction,
@@ -147,16 +148,17 @@ export function PromotionForm({
 
         <label>
           <span className={ADMIN_LABEL}>{copy.form.kind}</span>
-          <select
+          <FormSelect
             name="kind"
-            className={ADMIN_SELECT}
+            ariaLabel={copy.form.kind}
             value={kind}
             disabled={lockKind || isPending}
-            onChange={(event) => setKind(event.target.value as PromotionKind)}
-          >
-            <option value="COUPON">{copy.form.kindCoupon}</option>
-            <option value="AUTOMATIC">{copy.form.kindAutomatic}</option>
-          </select>
+            options={[
+              { value: 'COUPON', label: copy.form.kindCoupon },
+              { value: 'AUTOMATIC', label: copy.form.kindAutomatic },
+            ]}
+            onValueChange={(next) => setKind(next as PromotionKind)}
+          />
         </label>
 
         {kind === 'COUPON' ? (
@@ -175,35 +177,31 @@ export function PromotionForm({
           <>
             <label>
               <span className={ADMIN_LABEL}>{copy.form.productTarget}</span>
-              <select
+              <FormSelect
                 name="productId"
-                className={ADMIN_SELECT}
+                ariaLabel={copy.form.productTarget}
+                allLabel={copy.form.noneTarget}
                 defaultValue={defaults?.productId ?? ''}
                 disabled={isPending}
-              >
-                <option value="">{copy.form.noneTarget}</option>
-                {targets.products.map((product) => (
-                  <option key={product.id} value={product.id}>
-                    {product.sku} · {product.title}
-                  </option>
-                ))}
-              </select>
+                options={targets.products.map((product) => ({
+                  value: product.id,
+                  label: `${product.sku} · ${product.title}`,
+                }))}
+              />
             </label>
             <label>
               <span className={ADMIN_LABEL}>{copy.form.categoryTarget}</span>
-              <select
+              <FormSelect
                 name="categoryId"
-                className={ADMIN_SELECT}
+                ariaLabel={copy.form.categoryTarget}
+                allLabel={copy.form.noneTarget}
                 defaultValue={defaults?.categoryId ?? ''}
                 disabled={isPending}
-              >
-                <option value="">{copy.form.noneTarget}</option>
-                {targets.categories.map((category) => (
-                  <option key={category.id} value={category.id}>
-                    {category.title}
-                  </option>
-                ))}
-              </select>
+                options={targets.categories.map((category) => ({
+                  value: category.id,
+                  label: category.title,
+                }))}
+              />
             </label>
             <p className="text-xs text-gray-500">{copy.form.chooseOneTarget}</p>
           </>
@@ -212,15 +210,16 @@ export function PromotionForm({
         <div className="grid gap-4 sm:grid-cols-2">
           <label>
             <span className={ADMIN_LABEL}>{copy.form.discountType}</span>
-            <select
+            <FormSelect
               name="discountType"
-              className={ADMIN_SELECT}
+              ariaLabel={copy.form.discountType}
               defaultValue={defaults?.discountType ?? 'PERCENTAGE'}
               disabled={isPending}
-            >
-              <option value="PERCENTAGE">{copy.form.percentage}</option>
-              <option value="FIXED">{copy.form.fixedAmd}</option>
-            </select>
+              options={[
+                { value: 'PERCENTAGE', label: copy.form.percentage },
+                { value: 'FIXED', label: copy.form.fixedAmd },
+              ]}
+            />
           </label>
           <label>
             <span className={ADMIN_LABEL}>{copy.form.discountValue}</span>
@@ -289,21 +288,23 @@ export function PromotionForm({
         <div className="grid gap-4 sm:grid-cols-2">
           <label>
             <span className={ADMIN_LABEL}>{copy.form.startsAt}</span>
-            <input
+            <DateTimeField
+              locale={locale}
               name="startsAt"
-              type="datetime-local"
               defaultValue={toDateInput(defaults?.startsAt)}
-              className={ADMIN_INPUT}
+              placeholder={copy.form.startsAt}
+              timeLabel={copy.form.startsAt}
               disabled={isPending}
             />
           </label>
           <label>
             <span className={ADMIN_LABEL}>{copy.form.endsAt}</span>
-            <input
+            <DateTimeField
+              locale={locale}
               name="endsAt"
-              type="datetime-local"
               defaultValue={toDateInput(defaults?.endsAt)}
-              className={ADMIN_INPUT}
+              placeholder={copy.form.endsAt}
+              timeLabel={copy.form.endsAt}
               disabled={isPending}
             />
           </label>

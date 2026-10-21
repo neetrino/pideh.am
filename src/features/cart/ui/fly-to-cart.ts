@@ -1,7 +1,7 @@
 /** Marks the cart icon that add-to-cart animations fly into. */
 export const CART_TARGET_ATTR = 'data-cart-target';
 
-const FLY_DURATION_MS = 820;
+const FLY_DURATION_MS = 520;
 const BUMP_DURATION_MS = 380;
 /** Height of the arc the image rises through before dropping into the cart. */
 const ARC_LIFT_PX = 90;
@@ -27,6 +27,15 @@ function createClone(image: HTMLImageElement, from: DOMRect): HTMLImageElement {
   ].join(';');
 
   return clone;
+}
+
+function visibleCartTarget(): HTMLElement | null {
+  const targets = document.querySelectorAll<HTMLElement>(`[${CART_TARGET_ATTR}]`);
+  for (const target of targets) {
+    const box = target.getBoundingClientRect();
+    if (box.width > 0 && box.height > 0) return target;
+  }
+  return null;
 }
 
 function bumpCartIcon(target: HTMLElement): void {
@@ -83,7 +92,7 @@ export function flyToCart(source: HTMLElement | null): void {
   }
 
   const image = source.querySelector('img');
-  const target = document.querySelector<HTMLElement>(`[${CART_TARGET_ATTR}]`);
+  const target = visibleCartTarget();
   if (image == null || target == null) {
     return;
   }

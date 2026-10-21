@@ -10,7 +10,7 @@ export const ADMIN_SIDEBAR_NAV =
 
 /** Desktop: viewport-height shell so only the main column scrolls; sidebar stays fixed. */
 export const ADMIN_PAGE_SHELL =
-  'flex min-h-screen flex-col bg-[#fff8e7] lg:h-dvh lg:max-h-dvh lg:flex-row lg:overflow-hidden';
+  'admin-shell flex min-h-screen flex-col bg-[#fff8e7] lg:h-dvh lg:max-h-dvh lg:flex-row lg:overflow-hidden';
 
 export const ADMIN_MAIN_COLUMN =
   'min-w-0 flex-1 px-4 pb-8 pt-12 sm:px-6 lg:min-h-0 lg:overflow-y-auto lg:overscroll-y-contain lg:px-8';

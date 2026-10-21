@@ -1,6 +1,8 @@
 'use client';
 
 import Image from 'next/image';
+
+import { AppLink } from '@/components/ui/AppLink';
 import { motion, useMotionValue, useTransform } from 'motion/react';
 import { useEffect, useRef } from 'react';
 
@@ -20,6 +22,8 @@ import {
 
 type OrbitPideProps = {
   src: string;
+  title: string;
+  href?: string;
   pose: OrbitSlotPose;
   poseIndex: number;
   reduceMotion: boolean | null;
@@ -45,7 +49,7 @@ function OrbitPideImage({ src }: { src: string }) {
   );
 }
 
-export function OrbitPide({ src, pose, poseIndex, reduceMotion }: OrbitPideProps) {
+export function OrbitPide({ src, title, href, pose, poseIndex, reduceMotion }: OrbitPideProps) {
   const span = orbitSlotSpan(pose);
   const restVisual = orbitProductVisual(poseIndex);
   const settledPoseIndexRef = useRef(poseIndex);
@@ -106,6 +110,10 @@ export function OrbitPide({ src, pose, poseIndex, reduceMotion }: OrbitPideProps
       for (const control of controls) {
         control.stop();
       }
+      // A new step can start before this one finishes. Land on the target
+      // slot so the next tween continues from there instead of restarting.
+      snapOrbitPideValues(values, pose, poseIndex);
+      settledPoseIndexRef.current = poseIndex;
     };
   }, [
     angle,
@@ -154,7 +162,18 @@ export function OrbitPide({ src, pose, poseIndex, reduceMotion }: OrbitPideProps
               rotate: visualRotate,
             }}
           >
-            <OrbitPideImage key={src} src={src} />
+            {href ? (
+              <AppLink
+                href={href}
+                prefetchPolicy="intent"
+                aria-label={title}
+                className="pointer-events-auto relative block"
+              >
+                <OrbitPideImage key={src} src={src} />
+              </AppLink>
+            ) : (
+              <OrbitPideImage key={src} src={src} />
+            )}
           </motion.div>
         </motion.div>
       </motion.div>

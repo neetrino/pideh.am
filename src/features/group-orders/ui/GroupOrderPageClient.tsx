@@ -26,6 +26,7 @@ import {
 } from '@/features/group-orders/actions';
 import type { GroupOrderDetailView } from '@/features/group-orders/application/queries';
 import { GroupOrderConfirmDialog } from '@/features/group-orders/ui/GroupOrderConfirmDialog';
+import { GroupOrderSummary } from '@/features/group-orders/ui/GroupOrderSummary';
 import type { Dictionary } from '@/lib/i18n/get-dictionary';
 import type { Locale } from '@/lib/i18n/config';
 import type { Currency } from '@/lib/money/currency';
@@ -124,6 +125,9 @@ export function GroupOrderPageClient({
   const [copied, setCopied] = useState(false);
   const [joinName, setJoinName] = useState('');
   const [spendLimit, setSpendLimit] = useState(initialView?.spendLimitAmount?.toString() ?? '');
+  const [spendLimitEditing, setSpendLimitEditing] = useState(
+    () => initialView?.spendLimitAmount == null,
+  );
   const [deliveryAddress, setDeliveryAddress] = useState(initialView?.deliveryAddress ?? '');
   const [deliveryRuleId, setDeliveryRuleId] = useState(
     zoneIdForLabel(deliveryZones, initialView?.deliveryDistanceLabel ?? null),
@@ -134,6 +138,7 @@ export function GroupOrderPageClient({
   useEffect(() => {
     setView(initialView);
     setSpendLimit(initialView?.spendLimitAmount?.toString() ?? '');
+    setSpendLimitEditing(initialView?.spendLimitAmount == null);
     setDeliveryAddress(initialView?.deliveryAddress ?? '');
     setDeliveryRuleId(zoneIdForLabel(deliveryZones, initialView?.deliveryDistanceLabel ?? null));
   }, [initialView, deliveryZones]);
@@ -315,7 +320,7 @@ export function GroupOrderPageClient({
   }
 
   return (
-    <div className={`mx-auto max-w-2xl px-4 py-8 md:py-10 ${pending ? 'opacity-70' : ''}`}>
+    <div className={`mx-auto max-w-7xl px-4 py-8 md:py-10 ${pending ? 'opacity-70' : ''}`}>
       <GroupOrderConfirmDialog
         open={cancelOpen}
         title={labels.cancelConfirmTitle}
@@ -329,28 +334,20 @@ export function GroupOrderPageClient({
         }}
         onConfirm={confirmCancel}
       />
-      <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <p className="text-[11px] font-bold tracking-[0.22em] text-pideh-orange uppercase">
-            {labels.status}
-          </p>
-          <h1 className="font-display mt-2 text-[clamp(2.25rem,6vw,3.25rem)] leading-[0.9] text-pideh-ink uppercase">
-            {labels.manageTitle}
-          </h1>
-          <span className="mt-3 inline-flex rounded-full bg-pideh-orange/12 px-3 py-1 text-xs font-bold tracking-wide text-pideh-orange uppercase">
-            {view.status}
-          </span>
-        </div>
-        <AppLink
+      <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <h1 className="font-display text-[clamp(2rem,5vw,3.6rem)] leading-[0.9] text-pideh-ink uppercase">
+          {labels.manageTitle}
+        </h1>
+        <PidehPillButton
           href={`/${locale}/products`}
-          prefetchPolicy="intent"
-          className="text-sm font-bold text-pideh-orange underline-offset-4 hover:underline"
-        >
-          {labels.browseMenu}
-        </AppLink>
+          label={labels.browseMenu}
+          className="w-full sm:w-auto"
+        />
       </div>
 
-      <section className="mb-5 flex flex-wrap items-center justify-between gap-3 rounded-[22px] border-2 border-pideh-ink/10 bg-white px-4 py-3 shadow-[0px_8px_14px_rgba(31,20,8,0.06)]">
+      <div className="grid grid-cols-1 items-stretch gap-8 lg:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)]">
+      <div className="space-y-6">
+      <section className="flex flex-col gap-3 rounded-[26px] border-2 border-pideh-ink/10 bg-white p-4 shadow-[0px_12px_14px_rgba(31,20,8,0.08)] sm:flex-row sm:items-center sm:justify-between">
         <div className="min-w-0">
           <p className="font-display text-sm leading-none text-pideh-ink uppercase">
             {labels.inviteLink}
@@ -367,53 +364,6 @@ export function GroupOrderPageClient({
             {labels.share}
           </GhostPillButton>
         </div>
-      </section>
-
-      <section className={`mb-5 space-y-3 ${GROUP_CARD} text-sm`}>
-        <div className="flex items-center gap-2 font-semibold text-pideh-ink">
-          <Users className="h-4 w-4 text-pideh-orange" />
-          {view.paymentMode === 'ORGANIZER_PAYS_ALL'
-            ? labels.payingOrganizer.replace('{name}', view.organizerDisplayName)
-            : labels.payingSplit}
-        </div>
-        <p className="text-pideh-muted">
-          {view.spendLimitFormatted
-            ? labels.limitLabel.replace('{amount}', view.spendLimitFormatted)
-            : labels.noLimit}
-        </p>
-        <p className="text-pideh-muted">
-          {view.deliveryAddress
-            ? `${labels.deliveryAddressLabel}: ${view.deliveryAddress}`
-            : labels.noDeliveryAddress}
-        </p>
-        <p className="text-pideh-muted">
-          {labels.delivery}: {view.deliveryFormatted}
-          {view.deliveryDistanceLabel ? ` · ${view.deliveryDistanceLabel}` : ''}
-        </p>
-        {view.paymentMode === 'SPLIT_PER_PARTICIPANT' &&
-        view.currentParticipantId &&
-        currentParticipant ? (
-          <p className="text-pideh-muted">
-            {labels.yourDeliveryShare}: {currentParticipant.deliveryShareFormatted}
-          </p>
-        ) : null}
-        {view.paymentMode === 'SPLIT_PER_PARTICIPANT' &&
-        view.currentParticipantId &&
-        currentParticipant ? (
-          <>
-            <p className="pt-1 text-lg font-extrabold text-pideh-ink">
-              {labels.yourShare}:{' '}
-              <span className="text-pideh-orange">{currentParticipant.finalAmountFormatted}</span>
-            </p>
-            <p className="text-sm text-pideh-muted">
-              {labels.total}: {view.grandTotalFormatted}
-            </p>
-          </>
-        ) : (
-          <p className="pt-1 text-lg font-extrabold text-pideh-ink">
-            {labels.total}: <span className="text-pideh-orange">{view.grandTotalFormatted}</span>
-          </p>
-        )}
       </section>
 
       {isOrganizer && canEdit ? (
@@ -438,23 +388,35 @@ export function GroupOrderPageClient({
                   value={spendLimit}
                   onChange={(e) => setSpendLimit(e.target.value)}
                   inputMode="numeric"
+                  readOnly={!spendLimitEditing}
                   placeholder={labels.spendLimitPlaceholder}
                   aria-label={labels.spendLimitFieldLabel}
-                  className="w-full bg-transparent text-sm font-medium text-pideh-ink outline-none"
+                  className={`w-full bg-transparent text-sm font-medium text-pideh-ink outline-none ${
+                    spendLimitEditing ? '' : 'cursor-default text-pideh-muted'
+                  }`}
                 />
               </div>
-              <GhostPillButton
-                onClick={() =>
-                  run(async () =>
-                    updateSpendLimitAction({
-                      inviteToken,
-                      spendLimitAmount: spendLimit.trim() ? Number.parseInt(spendLimit, 10) : null,
-                    }),
-                  )
-                }
-              >
-                {labels.saveLimit}
-              </GhostPillButton>
+              {spendLimitEditing ? (
+                <GhostPillButton
+                  onClick={() => {
+                    run(async () =>
+                      updateSpendLimitAction({
+                        inviteToken,
+                        spendLimitAmount: spendLimit.trim()
+                          ? Number.parseInt(spendLimit, 10)
+                          : null,
+                      }),
+                    );
+                    setSpendLimitEditing(false);
+                  }}
+                >
+                  {labels.saveLimit}
+                </GhostPillButton>
+              ) : (
+                <GhostPillButton onClick={() => setSpendLimitEditing(true)}>
+                  {labels.editLimit}
+                </GhostPillButton>
+              )}
             </div>
           </div>
 
@@ -521,155 +483,168 @@ export function GroupOrderPageClient({
             ) : null}
           </div>
 
-          <div className="space-y-2 border-t border-pideh-orange/15 pt-4">
-            <p className="text-xs leading-relaxed text-pideh-muted">{labels.closeJoinsHint}</p>
-            <GhostPillButton
-              className="w-full sm:w-auto"
-              onClick={() =>
-                run(async () =>
-                  setJoinsClosedAction({
-                    inviteToken,
-                    joinsClosed: !view.joinsClosed,
-                  }),
-                )
-              }
-            >
-              {view.joinsClosed ? labels.openJoins : labels.closeJoins}
-            </GhostPillButton>
-          </div>
         </section>
       ) : null}
 
-      <section className="mb-6">
-        <h2 className="mb-3 text-lg font-extrabold text-pideh-ink">{labels.participants}</h2>
+      <section>
+        <h2 className="font-display mb-3 text-xl text-pideh-ink uppercase">{labels.participants}</h2>
         <ul className="space-y-4">
-          {view.participants.map((participant) => (
+          {view.participants.map((participant) => {
+            const hideGuestPayment =
+              view.paymentMode === 'ORGANIZER_PAYS_ALL' && participant.role !== 'ORGANIZER';
+            const paymentText = hideGuestPayment
+              ? null
+              : `${participant.finalAmountFormatted} · ${paymentLabel(participant.paymentStatus, labels, {
+                  paysAtCheckout:
+                    view.paymentMode === 'SPLIT_PER_PARTICIPANT' &&
+                    participant.role === 'ORGANIZER' &&
+                    participant.paymentStatus !== 'PAID' &&
+                    participant.paymentStatus !== 'MARKED_RECEIVED' &&
+                    (view.status === 'AWAITING_PAYMENTS' || view.status === 'CHECKOUT'),
+                })}`;
+
+            return (
             <li key={participant.id} className={GROUP_CARD}>
               <div className="flex items-start justify-between gap-3">
-                <div className="min-w-0">
-                  <p className="font-extrabold text-pideh-ink">
+                <div className="min-w-0 flex-1">
+                  <p className="font-display text-base text-pideh-ink uppercase">
                     {participant.displayName}
                     {participant.role === 'ORGANIZER' ? (
-                      <span className="ml-2 text-xs font-bold text-pideh-orange">
+                      <span className="ml-2 text-xs font-bold tracking-normal text-pideh-orange normal-case">
                         ({labels.organizer})
                       </span>
                     ) : null}
                   </p>
-                  <p className="mt-0.5 text-sm text-pideh-muted">
-                    {participant.subtotalFormatted} ·{' '}
-                    {paymentLabel(participant.paymentStatus, labels, {
-                      paysAtCheckout:
-                        view.paymentMode === 'SPLIT_PER_PARTICIPANT' &&
-                        participant.role === 'ORGANIZER' &&
-                        participant.paymentStatus !== 'PAID' &&
-                        participant.paymentStatus !== 'MARKED_RECEIVED' &&
-                        (view.status === 'AWAITING_PAYMENTS' || view.status === 'CHECKOUT'),
-                    })}
-                  </p>
                   {view.paymentMode === 'SPLIT_PER_PARTICIPANT' ? (
-                    <p className="mt-0.5 text-xs text-pideh-muted">
-                      {labels.deliveryShare}: {participant.deliveryShareFormatted} · {labels.total}:{' '}
-                      {participant.finalAmountFormatted}
+                    <p className="mt-0.5 hidden text-sm text-pideh-muted sm:block">
+                      {labels.deliveryShare}: {participant.deliveryShareFormatted} · {labels.subtotal}:{' '}
+                      {participant.subtotalFormatted}
                     </p>
                   ) : null}
                 </div>
-                <div className="flex shrink-0 items-center gap-2">
-                  <p
-                    className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-bold ${
-                      participant.itemsReady
-                        ? 'bg-pideh-orange/12 text-pideh-orange'
-                        : 'bg-pideh-yellow/50 text-pideh-ink'
-                    }`}
-                  >
-                    {participant.itemsReady ? labels.ready : labels.notReady}
-                  </p>
-                {isOrganizer && participant.role !== 'ORGANIZER' && canEdit ? (
-                  <button
-                    type="button"
-                    className="rounded-full p-2 text-pideh-muted transition hover:bg-red-50 hover:text-red-600"
-                    aria-label={labels.removeParticipant}
-                    onClick={() =>
-                      run(async () =>
-                        removeParticipantAction({
-                          inviteToken,
-                          participantId: participant.id,
-                        }),
-                      )
-                    }
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </button>
-                ) : null}
+                <div className="flex shrink-0 flex-col items-end gap-1">
+                  <div className="flex items-center gap-1">
+                    <p
+                      className={`inline-flex rounded-full bg-white px-2.5 py-1 text-xs font-bold ${
+                        participant.itemsReady ? 'text-pideh-orange' : 'text-amber-600'
+                      }`}
+                    >
+                      {participant.itemsReady ? labels.ready : labels.notReady}
+                    </p>
+                    {isOrganizer && participant.role !== 'ORGANIZER' && canEdit ? (
+                      <button
+                        type="button"
+                        className="rounded-full p-2 text-pideh-muted transition hover:bg-red-50 hover:text-red-600"
+                        aria-label={labels.removeParticipant}
+                        onClick={() =>
+                          run(async () =>
+                            removeParticipantAction({
+                              inviteToken,
+                              participantId: participant.id,
+                            }),
+                          )
+                        }
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </button>
+                    ) : null}
+                  </div>
+                  {paymentText ? (
+                    <p className="hidden text-right text-sm font-semibold text-pideh-ink sm:block">
+                      {paymentText}
+                    </p>
+                  ) : null}
                 </div>
               </div>
+              {view.paymentMode === 'SPLIT_PER_PARTICIPANT' ? (
+                <p className="mt-2 text-xs text-pideh-muted sm:hidden">
+                  {labels.deliveryShare}: {participant.deliveryShareFormatted} · {labels.subtotal}:{' '}
+                  {participant.subtotalFormatted}
+                </p>
+              ) : null}
+              {paymentText ? (
+                <p className="mt-1 text-sm font-semibold text-pideh-ink sm:hidden">{paymentText}</p>
+              ) : null}
 
               {participant.items.length === 0 ? (
                 <p className="mt-3 text-sm text-pideh-muted">{labels.emptyItems}</p>
               ) : (
-                <ul
-                  className={
-                    participant.id === view.currentParticipantId
-                      ? 'mt-3 space-y-2'
-                      : 'mt-3 grid grid-cols-2 gap-2'
-                  }
-                >
+                <ul className="mt-3 flex min-w-0 gap-3 overflow-x-auto overscroll-x-contain [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
                   {participant.items.map((item) => (
-                    <li
-                      key={item.id}
-                      className="flex items-center gap-3 rounded-[18px] bg-pideh-cream p-2"
-                    >
-                      <div className="relative h-12 w-12 overflow-hidden rounded-xl bg-white">
-                        {item.imageUrl ? (
-                          <Image
-                            src={item.imageUrl}
-                            alt={item.title}
-                            fill
-                            className="object-contain p-0.5"
-                            sizes="48px"
-                          />
-                        ) : null}
-                      </div>
-                      <div className="min-w-0 flex-1">
-                        <p className="truncate text-sm font-bold text-pideh-ink">
-                          {item.title} × {item.quantity}
-                        </p>
-                        <p className="text-xs font-medium text-pideh-muted">
-                          {item.lineTotalFormatted}
-                        </p>
-                      </div>
-                      {(isOrganizer || participant.id === view.currentParticipantId) && canEdit ? (
-                        <button
-                          type="button"
-                          className="rounded-full p-1.5 text-pideh-muted transition hover:bg-white hover:text-pideh-ink"
-                          aria-label={labels.removeItem}
-                          onClick={() =>
-                            run(async () =>
-                              removeGroupOrderItemAction({
-                                inviteToken,
-                                itemId: item.id,
-                              }),
-                            )
-                          }
-                        >
-                          <X className="h-4 w-4" />
-                        </button>
-                      ) : null}
+                    <li key={item.id} className="w-[260px] shrink-0">
+                      <article className="flex gap-3 rounded-[20px] bg-pideh-cream p-3">
+                        <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-[14px] bg-white">
+                          {item.imageUrl ? (
+                            <Image
+                              src={item.imageUrl}
+                              alt={item.title}
+                              fill
+                              className="object-cover"
+                              sizes="80px"
+                            />
+                          ) : null}
+                        </div>
+                        <div className="flex min-w-0 flex-1 flex-col justify-between gap-2">
+                          <div className="flex items-start gap-2">
+                            <div className="min-w-0 flex-1">
+                              <p className="line-clamp-2 text-sm leading-snug font-semibold text-pideh-ink">
+                                {item.title}
+                              </p>
+                              {item.modifierSummary ? (
+                                <p className="mt-0.5 line-clamp-2 text-xs text-pideh-muted">
+                                  {item.modifierSummary}
+                                </p>
+                              ) : null}
+                            </div>
+                            {(isOrganizer || participant.id === view.currentParticipantId) &&
+                            canEdit ? (
+                              <button
+                                type="button"
+                                className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-pideh-muted transition hover:bg-white hover:text-pideh-ink"
+                                aria-label={labels.removeItem}
+                                onClick={() =>
+                                  run(async () =>
+                                    removeGroupOrderItemAction({
+                                      inviteToken,
+                                      itemId: item.id,
+                                    }),
+                                  )
+                                }
+                              >
+                                <X className="h-4 w-4" />
+                              </button>
+                            ) : null}
+                          </div>
+                          <div className="flex items-center justify-between gap-2">
+                            <p className="text-sm font-bold text-pideh-ink">{item.lineTotalFormatted}</p>
+                            <span className="inline-flex h-6 items-center rounded-full border border-pideh-ink/10 bg-white px-2 text-[11px] font-bold text-pideh-ink">
+                              ×{item.quantity}
+                            </span>
+                          </div>
+                        </div>
+                      </article>
                     </li>
                   ))}
                 </ul>
               )}
             </li>
-          ))}
+            );
+          })}
         </ul>
       </section>
+      </div>
 
-      {error ? (
-        <p className="mb-4 text-sm font-semibold text-red-600" role="alert">
-          {error}
-        </p>
-      ) : null}
-
-      <div className="group-order-actions sticky bottom-4 space-y-3">
+      <GroupOrderSummary
+        labels={labels}
+        view={view}
+        currentParticipant={currentParticipant}
+        actions={
+          <div className="space-y-3">
+            {error ? (
+              <p className="text-sm font-semibold text-red-600" role="alert">
+                {error}
+              </p>
+            ) : null}
         {canEdit && view.currentParticipantId ? (
           iAmReady ? (
             <div
@@ -681,11 +656,49 @@ export function GroupOrderPageClient({
                 {labels.itemsReadyDoneHint}
               </p>
             </div>
+          ) : isOrganizer ? (
+            <div className="grid grid-cols-2 gap-3">
+              <PidehPillButton
+                label={labels.itemsReady}
+                showArrow={false}
+                disabled={pending}
+                className="w-full max-w-none"
+                onClick={() => {
+                  setError(null);
+                  startTransition(async () => {
+                    const result = await markItemsReadyAction({ inviteToken });
+                    if (!result.ok) {
+                      setError(result.error ?? labels.errorGeneric);
+                      return;
+                    }
+                    setView((prev) => {
+                      if (!prev?.currentParticipantId) return prev;
+                      return {
+                        ...prev,
+                        participants: prev.participants.map((participant) =>
+                          participant.id === prev.currentParticipantId
+                            ? { ...participant, itemsReady: true }
+                            : participant,
+                        ),
+                      };
+                    });
+                    router.refresh();
+                  });
+                }}
+              />
+              <GhostPillButton
+                className="w-full text-red-700"
+                disabled={pending}
+                onClick={() => setCancelOpen(true)}
+              >
+                {labels.cancelOrder}
+              </GhostPillButton>
+            </div>
           ) : (
             <PidehPillButton
               label={labels.itemsReady}
               disabled={pending}
-              className="w-full"
+              className="w-full max-w-none"
               onClick={() => {
                 setError(null);
                 startTransition(async () => {
@@ -717,9 +730,42 @@ export function GroupOrderPageClient({
             label={labels.lockAndContinue}
             tone="dark"
             disabled={pending}
-            className="w-full"
+            className="w-full max-w-none"
             onClick={() => run(async () => lockGroupOrderAction({ inviteToken }))}
           />
+        ) : null}
+
+        {isOrganizer && canEdit ? (
+          <PidehPillButton
+            label={view.joinsClosed ? labels.openJoins : labels.closeJoins}
+            tone="yellow"
+            showArrow={false}
+            disabled={pending}
+            className="w-full max-w-none !whitespace-normal"
+            onClick={() =>
+              run(async () =>
+                setJoinsClosedAction({
+                  inviteToken,
+                  joinsClosed: !view.joinsClosed,
+                }),
+              )
+            }
+          />
+        ) : null}
+
+        {isOrganizer &&
+        (iAmReady || !canEdit) &&
+        view.status !== 'CANCELLED' &&
+        view.status !== 'COMPLETED' &&
+        view.status !== 'PAID' &&
+        view.status !== 'PREPARING' ? (
+          <GhostPillButton
+            className="w-full text-red-700"
+            disabled={pending}
+            onClick={() => setCancelOpen(true)}
+          >
+            {labels.cancelOrder}
+          </GhostPillButton>
         ) : null}
 
         {isOrganizer && view.status === 'CHECKOUT' ? (
@@ -777,16 +823,9 @@ export function GroupOrderPageClient({
             {labels.statusAwaitingCardPayments}
           </p>
         ) : null}
-
-        {isOrganizer &&
-        view.status !== 'CANCELLED' &&
-        view.status !== 'COMPLETED' &&
-        view.status !== 'PAID' &&
-        view.status !== 'PREPARING' ? (
-          <GhostPillButton className="w-full" disabled={pending} onClick={() => setCancelOpen(true)}>
-            {labels.cancelOrder}
-          </GhostPillButton>
-        ) : null}
+          </div>
+        }
+      />
       </div>
     </div>
   );

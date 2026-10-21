@@ -4,6 +4,7 @@ import { useEffect, useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 
 import { Button } from '@/components/ui/Button';
+import { DateTimeField } from '@/components/ui/DateTimeField';
 import { MultiSelectDropdown } from '@/components/ui/MultiSelectDropdown';
 import { SelectDropdown } from '@/components/ui/SelectDropdown';
 import { SideSheet } from '@/components/ui/SideSheet';
@@ -223,11 +224,12 @@ export function CouponDrawer({
             </label>
             <label>
               <span className={ADMIN_LABEL}>{copy.drawer.expiresOptional}</span>
-              <input
-                type="datetime-local"
+              <DateTimeField
+                locale={locale}
                 value={expiresAt}
-                onChange={(event) => setExpiresAt(event.target.value)}
-                className={ADMIN_INPUT}
+                onChange={setExpiresAt}
+                placeholder={copy.drawer.expiresOptional}
+                timeLabel={copy.drawer.expiresOptional}
                 disabled={isPending}
               />
             </label>

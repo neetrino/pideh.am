@@ -1,4 +1,3 @@
-import { MobileBrandBar } from '@/components/layout/MobileBrandBar';
 import { NAV_DOCK_HEIGHT_PX } from '@/components/layout/NavEllipse3469';
 import {
   MOBILE_STOREFRONT_COLUMN,
@@ -17,7 +16,6 @@ import { MobileHomeHero } from '@/features/home/ui/mobile/MobileHomeHero';
 import { toTelHref } from '@/lib/contact/tel-href';
 import type { Dictionary } from '@/lib/i18n/get-dictionary';
 import type { Locale } from '@/lib/i18n/config';
-import type { Currency } from '@/lib/money/currency';
 
 /**
  * Figma top band through product grid start (y=588).
@@ -54,7 +52,6 @@ type MobileHomeProps = {
   dictionary: Dictionary;
   categories: readonly CategoryItem[];
   products: readonly FeaturedItem[];
-  currency: Currency;
   isSignedIn: boolean;
 };
 
@@ -77,7 +74,6 @@ export function MobileHome({
   dictionary,
   categories,
   products,
-  currency,
   isSignedIn,
 }: MobileHomeProps) {
   const home = dictionary.home;
@@ -119,16 +115,6 @@ export function MobileHome({
       <div className={MOBILE_STOREFRONT_COLUMN}>
       <MobileFrame440 height={MOBILE_TOP_BAND_HEIGHT}>
         <MobileEllipse3469 />
-
-        <MobileBrandBar
-          locale={locale}
-          dictionary={dictionary}
-          phoneHref={phoneHref}
-          phoneLabel={contact.callTitle}
-          currency={currency}
-          isSignedIn={isSignedIn}
-          className="absolute top-[49px] left-1/2 z-40 flex -translate-x-1/2 items-end justify-center gap-[179px]"
-        />
 
         <MobileHomeHero
           locale={locale}

@@ -11,14 +11,20 @@ type MobileProductImageProps = {
   src: string;
   alt: string;
   imageRef: RefObject<HTMLDivElement | null>;
+  /** Shawarma shots are smaller and upright; pide already fills the hero on a tilt. */
+  emphasize?: boolean;
 };
 
-export function MobileProductImage({ src, alt, imageRef }: MobileProductImageProps) {
+export function MobileProductImage({ src, alt, imageRef, emphasize = false }: MobileProductImageProps) {
   return (
     <div
       ref={imageRef}
       data-node-id="268:594"
-      className="pointer-events-none absolute inset-x-3 top-24 bottom-3 z-0"
+      className={
+        emphasize
+          ? 'pointer-events-none absolute inset-x-0 top-10 bottom-0 z-0'
+          : 'pointer-events-none absolute inset-x-1 top-12 bottom-1 z-0'
+      }
     >
       <Image
         src={src}
@@ -26,7 +32,11 @@ export function MobileProductImage({ src, alt, imageRef }: MobileProductImagePro
         fill
         sizes="100vw"
         priority
-        className="object-contain object-center"
+        className={
+          emphasize
+            ? 'origin-center scale-[1.35] -rotate-[18deg] object-contain object-center'
+            : 'origin-center scale-100 object-contain object-center'
+        }
       />
     </div>
   );

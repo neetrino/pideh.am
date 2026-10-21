@@ -17,7 +17,7 @@ type ShopCategoryOption = {
 export type ShopCategoryChipsTone = 'onCream' | 'onOrange';
 
 const BASE_CHIP =
-  'inline-flex h-14 shrink-0 items-center gap-2 rounded-[40px] pr-5 pl-4 font-montserrat-arm text-base font-semibold whitespace-nowrap transition duration-200';
+  'inline-flex h-14 shrink-0 items-center gap-2 rounded-[40px] pr-5 pl-4 font-montserrat-arm text-base font-semibold whitespace-nowrap outline-none transition duration-200 focus-visible:ring-2 focus-visible:ring-[#ffcf48] focus-visible:ring-offset-2';
 
 /**
  * Every chip flattens its glyph to the chip's own label colour, so icon and
@@ -30,7 +30,7 @@ type ChipStyle = {
 };
 
 const INACTIVE_CHIP: ChipStyle = {
-  chip: 'bg-white text-[#ff6b00] shadow-none hover:scale-[1.04] hover:bg-white hover:shadow-[0px_8px_14px_rgba(31,20,8,0.08)]',
+  chip: 'bg-white text-[#ff6b00] shadow-none hover:scale-[1.04] hover:bg-white',
   iconColor: '#ff6b00',
 };
 
@@ -118,23 +118,35 @@ function CategoryChip({ href, label, icon, active, tone }: CategoryChipProps) {
       aria-selected={active}
       className={`${BASE_CHIP} ${style.chip}`}
     >
-      <span
-        aria-hidden
-        className="shrink-0"
-        style={{
-          width: icon.width,
-          height: icon.height,
-          backgroundColor: style.iconColor,
-          maskImage: `url(${icon.src})`,
-          maskRepeat: 'no-repeat',
-          maskPosition: 'center',
-          maskSize: 'contain',
-          WebkitMaskImage: `url(${icon.src})`,
-          WebkitMaskRepeat: 'no-repeat',
-          WebkitMaskPosition: 'center',
-          WebkitMaskSize: 'contain',
-        }}
-      />
+      {icon.plain && !active ? (
+        // Decorative category mark; the link name is the visible label.
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src={icon.src}
+          alt=""
+          width={icon.width}
+          height={icon.height}
+          className="-ml-1.5 shrink-0 scale-110 object-contain"
+        />
+      ) : (
+        <span
+          aria-hidden
+          className="shrink-0"
+          style={{
+            width: icon.width,
+            height: icon.height,
+            backgroundColor: style.iconColor,
+            maskImage: `url(${icon.src})`,
+            maskRepeat: 'no-repeat',
+            maskPosition: 'center',
+            maskSize: 'contain',
+            WebkitMaskImage: `url(${icon.src})`,
+            WebkitMaskRepeat: 'no-repeat',
+            WebkitMaskPosition: 'center',
+            WebkitMaskSize: 'contain',
+          }}
+        />
+      )}
       {label}
     </AppLink>
   );

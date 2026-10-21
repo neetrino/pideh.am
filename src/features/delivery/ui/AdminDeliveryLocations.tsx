@@ -1,22 +1,11 @@
 'use client';
 
-import { Pencil, Trash2 } from 'lucide-react';
+import { Pencil, Plus, Trash2 } from 'lucide-react';
 import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
-import {
-  ADMIN_TABLE,
-  ADMIN_TABLE_OUTER_SCROLL,
-  ADMIN_TABLE_ROW,
-  ADMIN_TABLE_TBODY,
-  ADMIN_TABLE_TD,
-  ADMIN_TABLE_TD_CENTER,
-  ADMIN_TABLE_TH,
-  ADMIN_TABLE_TH_CENTER,
-  ADMIN_TABLE_THEAD,
-} from '@/features/admin/ui/admin-table-classes';
 import { deleteDeliveryLocationAction } from '@/features/delivery/application/manage-delivery';
 import type { AdminDeliveryLocation } from '@/features/delivery/application/queries';
 import { DeliveryLocationDrawer } from '@/features/delivery/ui/DeliveryLocationDrawer';
@@ -32,9 +21,19 @@ type AdminDeliveryLocationsProps = {
   locale: string;
   locations: AdminDeliveryLocation[];
   copy: AdminDeliveryLocationsCopy;
+  isActive: boolean;
+  onActiveChange: (value: boolean) => void;
+  activeDisabled?: boolean;
 };
 
-export function AdminDeliveryLocations({ locale, locations, copy }: AdminDeliveryLocationsProps) {
+export function AdminDeliveryLocations({
+  locale,
+  locations,
+  copy,
+  isActive,
+  onActiveChange,
+  activeDisabled,
+}: AdminDeliveryLocationsProps) {
   const router = useRouter();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [editing, setEditing] = useState<AdminDeliveryLocation | null>(null);
@@ -66,12 +65,19 @@ export function AdminDeliveryLocations({ locale, locations, copy }: AdminDeliver
   return (
     <>
       <Card className="flex h-full min-h-0 flex-col p-6">
-        <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
-          <div className="min-w-0">
+        <div className="relative mb-4">
+          <div className="pr-[14rem]">
             <h2 className="text-base font-semibold text-gray-900">{copy.delivery.locations.title}</h2>
             <p className="mt-1 text-sm text-gray-600">{copy.delivery.locations.hint}</p>
           </div>
-          <Button type="button" onClick={openCreate} disabled={isPending}>
+          <Button
+            type="button"
+            size="sm"
+            onClick={openCreate}
+            disabled={isPending}
+            className="absolute top-0 right-0 inline-flex items-center gap-1.5 bg-[#ff6b00] whitespace-nowrap text-white hover:bg-[#e85f00]"
+          >
+            <Plus className="h-4 w-4" aria-hidden />
             {copy.delivery.locations.add}
           </Button>
         </div>
@@ -79,54 +85,57 @@ export function AdminDeliveryLocations({ locale, locations, copy }: AdminDeliver
         {error ? <p className="mb-3 text-sm text-red-700">{error}</p> : null}
 
         {locations.length === 0 ? (
-          <p className="text-sm text-gray-600">{copy.delivery.locations.empty}</p>
+          <p className="rounded-xl border border-dashed border-[#ff6b00]/25 bg-[#fff8e7] px-4 py-6 text-center text-sm text-[#1e1e1e]/70">
+            {copy.delivery.locations.empty}
+          </p>
         ) : (
-          <div className={ADMIN_TABLE_OUTER_SCROLL}>
-            <table className={ADMIN_TABLE}>
-              <thead className={ADMIN_TABLE_THEAD}>
-                <tr>
-                  <th className={ADMIN_TABLE_TH}>{copy.delivery.locationDrawer.city}</th>
-                  <th className={ADMIN_TABLE_TH}>{copy.delivery.locationDrawer.area}</th>
-                  <th className={ADMIN_TABLE_TH_CENTER}>{copy.delivery.locationDrawer.priceAmd}</th>
-                  <th className={ADMIN_TABLE_TH_CENTER}>{copy.common.actions}</th>
-                </tr>
-              </thead>
-              <tbody className={ADMIN_TABLE_TBODY}>
-                {locations.map((location) => (
-                  <tr key={location.id} className={ADMIN_TABLE_ROW}>
-                    <td className={ADMIN_TABLE_TD}>{location.city}</td>
-                    <td className={ADMIN_TABLE_TD}>{location.area}</td>
-                    <td className={ADMIN_TABLE_TD_CENTER}>
-                      {formatMoneyAmount(location.priceAmount, 'AMD', locale)}
-                    </td>
-                    <td className={ADMIN_TABLE_TD_CENTER}>
-                      <div className="flex items-center justify-center gap-1">
-                        <button
-                          type="button"
-                          onClick={() => openEdit(location)}
-                          className="rounded p-1.5 text-gray-500 hover:bg-gray-100 hover:text-gray-900"
-                          disabled={isPending}
-                          aria-label={copy.common.edit}
-                        >
-                          <Pencil className="h-4 w-4" />
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => onDelete(location.id)}
-                          className="rounded p-1.5 text-red-600 hover:bg-red-50"
-                          disabled={isPending}
-                          aria-label={copy.common.delete}
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          <ul className="divide-y divide-[#ff6b00]/15 overflow-hidden rounded-xl border border-[#ff6b00]/20">
+            {locations.map((location) => (
+              <li key={location.id} className="flex items-center justify-between gap-3 px-4 py-3">
+                <div className="min-w-0">
+                  <p className="truncate text-sm font-medium text-[#1e1e1e]">
+                    {location.city}
+                    {location.area ? ` · ${location.area}` : ''}
+                  </p>
+                  <p className="text-sm text-[#ff6b00]">
+                    {formatMoneyAmount(location.priceAmount, 'AMD', locale)}
+                  </p>
+                </div>
+                <div className="flex shrink-0 items-center gap-1">
+                  <button
+                    type="button"
+                    onClick={() => openEdit(location)}
+                    className="rounded-lg p-2 text-[#1e1e1e]/55 hover:bg-[#ffd54a]/40 hover:text-[#1e1e1e]"
+                    disabled={isPending}
+                    aria-label={copy.common.edit}
+                  >
+                    <Pencil className="h-4 w-4" aria-hidden />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => onDelete(location.id)}
+                    className="rounded-lg p-2 text-[#1e1e1e]/55 hover:bg-red-50 hover:text-red-700"
+                    disabled={isPending}
+                    aria-label={copy.common.delete}
+                  >
+                    <Trash2 className="h-4 w-4" aria-hidden />
+                  </button>
+                </div>
+              </li>
+            ))}
+          </ul>
         )}
+
+        <label className="mt-4 inline-flex items-center gap-2 text-sm text-[#1e1e1e]">
+          <input
+            type="checkbox"
+            checked={isActive}
+            onChange={(event) => onActiveChange(event.target.checked)}
+            disabled={activeDisabled}
+            className="h-4 w-4 rounded border-[#1e1e1e]/20 accent-[#ff6b00]"
+          />
+          <span className="font-bold">{copy.delivery.offerDelivery}</span>
+        </label>
       </Card>
 
       <DeliveryLocationDrawer

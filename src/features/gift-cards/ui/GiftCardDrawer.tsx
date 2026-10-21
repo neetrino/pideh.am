@@ -4,6 +4,7 @@ import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 
 import { Button } from '@/components/ui/Button';
+import { DateTimeField } from '@/components/ui/DateTimeField';
 import { SideSheet } from '@/components/ui/SideSheet';
 import {
   ADMIN_CHECKBOX,
@@ -124,11 +125,12 @@ export function GiftCardDrawer({ locale, open, onClose, presets, copy }: GiftCar
         </label>
         <label className="block space-y-1">
           <span className={ADMIN_LABEL}>{copy.drawer.expiresOptional}</span>
-          <input
-            className={ADMIN_INPUT}
-            type="datetime-local"
+          <DateTimeField
+            locale={locale}
             value={expiresAt}
-            onChange={(event) => setExpiresAt(event.target.value)}
+            onChange={setExpiresAt}
+            placeholder={copy.drawer.expiresOptional}
+            timeLabel={copy.drawer.expiresOptional}
           />
         </label>
         <label className={ADMIN_CHECKBOX_LABEL}>

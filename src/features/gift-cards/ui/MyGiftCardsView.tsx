@@ -25,6 +25,12 @@ type MyGiftCardsViewCopy = {
   created: string;
   expires: string;
   filters: Record<CustomerGiftCardBucket, string>;
+  sectionsSwitcher: {
+    aria: string;
+    mine: string;
+    usedByMe: string;
+    boughtForOthers: string;
+  };
   statuses: Record<string, string>;
   buyDrawer: {
     title: string;
@@ -83,7 +89,7 @@ export function MyGiftCardsView({
 
   return (
     <section className="profile-sheet-keep-frame space-y-6">
-      <div className="flex flex-wrap items-center justify-between gap-3">
+      <div className="mb-1 flex flex-col gap-4 border-b border-[#1e1e1e]/10 pb-5 sm:mb-2 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between sm:gap-3 sm:pb-6">
         <h1 className="font-display text-3xl leading-[0.9] text-[#1e1e1e] uppercase sm:text-4xl">
           {copy.title}
         </h1>
@@ -93,14 +99,49 @@ export function MyGiftCardsView({
             setDrawerKey((key) => key + 1);
             setDrawerOpen(true);
           }}
-          className="inline-flex h-10 items-center rounded-full bg-[#ff6b00] px-5 text-sm font-bold text-white transition hover:brightness-105"
+          className="inline-flex h-10 w-full items-center justify-center rounded-full bg-[#ff6b00] px-5 text-sm font-bold text-white transition hover:brightness-105 sm:w-auto"
         >
           {copy.buy}
         </button>
       </div>
 
+      <div className="sm:hidden">
+        <div
+          role="tablist"
+          aria-label={copy.sectionsSwitcher.aria}
+          className="relative flex w-full items-center rounded-full bg-[#f3f4f6] p-1"
+        >
+          <span
+            aria-hidden
+            className="pointer-events-none absolute top-1 bottom-1 rounded-full bg-white shadow-sm transition-transform duration-300 ease-[cubic-bezier(0.32,0.72,0,1)]"
+            style={{
+              width: 'calc((100% - 0.5rem) / 3)',
+              left: '0.25rem',
+              transform: `translateX(${FILTER_ORDER.indexOf(activeFilter) * 100}%)`,
+            }}
+          />
+          {FILTER_ORDER.map((bucket) => {
+            const isActive = activeFilter === bucket;
+            return (
+              <button
+                key={bucket}
+                type="button"
+                role="tab"
+                aria-selected={isActive}
+                onClick={() => setActiveFilter(bucket)}
+                className={`relative z-[1] flex min-w-0 flex-1 items-center justify-center rounded-full px-1 py-2 text-center text-[11px] leading-tight transition-colors duration-300 ${
+                  isActive ? 'font-bold text-[#1e1e1e]' : 'font-semibold text-[#6b7280]'
+                }`}
+              >
+                {copy.sectionsSwitcher[bucket]}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
       <div
-        className="flex flex-nowrap items-center gap-1.5 sm:gap-2"
+        className="hidden flex-nowrap items-center gap-2 sm:flex"
         role="tablist"
         aria-label={copy.title}
       >
@@ -113,9 +154,9 @@ export function MyGiftCardsView({
               role="tab"
               aria-selected={isActive}
               onClick={() => setActiveFilter(bucket)}
-              className={`inline-flex min-h-8 flex-1 items-center justify-center rounded-full px-2.5 py-1.5 text-center text-[10px] font-bold leading-tight tracking-wide uppercase transition sm:min-h-9 sm:px-3 sm:text-[11px] lg:text-xs ${
+              className={`inline-flex min-h-10 flex-1 items-center justify-center rounded-full px-3 py-2 text-center text-xs leading-tight font-bold transition ${
                 isActive
-                  ? 'bg-[#1e1e1e] text-white shadow-[0_8px_18px_rgba(30,30,30,0.18)]'
+                  ? 'bg-[#ff6b00] text-white'
                   : 'bg-[#ff6b00]/12 text-[#1e1e1e] hover:bg-[#ff6b00]/20'
               }`}
             >

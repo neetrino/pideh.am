@@ -121,6 +121,12 @@
       "usedByMe": "Gift cards used by me",
       "boughtForOthers": "Gift cards I bought for others"
     },
+    "sectionsSwitcher": {
+      "aria": "Gift card sections",
+      "mine": "Mine",
+      "usedByMe": "Used",
+      "boughtForOthers": "For others"
+    },
     "statuses": {
       "PENDING_PAYMENT": "Pending payment",
       "ACTIVE": "Active",

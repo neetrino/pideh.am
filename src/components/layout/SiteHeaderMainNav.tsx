@@ -2,6 +2,7 @@
 
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 
 import { AccountControls } from '@/components/layout/AccountControls';
 import { LocaleCurrencySwitcher } from '@/components/layout/LocaleCurrencySwitcher';
@@ -50,6 +51,20 @@ function headerSearchLabels(header: Dictionary['header']): {
   };
 }
 
+type PillRect = {
+  left: number;
+  width: number;
+};
+
+function measureActivePill(nav: HTMLElement): PillRect | null {
+  const active = nav.querySelector<HTMLElement>('[data-nav-item][aria-current="page"]');
+  if (!active) {
+    return null;
+  }
+
+  return { left: active.offsetLeft, width: active.offsetWidth };
+}
+
 function isActiveHref(pathname: string, href: string): boolean {
   const path = pathname.replace(/\/$/, '') || '/';
   const target = href.replace(/\/$/, '') || '/';
@@ -84,6 +99,47 @@ export function SiteHeaderMainNav({
   const primaryNav = navItems.filter(
     (item) => !item.href.includes('/blog') && !item.href.endsWith('/cart'),
   );
+  const navRef = useRef<HTMLElement>(null);
+  const [pill, setPill] = useState<PillRect | null>(null);
+  const [motionReady, setMotionReady] = useState(false);
+
+  useLayoutEffect(() => {
+    const nav = navRef.current;
+    if (!nav || motionReady) {
+      return;
+    }
+
+    setPill(measureActivePill(nav));
+  }, [motionReady, pathname]);
+
+  useEffect(() => {
+    const nav = navRef.current;
+    if (!nav) {
+      return;
+    }
+
+    const frame = requestAnimationFrame(() => {
+      setMotionReady(true);
+    });
+    const observer = new ResizeObserver(() => {
+      setPill(measureActivePill(nav));
+    });
+    observer.observe(nav);
+
+    return () => {
+      cancelAnimationFrame(frame);
+      observer.disconnect();
+    };
+  }, []);
+
+  useEffect(() => {
+    const nav = navRef.current;
+    if (!nav || !motionReady) {
+      return;
+    }
+
+    setPill(measureActivePill(nav));
+  }, [motionReady, pathname]);
 
   return (
     <header className="relative z-40 pt-3 md:pt-3.5">
@@ -96,24 +152,42 @@ export function SiteHeaderMainNav({
             href={`/${locale}`}
             prefetchPolicy="intent"
             data-header-logo
-            className="relative h-12 w-[56px] shrink-0 md:h-16 md:w-[75px]"
+            className="relative h-12 w-[62px] shrink-0 md:h-14 md:w-[72px]"
             aria-label={dictionary.brand}
+            onClick={(event) => {
+              if (pathname === `/${locale}`) {
+                event.preventDefault();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }
+            }}
           >
             <Image
-              src={PIDEH_ASSETS.logo}
+              src={PIDEH_ASSETS.wordmark}
               alt={dictionary.brand}
               fill
-              sizes="225px"
-              quality={100}
+              sizes="72px"
+              unoptimized
               className="object-contain"
               priority
             />
           </AppLink>
 
           <nav
+            ref={navRef}
             aria-label="Primary"
-            className="hidden flex-1 items-center justify-center gap-[26px] md:flex"
+            className="relative hidden flex-1 items-center justify-center gap-0.5 md:flex"
           >
+            {pill ? (
+              <span
+                aria-hidden
+                className={
+                  motionReady
+                    ? 'pointer-events-none absolute top-1/2 left-0 z-0 h-12 rounded-[72px] bg-[#ff6b00] transition-[transform,width] duration-300 ease-in-out motion-reduce:transition-none'
+                    : 'pointer-events-none absolute top-1/2 left-0 z-0 h-12 rounded-[72px] bg-[#ff6b00]'
+                }
+                style={{ width: pill.width, transform: `translate(${pill.left}px, -50%)` }}
+              />
+            ) : null}
             {primaryNav.map((item) => {
               const active = isActiveHref(pathname, item.href);
               return (
@@ -121,11 +195,12 @@ export function SiteHeaderMainNav({
                   key={item.href}
                   href={item.href}
                   prefetchPolicy="intent"
+                  data-nav-item
                   aria-current={active ? 'page' : undefined}
                   className={
                     active
-                      ? 'inline-flex h-12 items-center rounded-[72px] bg-[#ff6b00] px-6 text-base font-bold text-white'
-                      : 'text-base font-bold whitespace-nowrap text-[#364153] transition hover:text-[#ff6b00]'
+                      ? 'relative z-10 inline-flex h-12 items-center rounded-[72px] px-4 text-base font-bold whitespace-nowrap text-white transition-colors duration-300 motion-reduce:transition-none'
+                      : 'relative z-10 inline-flex h-12 items-center rounded-[72px] px-4 text-base font-bold whitespace-nowrap text-[#364153] transition-colors duration-300 hover:text-[#ff6b00] motion-reduce:transition-none'
                   }
                 >
                   {item.label}
@@ -148,18 +223,20 @@ export function SiteHeaderMainNav({
                 languageLabel={dictionary.header.language}
                 compact
               />
-              <HeaderSearch locale={locale} currency={currency} labels={searchLabels} />
-              <WishlistHeaderLink
-                locale={locale}
-                label={dictionary.nav.wishlist}
-                count={wishlistCount}
-              />
-              <CartDrawer
-                locale={locale}
-                currency={currency}
-                dictionary={dictionary}
-                itemCount={cartItemCount}
-              />
+              <div className="flex items-center [&>*+*]:-ml-2.5">
+                <HeaderSearch locale={locale} currency={currency} labels={searchLabels} />
+                <WishlistHeaderLink
+                  locale={locale}
+                  label={dictionary.nav.wishlist}
+                  count={wishlistCount}
+                />
+                <CartDrawer
+                  locale={locale}
+                  currency={currency}
+                  dictionary={dictionary}
+                  itemCount={cartItemCount}
+                />
+              </div>
             </div>
 
             <div className="hidden items-center gap-[19px] md:flex">

@@ -343,6 +343,7 @@ export function ProductDrawer({
               />
             </label>
             <ProductDrawerDiscount
+              locale={locale}
               value={discount}
               disabled={isPending}
               onChange={setDiscount}
