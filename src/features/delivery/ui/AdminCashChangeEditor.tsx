@@ -1,6 +1,7 @@
 'use client';
 
 import { useRef, useState, useTransition } from 'react';
+import { ImagePlus, Plus, Trash2 } from 'lucide-react';
 
 import { Button } from '@/components/ui/Button';
 import {
@@ -98,9 +99,21 @@ export function AdminCashChangeEditor({
 
   return (
     <div className="flex flex-col gap-4">
-      <div>
-        <h2 className="text-base font-semibold text-gray-900">{copy.title}</h2>
-        <p className="mt-1 text-sm text-gray-600">{copy.hint}</p>
+      <div className="relative">
+        <div className="pr-40">
+          <h2 className="text-base font-semibold text-gray-900">{copy.title}</h2>
+          <p className="mt-1 text-sm text-gray-600">{copy.hint}</p>
+        </div>
+        <Button
+          type="button"
+          size="sm"
+          disabled={disabled || isUploading || value.length >= 20}
+          onClick={addItem}
+          className="absolute top-0 right-0 inline-flex items-center gap-1.5 bg-[#ff6b00] whitespace-nowrap text-white hover:bg-[#e85f00]"
+        >
+          <Plus className="h-4 w-4" aria-hidden />
+          {copy.add}
+        </Button>
       </div>
 
       {error ? <p className="text-sm text-red-700">{error}</p> : null}
@@ -130,9 +143,9 @@ export function AdminCashChangeEditor({
                 )}
               </div>
 
-              <div className="grid min-w-0 flex-1 gap-2 sm:grid-cols-[1fr_auto_auto] sm:items-end">
-                <label>
-                  <span className={ADMIN_LABEL}>{copy.amount}</span>
+              <div className="min-w-0 flex-1">
+                <span className={ADMIN_LABEL}>{copy.amount}</span>
+                <div className="flex items-center gap-3">
                   <input
                     type="number"
                     min={1}
@@ -144,65 +157,51 @@ export function AdminCashChangeEditor({
                       })
                     }
                     placeholder={copy.amountPlaceholder}
-                    className={ADMIN_INPUT}
+                    className={`${ADMIN_INPUT} min-w-0 flex-1`}
                     disabled={disabled || isUploading}
                   />
-                  {item.amount > 0 ? (
-                    <span className="mt-1 block text-xs text-gray-500">
-                      {formatMoneyAmount(item.amount, 'AMD', locale)}
-                    </span>
-                  ) : null}
-                </label>
-
-                <label className={`${ADMIN_CHECKBOX_LABEL} pb-2`}>
-                  <input
-                    type="checkbox"
-                    checked={item.isActive}
-                    onChange={(event) => updateItem(item.id, { isActive: event.target.checked })}
-                    disabled={disabled || isUploading}
-                    className={ADMIN_CHECKBOX}
-                  />
-                  {copy.active}
-                </label>
-
-                <div className="flex flex-wrap gap-2">
-                  <Button
+                  <label className={ADMIN_CHECKBOX_LABEL}>
+                    <input
+                      type="checkbox"
+                      checked={item.isActive}
+                      onChange={(event) => updateItem(item.id, { isActive: event.target.checked })}
+                      disabled={disabled || isUploading}
+                      className={ADMIN_CHECKBOX}
+                    />
+                    {copy.active}
+                  </label>
+                  <button
                     type="button"
-                    variant="secondary"
                     disabled={disabled || isUploading}
                     onClick={() => pickImage(item.id)}
+                    aria-label={previewUrl ? copy.changeImage : copy.uploadImage}
+                    title={previewUrl ? copy.changeImage : copy.uploadImage}
+                    className="inline-flex size-11 shrink-0 items-center justify-center rounded-[18px] border-[1.5px] border-[#1e1e1e]/12 text-[#ff6b00] transition hover:border-[#ff6b00]/40 hover:bg-[#fff8e7] disabled:opacity-50"
                   >
-                    {isUploading && uploadTargetId === item.id
-                      ? copy.uploading
-                      : previewUrl
-                        ? copy.changeImage
-                        : copy.uploadImage}
-                  </Button>
-                  <Button
+                    <ImagePlus className="h-5 w-5" aria-hidden />
+                  </button>
+                  <button
                     type="button"
-                    variant="secondary"
                     disabled={disabled || isUploading}
                     onClick={() => removeItem(item.id)}
+                    aria-label={copy.remove}
+                    title={copy.remove}
+                    className="inline-flex size-11 shrink-0 items-center justify-center rounded-[18px] border-[1.5px] border-[#1e1e1e]/12 text-[#1e1e1e]/70 transition hover:border-red-300 hover:bg-red-50 hover:text-red-700 disabled:opacity-50"
                   >
-                    {copy.remove}
-                  </Button>
+                    <Trash2 className="h-5 w-5" aria-hidden />
+                  </button>
                 </div>
+                {item.amount > 0 ? (
+                  <span className="mt-1 block text-xs text-gray-500">
+                    {formatMoneyAmount(item.amount, 'AMD', locale)}
+                  </span>
+                ) : null}
               </div>
             </li>
           );
         })}
       </ul>
 
-      <div>
-        <Button
-          type="button"
-          variant="secondary"
-          disabled={disabled || isUploading || value.length >= 20}
-          onClick={addItem}
-        >
-          {copy.add}
-        </Button>
-      </div>
     </div>
   );
 }

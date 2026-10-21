@@ -35,6 +35,8 @@ type SideSheetProps = {
   panelInnerClassName?: string;
   /** Extra classes for the circle close control. */
   closeClassName?: string;
+  /** Size the panel to its content instead of the full viewport height. */
+  compact?: boolean;
 };
 
 /**
@@ -54,6 +56,7 @@ export function SideSheet({
   backdropBlur,
   panelInnerClassName,
   closeClassName,
+  compact = false,
 }: SideSheetProps) {
   const [mounted, setMounted] = useState(false);
   const [rendered, setRendered] = useState(false);
@@ -179,7 +182,11 @@ export function SideSheet({
         onClick={onClose}
       />
       <div
-        className={`fixed inset-y-0 ${edgeClass} z-[1] flex h-dvh max-h-dvh ${panelMotionClass} ${resolvedPanelClassName}`}
+        className={`fixed ${edgeClass} z-[1] flex ${
+          compact
+            ? 'top-6 h-auto max-h-[calc(100dvh-3rem)]'
+            : 'inset-y-0 h-dvh max-h-dvh'
+        } ${panelMotionClass} ${resolvedPanelClassName}`}
         onAnimationEnd={handlePanelAnimationEnd}
       >
         {closeVariant === 'edge-tab' ? (
@@ -206,7 +213,9 @@ export function SideSheet({
           </button>
         )}
         <div
-          className={`flex h-full min-h-0 w-full flex-col overflow-hidden shadow-2xl ${resolvedPanelInnerClassName}`}
+          className={`flex min-h-0 w-full flex-col overflow-hidden shadow-2xl ${
+            compact ? 'h-auto' : 'h-full'
+          } ${resolvedPanelInnerClassName}`}
           onClick={(event) => event.stopPropagation()}
         >
           {open ? children : snapshotChildrenRef.current}

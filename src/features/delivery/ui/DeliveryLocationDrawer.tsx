@@ -121,7 +121,7 @@ function DeliveryLocationForm({ locale, location, onClose, copy }: DeliveryLocat
         });
       }}
     >
-      <div className="flex-1 space-y-4 overflow-y-auto px-5 py-5">
+      <div className="flex-1 space-y-8 overflow-y-auto px-5 py-5">
         <AdminLocaleTabs
           label={tabFields.translations}
           active={activeLocale}
@@ -201,6 +201,7 @@ export function DeliveryLocationDrawer({
       onClose={onClose}
       ariaLabel={location ? copy.locationDrawer.editAria : copy.locationDrawer.addAria}
       variant="admin"
+      panelClassName="w-[min(100%,calc(100%-2.75rem))] sm:w-[min(28rem,42%)]"
     >
       <div className="shrink-0 border-b-2 border-[#1e1e1e]/10 px-5 py-4 sm:px-6">
         <h2 className="font-display text-2xl leading-[0.95] text-[#1e1e1e] uppercase sm:text-3xl">

@@ -5,6 +5,7 @@ import { useMemo, useState, useTransition } from 'react';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
 import { AdminPageHeading } from '@/features/admin/ui/AdminPageHeading';
+import { useAdminSidebarCollapse } from '@/features/admin/ui/AdminSidebarCollapseContext';
 import { saveDeliverySettingsAction } from '@/features/delivery/application/save-delivery-settings';
 import type { CashChangeDenomination } from '@/features/delivery/domain/cash-change';
 import type { StoreDeliverySettings } from '@/features/delivery/domain/delivery-settings';
@@ -64,6 +65,7 @@ export function AdminDeliveryView({
   initialImageUrls,
   copy,
 }: AdminDeliveryViewProps) {
+  const [isActive, setIsActive] = useState(settings.isActive);
   const [schedule, setSchedule] = useState<DeliveryScheduleSettings>(settings.schedule);
   const [cashChangeDenominations, setCashChangeDenominations] = useState<CashChangeDenomination[]>(
     settings.cashChangeDenominations,
@@ -72,6 +74,14 @@ export function AdminDeliveryView({
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
+  const { collapsed } = useAdminSidebarCollapse();
+  const stickyBarOffsetClass = collapsed ? 'lg:left-16' : 'lg:left-64';
+  const [savedSnapshot, setSavedSnapshot] = useState(() => ({
+    isActive: settings.isActive,
+    schedule: settings.schedule,
+    cashChangeDenominations: settings.cashChangeDenominations,
+    imageUrls: initialImageUrls,
+  }));
 
   const sortedDenominations = useMemo(
     () =>
@@ -79,39 +89,69 @@ export function AdminDeliveryView({
     [cashChangeDenominations],
   );
 
+  const isDirty = useMemo(() => {
+    if (isActive !== savedSnapshot.isActive) return true;
+    if (JSON.stringify(schedule) !== JSON.stringify(savedSnapshot.schedule)) return true;
+    const savedDenominations = [...savedSnapshot.cashChangeDenominations].sort(
+      (a, b) => a.sortOrder - b.sortOrder || a.amount - b.amount,
+    );
+    if (JSON.stringify(sortedDenominations) !== JSON.stringify(savedDenominations)) return true;
+    if (JSON.stringify(imageUrls) !== JSON.stringify(savedSnapshot.imageUrls)) return true;
+    return false;
+  }, [imageUrls, isActive, savedSnapshot, schedule, sortedDenominations]);
+
   function onSave(): void {
+    if (!isDirty) return;
     startTransition(async () => {
       setError(null);
       setMessage(null);
       const weekly = normalizeScheduleForSave(schedule);
-      setSchedule({ ...schedule, weekly });
+      const nextSchedule = { ...schedule, weekly };
+      setSchedule(nextSchedule);
+      const nextDenominations = sortedDenominations.map((item, index) => ({
+        ...item,
+        sortOrder: index,
+      }));
       const result = await saveDeliverySettingsAction(locale, {
         originAddress: settings.originAddress,
         originLat: settings.originLat,
         originLng: settings.originLng,
         pricePerKmAmount: settings.pricePerKmAmount,
-        isActive: true,
+        isActive,
         schedule: {
-          slotMinutes: schedule.slotMinutes,
-          maxDaysAhead: schedule.maxDaysAhead,
+          slotMinutes: nextSchedule.slotMinutes,
+          maxDaysAhead: nextSchedule.maxDaysAhead,
           weekly,
-          closedDates: schedule.closedDates,
+          closedDates: nextSchedule.closedDates,
         },
-        cashChangeDenominations: sortedDenominations.map((item, index) => ({
-          ...item,
-          sortOrder: index,
-        })),
+        cashChangeDenominations: nextDenominations,
       });
       if (!result.ok) {
         setError(result.error.message);
         return;
       }
+      setCashChangeDenominations(nextDenominations);
+      setSavedSnapshot({
+        isActive,
+        schedule: nextSchedule,
+        cashChangeDenominations: nextDenominations,
+        imageUrls,
+      });
       setMessage(copy.delivery.saved);
     });
   }
 
+  function onCancel(): void {
+    setIsActive(savedSnapshot.isActive);
+    setSchedule(savedSnapshot.schedule);
+    setCashChangeDenominations(savedSnapshot.cashChangeDenominations);
+    setImageUrls(savedSnapshot.imageUrls);
+    setError(null);
+    setMessage(null);
+  }
+
   return (
-    <section>
+    <section className="pb-24">
       <AdminPageHeading
         className="mb-6"
         title={copy.delivery.title}
@@ -121,59 +161,67 @@ export function AdminDeliveryView({
       {error ? <p className="mb-3 text-sm text-red-700">{error}</p> : null}
       {message ? <p className="mb-3 text-sm text-green-700">{message}</p> : null}
 
-      <div className="grid items-start gap-6 xl:grid-cols-2">
-        <form
-          className="contents"
-          onSubmit={(event) => {
-            event.preventDefault();
-            onSave();
-          }}
-        >
-          <Card className="p-6">
-            <div className="flex flex-col gap-5">
-              <AdminDeliveryScheduleEditor
-                locale={locale}
-                value={schedule}
-                onChange={setSchedule}
-                disabled={isPending}
-                copy={copy.delivery.schedule}
-              />
-              <div>
-                <Button type="submit" disabled={isPending}>
-                  {isPending ? copy.common.saving : copy.common.save}
-                </Button>
-              </div>
-            </div>
-          </Card>
-        </form>
+      <form
+        className="grid items-stretch gap-6 xl:grid-cols-2"
+        onSubmit={(event) => {
+          event.preventDefault();
+          onSave();
+        }}
+      >
+        <AdminDeliveryLocations
+          locale={locale}
+          locations={locations}
+          copy={copy}
+          isActive={isActive}
+          onActiveChange={setIsActive}
+          activeDisabled={isPending}
+        />
 
-        <AdminDeliveryLocations locale={locale} locations={locations} copy={copy} />
+        <Card className="flex h-full flex-col p-6">
+          <AdminDeliveryScheduleEditor
+            locale={locale}
+            value={schedule}
+            onChange={setSchedule}
+            disabled={isPending}
+            copy={copy.delivery.schedule}
+          />
+        </Card>
 
-        <form
-          className="contents"
-          onSubmit={(event) => {
-            event.preventDefault();
-            onSave();
-          }}
+        <Card className="p-6 xl:col-span-2">
+          <AdminCashChangeEditor
+            locale={locale}
+            value={sortedDenominations}
+            imageUrls={imageUrls}
+            onChange={setCashChangeDenominations}
+            onImageUrlsChange={setImageUrls}
+            disabled={isPending}
+            copy={copy.delivery.cashChange}
+          />
+        </Card>
+
+        <div
+          className={`fixed inset-x-0 bottom-0 z-20 border-t border-[#ff6b00]/20 bg-[#fff8e7] px-4 py-2.5 shadow-[0_-8px_24px_rgba(255,107,0,0.12)] sm:px-6 lg:px-8 ${stickyBarOffsetClass}`}
         >
-          <Card className="p-6 xl:col-span-2">
-            <AdminCashChangeEditor
-              locale={locale}
-              value={sortedDenominations}
-              imageUrls={imageUrls}
-              onChange={setCashChangeDenominations}
-              onImageUrlsChange={setImageUrls}
-              disabled={isPending}
-              copy={copy.delivery.cashChange}
-            />
-            <div className="mt-5">
-              <Button type="submit" disabled={isPending}>
-                {isPending ? copy.common.saving : copy.common.save}
-              </Button>
-            </div>
-          </Card>
-        </form>
-      </div>
+          <div className="flex items-center justify-end gap-3">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={onCancel}
+              disabled={isPending || !isDirty}
+              className="min-w-[160px] px-10"
+            >
+              {copy.common.cancel}
+            </Button>
+            <Button
+              type="submit"
+              disabled={isPending || !isDirty}
+              className="min-w-[180px] bg-[#ff6b00] px-10 text-white hover:bg-[#e85f00]"
+            >
+              {isPending ? copy.common.saving : copy.common.save}
+            </Button>
+          </div>
+        </div>
+      </form>
     </section>
   );
 }

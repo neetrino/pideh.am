@@ -665,6 +665,31 @@ body:has([role='dialog'][aria-modal='true'], [role='alertdialog'][aria-modal='tr
   [aria-disabled="true"] {
     cursor: not-allowed;
   }
+
+}
+
+input[type="checkbox"] {
+  appearance: none;
+  width: 1.45rem;
+  height: 1.45rem;
+  margin: 0;
+  border: 2px solid rgb(30 30 30 / 0.22);
+  border-radius: 0.4rem;
+  background-color: #fff;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 1.28rem;
+  vertical-align: middle;
+}
+
+input[type="checkbox"]:checked {
+  border-color: #ff6b00;
+  background-color: #ff6b00;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none'%3E%3Cpath d='M3.2 8.2 6.4 11.4 12.8 4.6' stroke='%23ffd54a' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+}
+
+input[type="checkbox"]:disabled {
+  opacity: 0.45;
 }
 
 /* Confirm / modal dismiss — same motion as Mobee storefront dialog */
@@ -1022,6 +1047,15 @@ body:has([role='dialog'][aria-modal='true'], [role='alertdialog'][aria-modal='tr
   background: transparent;
   height: 4px;
   border: none;
+}
+
+.admin-shell :is(button, a).bg-gray-900 {
+  background-color: #ff6b00;
+  box-shadow: none;
+}
+
+.admin-shell :is(button, a).bg-gray-900:hover {
+  background-color: #e85f00;
 }
 
 .admin-sidebar-ticket-veil {

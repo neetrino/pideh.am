@@ -168,9 +168,9 @@ export function AdminDeliveryScheduleEditor({
           <thead className="bg-gray-50 text-left text-gray-600">
             <tr>
               <th className="px-3 py-2 font-medium">{copy.day}</th>
-              <th className="px-3 py-2 font-medium">{copy.open}</th>
-              <th className="px-3 py-2 font-medium">{copy.from}</th>
-              <th className="px-3 py-2 font-medium">{copy.to}</th>
+              <th className="px-3 py-2 text-center font-medium">{copy.open}</th>
+              <th className="px-3 py-2 text-center font-medium">{copy.from}</th>
+              <th className="px-3 py-2 text-center font-medium">{copy.to}</th>
             </tr>
           </thead>
           <tbody>
@@ -179,12 +179,12 @@ export function AdminDeliveryScheduleEditor({
               return (
                 <tr key={day} className="border-t border-gray-100">
                   <td className="px-3 py-2 font-medium text-gray-900">{weekdayLabels[day]}</td>
-                  <td className="px-3 py-2">
+                  <td className="px-3 py-2 text-center">
                     <input
                       type="checkbox"
                       checked={hours.isOpen}
                       disabled={disabled}
-                      className={ADMIN_CHECKBOX}
+                      className={`${ADMIN_CHECKBOX} mx-auto`}
                       onChange={(event) => updateWeekly(day, { isOpen: event.target.checked })}
                     />
                   </td>
