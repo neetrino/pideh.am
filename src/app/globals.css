@@ -483,15 +483,11 @@ body:has([role='dialog'][aria-modal='true'], [role='alertdialog'][aria-modal='tr
   }
 
   /*
-   * Dock frame is 176px tall inside the 440px mobile frame, then scaled to
-   * the viewport. Sit the chat bubble just above that orange band.
-   */
-  /*
-   * The launcher iframe is pinned to the full viewport (top + height), so
-   * `bottom` does not move the bubble. Shift the whole widget up by the dock.
+   * The launcher iframe is pinned to the full viewport, so `bottom` does not
+   * move the bubble. Shift it up to the profile icon, not the raised home button.
    */
   #tidio-chat-iframe {
-    transform: translateY(calc(-1 * (176px * 100vw / 440 + env(safe-area-inset-bottom, 0px) + 0.75rem))) !important;
+    transform: translateY(calc(-1 * (108px * 100vw / 440 + env(safe-area-inset-bottom, 0px)))) !important;
   }
 
   /* Phone + iPad portrait: Figma mobile header + dock. */

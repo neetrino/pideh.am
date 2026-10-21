@@ -3,8 +3,8 @@
 import { useEffect } from 'react';
 
 const MOBILE_QUERY = '(max-width: 767px), (orientation: portrait) and (max-width: 1199px)';
-/** Dock is 176px in the 440px frame, then scaled to the viewport, plus a gap. */
-const LIFT = 'translateY(calc(-1 * (176px * 100vw / 440 + env(safe-area-inset-bottom, 0px) + 0.75rem)))';
+/** Profile icon top in the 440px frame, then scaled. Home sits higher in the center. */
+const LIFT = 'translateY(calc(-1 * (108px * 100vw / 440 + env(safe-area-inset-bottom, 0px))))';
 
 const OVERLAY_QUERY =
   '[role="dialog"][aria-modal="true"], [role="alertdialog"][aria-modal="true"]';
