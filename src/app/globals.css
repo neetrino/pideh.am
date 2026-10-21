@@ -445,11 +445,9 @@ body:has([role='dialog'][aria-modal='true'], [role='alertdialog'][aria-modal='tr
   html {
     touch-action: manipulation;
     scrollbar-width: none;
-    overflow-x: clip;
   }
 
   body {
-    overflow-x: clip;
     max-width: 100%;
   }
 
