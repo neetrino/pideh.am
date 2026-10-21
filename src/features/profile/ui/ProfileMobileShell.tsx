@@ -88,9 +88,7 @@ export function ProfileMobileShell({
   );
 
   const desktopColumn = (
-    <div className="profile-desktop-scroll min-w-0 md:min-h-0 md:flex-1 md:overflow-y-auto md:overscroll-contain">
-      {children}
-    </div>
+    <div className="profile-desktop-content profile-sticky-band min-w-0 flex-1">{children}</div>
   );
 
   // SSR / pre-hydration: hub on phone + iPad portrait via CSS; desktop from landscape / 1200+.
@@ -98,7 +96,7 @@ export function ProfileMobileShell({
     return (
       <>
         <div className="profile-mobile-page w-full md:hidden">{hub}</div>
-        <div className="profile-desktop-scroll storefront-desktop-tree hidden md:block md:min-h-0 md:flex-1 md:overflow-y-auto md:overscroll-contain">
+        <div className="profile-desktop-content profile-sticky-band storefront-desktop-tree hidden min-w-0 flex-1 md:block">
           {children}
         </div>
       </>

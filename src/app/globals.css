@@ -883,7 +883,8 @@ input[type="checkbox"]:disabled {
 }
 
 /**
- * Profile desktop shell: page grows with the sidebar, storefront footer stays below.
+ * Profile desktop: sticky sidebar and content under the header.
+ * Each column scrolls on its own. After that, the page scrolls to the footer.
  */
 @media (min-width: 768px) and (min-height: 600px) and (orientation: landscape),
   (min-width: 1200px) {
@@ -898,66 +899,54 @@ input[type="checkbox"]:disabled {
     display: flex;
     flex: 1 1 auto;
     flex-direction: column;
-    min-height: 0;
-    overflow: visible;
-    padding-top: 24px;
-    padding-bottom: 24px;
+    --profile-sticky-gap: 1.25rem;
+    --storefront-header-offset: 6.25rem;
+    padding-top: var(--profile-sticky-gap);
+    padding-bottom: var(--profile-sticky-gap);
   }
 
-  .storefront-shell:has(.profile-desktop-page) .storefront-footer {
+  .profile-desktop-page {
+    flex: 1 1 auto;
+    min-height: calc(
+      100dvh - var(--storefront-header-offset) - (var(--profile-sticky-gap) * 2)
+    );
+    align-items: flex-start;
+  }
+
+  .profile-sticky-band {
+    position: sticky;
+    top: calc(var(--storefront-header-offset) + var(--profile-sticky-gap));
+    z-index: 10;
+    height: calc(
+      100dvh - var(--storefront-header-offset) - (var(--profile-sticky-gap) * 2)
+    );
+    max-height: calc(
+      100dvh - var(--storefront-header-offset) - (var(--profile-sticky-gap) * 2)
+    );
+    align-self: flex-start;
+  }
+
+  .profile-desktop-sidebar.profile-sticky-band {
+    z-index: 30;
+  }
+
+  .profile-desktop-content {
+    min-width: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior-y: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .profile-desktop-content::-webkit-scrollbar {
     display: none;
   }
 
-  /*
-   * Group-order banner sits above main and steals height from the locked
-   * viewport. Inner columns stay content-sized and swallow the wheel
-   * (overflow: auto + overscroll-behavior: contain), so the shell clips
-   * the profile. Let the shell scroll instead while the banner is up.
-   */
-  .storefront-shell:has(.profile-desktop-page):has(.group-order-banner) {
-    overflow-x: hidden;
-    overflow-y: auto;
-  }
-
-  .storefront-shell:has(.profile-desktop-page):has(.group-order-banner) .storefront-main {
-    display: block;
-    flex: none;
-    min-height: auto;
-    overflow: visible;
-  }
-
-  .storefront-shell:has(.profile-desktop-page):has(.group-order-banner) .profile-desktop-page,
-  .storefront-shell:has(.profile-desktop-page):has(.group-order-banner)
-    .profile-desktop-page
-    > .storefront-desktop-tree {
-    height: auto;
-    max-height: none;
-    min-height: auto;
-    overflow: visible;
-  }
-
-  .storefront-shell:has(.profile-desktop-page):has(.group-order-banner) .profile-desktop-scroll {
-    height: auto;
-    max-height: none;
-    min-height: auto;
-    flex: 1 1 auto;
-    overflow: visible;
-    overscroll-behavior: auto;
-  }
-
-  .storefront-shell:has(.profile-desktop-page):has(.group-order-banner) .profile-sidebar-scroll {
-    height: auto;
-    max-height: none;
-    min-height: auto;
-    flex: none;
-    overflow: visible;
-    overscroll-behavior: auto;
-  }
-
-  .storefront-shell:has(.profile-desktop-page):has(.group-order-banner) .profile-desktop-page aside {
-    height: auto;
-    max-height: none;
-    min-height: auto;
+  .profile-desktop-content > * {
+    display: flex;
+    min-height: 100%;
+    flex-direction: column;
   }
 }
 
