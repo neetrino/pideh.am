@@ -104,7 +104,7 @@ export default async function AdminMessagesPage({ params, searchParams }: AdminM
               options={CONTACT_STATUSES.map((status) => ({ value: status, label: status }))}
             />
           </label>
-          <Button type="submit" size="sm">
+          <Button type="submit" className="h-11 shrink-0 rounded-2xl px-5 text-sm">
             {t.filter}
           </Button>
         </form>
