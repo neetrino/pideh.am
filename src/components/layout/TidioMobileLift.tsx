@@ -2,26 +2,23 @@
 
 import { useEffect } from 'react';
 
-const MOBILE_QUERY = '(max-width: 767px), (orientation: portrait) and (max-width: 1199px)';
+const LIFT_STYLE_ID = 'pideh-tidio-lift';
 /**
- * 440px frame: profile icon top (~108) plus the 43px glyph and a gap,
- * so the bubble sits above the profile icon. Home sits higher in the center.
+ * Tidio renders inside an open shadow root on #tidio-chat, so page CSS cannot reach it.
+ * 440px frame: the closed bubble and its label sit above the mobile dock icons.
  */
-const LIFT = 'translateY(calc(-1 * (168px * 100vw / 440 + env(safe-area-inset-bottom, 0px))))';
+const LIFT_CSS = `
+@media (max-width: 767px), (orientation: portrait) and (max-width: 1199px) {
+  #button.chat-closed,
+  .widgetLabel {
+    translate: 0 calc(-1 * (100vw * 168 / 440 + env(safe-area-inset-bottom, 0px))) !important;
+  }
+}`;
 
 const OVERLAY_QUERY =
   '[role="dialog"][aria-modal="true"], [role="alertdialog"][aria-modal="true"]';
 /** Side sheets and modals start at z-50. */
 const BELOW_OVERLAY_Z = '30';
-
-function liftBubble(iframe: HTMLElement): void {
-  const wanted = LIFT.replaceAll(/\s/g, '');
-  const current = iframe.style.getPropertyValue('transform').replaceAll(/\s/g, '');
-  if (current === wanted && iframe.style.getPropertyPriority('transform') === 'important') {
-    return;
-  }
-  iframe.style.setProperty('transform', LIFT, 'important');
-}
 
 function stackUnderOverlay(node: HTMLElement, covered: boolean): void {
   const zIndex = node.style.getPropertyValue('z-index');
@@ -35,49 +32,40 @@ function stackUnderOverlay(node: HTMLElement, covered: boolean): void {
   if (sunk) node.style.removeProperty('z-index');
 }
 
-function resetDesktopPlacement(iframe: HTMLElement): void {
-  iframe.style.removeProperty('transform');
+function ensureLiftStyle(root: ShadowRoot): void {
+  if (root.getElementById(LIFT_STYLE_ID)) return;
+  const style = document.createElement('style');
+  style.id = LIFT_STYLE_ID;
+  style.textContent = LIFT_CSS;
+  root.appendChild(style);
 }
 
 /** Keeps the chat above the mobile dock, and behind open modals and side sheets. */
 export function TidioMobileLift() {
   useEffect(() => {
-    const media = window.matchMedia(MOBILE_QUERY);
-    let styleObserver: MutationObserver | undefined;
+    let shadowObserver: MutationObserver | undefined;
 
     const apply = () => {
-      const covered = document.querySelector(OVERLAY_QUERY) != null;
-      const iframe = document.getElementById('tidio-chat-iframe');
       const host = document.getElementById('tidio-chat');
-      if (host instanceof HTMLElement) stackUnderOverlay(host, covered);
-      if (!(iframe instanceof HTMLElement)) return;
-      stackUnderOverlay(iframe, covered);
-      if (media.matches) {
-        liftBubble(iframe);
-      } else {
-        resetDesktopPlacement(iframe);
-      }
-      if (styleObserver) return;
-      styleObserver = new MutationObserver(apply);
-      styleObserver.observe(iframe, { attributes: true, attributeFilter: ['style'] });
-      if (host instanceof HTMLElement && host !== iframe) {
-        styleObserver.observe(host, { attributes: true, attributeFilter: ['style'] });
-      }
+      if (!(host instanceof HTMLElement)) return;
+      stackUnderOverlay(host, document.querySelector(OVERLAY_QUERY) != null);
+      const root = host.shadowRoot;
+      if (!root) return;
+      ensureLiftStyle(root);
+      if (shadowObserver) return;
+      shadowObserver = new MutationObserver(() => ensureLiftStyle(root));
+      shadowObserver.observe(root, { childList: true });
     };
 
     const mountObserver = new MutationObserver(apply);
     mountObserver.observe(document.body, { childList: true, subtree: true });
     apply();
     document.addEventListener('tidioChat-ready', apply);
-    media.addEventListener('change', apply);
-    window.addEventListener('resize', apply);
 
     return () => {
       document.removeEventListener('tidioChat-ready', apply);
-      media.removeEventListener('change', apply);
-      window.removeEventListener('resize', apply);
       mountObserver.disconnect();
-      styleObserver?.disconnect();
+      shadowObserver?.disconnect();
     };
   }, []);
 
