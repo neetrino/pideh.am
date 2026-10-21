@@ -10,7 +10,7 @@ import {
 } from '@/features/home/ui/product-image-motion';
 import { useProductImageMotion } from '@/features/home/ui/use-product-image-motion';
 
-function isShawarmaTitle(title: string): boolean {
+export function isShawarmaTitle(title: string): boolean {
   const normalized = title.trim().toLowerCase();
   return (
     normalized.includes('shaur') ||

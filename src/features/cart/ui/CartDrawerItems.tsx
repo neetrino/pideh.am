@@ -7,6 +7,7 @@ import NumberFlow from '@number-flow/react';
 import { motion } from 'motion/react';
 
 import { fadeUp } from '@/components/motion/presets';
+import { isShawarmaTitle } from '@/features/home/ui/ProductCardPhoto';
 import { AppLink } from '@/components/ui/AppLink';
 import type { CartDrawerItemView } from '@/features/cart/get-cart-drawer-view';
 
@@ -134,7 +135,11 @@ function CartDrawerLine({
               fill
               sizes="96px"
               priority
-              className="object-contain p-1"
+              className={
+                isShawarmaTitle(item.title)
+                  ? 'origin-center scale-125 -rotate-[18deg] object-contain select-none'
+                  : 'object-contain p-1'
+              }
             />
           ) : (
             <div className="flex h-full w-full items-center justify-center text-xs text-[#1e1e1e]/40">
