@@ -222,9 +222,6 @@ export function MobileNavDrawer({
   useEffect(() => {
     if (!rendered) return;
 
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
-
     function handleKeyDown(event: KeyboardEvent): void {
       if (event.key === 'Escape') setOpen(false);
     }
@@ -233,19 +230,21 @@ export function MobileNavDrawer({
       const target = event.target;
       if (!(target instanceof Node)) return;
       if (panelRef.current?.contains(target)) return;
-      const header = document.querySelector('[data-site-header]');
+      const header = triggerRef.current?.closest('[data-site-header]');
       if (header?.contains(target)) return;
       event.preventDefault();
     }
 
+    measureHeader();
     document.addEventListener('touchmove', handleTouchMove, { passive: false });
     window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('scroll', measureHeader, { passive: true });
     return () => {
-      document.body.style.overflow = previousOverflow;
       document.removeEventListener('touchmove', handleTouchMove);
       window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('scroll', measureHeader);
     };
-  }, [rendered]);
+  }, [rendered, measureHeader]);
 
   return (
     <>
