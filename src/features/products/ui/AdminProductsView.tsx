@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { Plus } from 'lucide-react';
 
 import { ADMIN_PRIMARY_BTN } from '@/features/admin/ui/admin-form-classes';
+import { AdminPageHeading } from '@/features/admin/ui/AdminPageHeading';
 import type {
   AdminCategoryOption,
   AdminProductListItem,
@@ -77,8 +78,24 @@ export function AdminProductsView({
 
   return (
     <>
+      <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
+        <div className="flex min-w-0 items-center gap-3">
+          <AdminPageHeading title={copy.products.title} />
+          <span className="inline-flex h-8 min-w-8 shrink-0 items-center justify-center rounded-full bg-[#ff6b00] px-2.5 text-sm font-semibold text-white">
+            {filters.total}
+          </span>
+        </div>
+        <button
+          type="button"
+          onClick={openCreate}
+          className={`${ADMIN_PRIMARY_BTN} h-11 shrink-0 px-5 whitespace-nowrap`}
+        >
+          <Plus className="h-4 w-4 shrink-0" aria-hidden />
+          {copy.products.addNewProduct}
+        </button>
+      </div>
+
       <AdminProductsFilters
-        total={filters.total}
         q={filters.q}
         categoryId={filters.categoryId}
         status={filters.status}
@@ -86,12 +103,6 @@ export function AdminProductsView({
         sort={filters.sort}
         dir={filters.dir}
         copy={copy.products.filters}
-        action={
-          <button type="button" onClick={openCreate} className={`${ADMIN_PRIMARY_BTN} h-11 w-full sm:w-auto`}>
-            <Plus className="h-4 w-4" aria-hidden />
-            {copy.products.addNewProduct}
-          </button>
-        }
       />
 
       <AdminProductsTable

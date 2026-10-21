@@ -6,6 +6,7 @@ import type { DragEvent } from 'react';
 import {
   ADMIN_TABLE_ROW,
   ADMIN_TABLE_TD,
+  ADMIN_TABLE_TD_CENTER,
   ADMIN_TABLE_TD_CHECK,
   ADMIN_TABLE_CHECKBOX,
 } from '@/features/admin/ui/admin-table-classes';
@@ -103,8 +104,8 @@ export function AdminProductRow({
           </div>
         </div>
       </td>
-      <td className={ADMIN_TABLE_TD}>
-        <div className="flex flex-col">
+      <td className={`${ADMIN_TABLE_TD_CENTER}`}>
+        <div className="flex flex-col items-center">
           <span className="font-medium text-gray-900">
             {formatMoneyAmount(product.priceAmount, 'AMD', locale)}
           </span>
@@ -115,12 +116,12 @@ export function AdminProductRow({
           ) : null}
         </div>
       </td>
-      <td className={ADMIN_TABLE_TD}>
-        <span className="line-clamp-2 max-w-[160px] text-gray-700">
+      <td className={`${ADMIN_TABLE_TD_CENTER}`}>
+        <span className="mx-auto line-clamp-2 block max-w-[160px] text-gray-700">
           {product.categoryLabels.length > 0 ? product.categoryLabels.join(', ') : copy.common.none}
         </span>
       </td>
-      <td className={ADMIN_TABLE_TD}>
+      <td className={`${ADMIN_TABLE_TD_CENTER}`}>
         <button
           type="button"
           disabled={disabled}
@@ -133,8 +134,8 @@ export function AdminProductRow({
           />
         </button>
       </td>
-      <td className={ADMIN_TABLE_TD}>
-        <div className="flex items-center gap-1">
+      <td className={`${ADMIN_TABLE_TD_CENTER}`}>
+        <div className="flex items-center justify-center gap-1">
           <button
             type="button"
             onClick={onEdit}
@@ -171,7 +172,7 @@ export function AdminProductRow({
           </button>
         </div>
       </td>
-      <td className={ADMIN_TABLE_TD}>
+      <td className={`${ADMIN_TABLE_TD_CENTER}`}>
         <span className="text-xs text-gray-500">{createdLabel}</span>
       </td>
     </tr>

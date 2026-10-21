@@ -1,7 +1,6 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
-import { AdminPageHeading } from '@/features/admin/ui/AdminPageHeading';
 import {
   listAdminCategoryOptions,
   listAdminProducts,
@@ -113,8 +112,6 @@ export default async function AdminProductsPage({ params, searchParams }: AdminP
 
   return (
     <section>
-      <AdminPageHeading className="mb-6" title={adminCopy.nav.products} />
-
       <AdminProductsView
         locale={locale}
         products={rows}
