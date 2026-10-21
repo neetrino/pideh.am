@@ -858,26 +858,25 @@ body:has([role='dialog'][aria-modal='true'], [role='alertdialog'][aria-modal='tr
 }
 
 /**
- * MaMarie-style profile desktop shell:
- * lock viewport height, hide footer, scroll only the content column.
+ * Profile desktop shell: page grows with the sidebar, storefront footer stays below.
  */
 @media (min-width: 768px) and (min-height: 600px) and (orientation: landscape),
   (min-width: 1200px) {
   .storefront-shell:has(.profile-desktop-page) {
-    height: 100dvh;
-    max-height: 100dvh;
-    min-height: 0;
-    overflow: hidden;
+    min-height: 100dvh;
+    height: auto;
+    max-height: none;
+    overflow: visible;
   }
 
   .storefront-shell:has(.profile-desktop-page) .storefront-main {
     display: flex;
-    flex: 1 1 0%;
+    flex: 1 1 auto;
     flex-direction: column;
     min-height: 0;
-    overflow: hidden;
+    overflow: visible;
     padding-top: 24px;
-    padding-bottom: 20px;
+    padding-bottom: 24px;
   }
 
   .storefront-shell:has(.profile-desktop-page) .storefront-footer {
