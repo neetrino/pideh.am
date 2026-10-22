@@ -201,13 +201,13 @@ async function seed(): Promise<void> {
         en: {
           title: "White Shop",
           subtitle: "New collection",
-          buttonLabel: "Մենյու",
+          buttonLabel: "Menu",
           buttonUrl: "/en/products",
         },
         ru: {
           title: "White Shop",
           subtitle: "New collection",
-          buttonLabel: "Մենյու",
+          buttonLabel: "Меню",
           buttonUrl: "/ru/products",
         },
       },
@@ -227,13 +227,13 @@ async function seed(): Promise<void> {
           en: {
             title: "White Shop",
             subtitle: "New collection",
-            buttonLabel: "Մենյու",
+            buttonLabel: "Menu",
             buttonUrl: "/en/products",
           },
           ru: {
             title: "White Shop",
             subtitle: "New collection",
-            buttonLabel: "Մենյու",
+            buttonLabel: "Меню",
             buttonUrl: "/ru/products",
           },
         },
