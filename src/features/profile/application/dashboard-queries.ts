@@ -10,7 +10,7 @@ import {
   customerFacingOrderAmountSql,
 } from '@/features/orders/application/customer-facing-order-amount-sql';
 
-const RECENT_ORDERS_LIMIT = 5;
+const RECENT_ORDERS_LIMIT = 3;
 
 export type ProfileDashboardStats = {
   totalOrders: number;
