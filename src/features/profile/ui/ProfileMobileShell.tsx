@@ -14,6 +14,7 @@ type ProfileMobileShellProps = {
   locale: Locale;
   user: SessionUser;
   dictionary: Dictionary['profile'];
+  bonusAmount: string;
   children: ReactNode;
 };
 
@@ -30,6 +31,7 @@ export function ProfileMobileShell({
   locale,
   user,
   dictionary,
+  bonusAmount,
   children,
 }: ProfileMobileShellProps) {
   const pathname = usePathname() ?? '';
@@ -83,6 +85,7 @@ export function ProfileMobileShell({
       locale={locale}
       user={user}
       dictionary={dictionary}
+      bonusAmount={bonusAmount}
       onOpenDashboard={openHubDashboard}
     />
   );

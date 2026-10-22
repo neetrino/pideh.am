@@ -207,7 +207,7 @@ async function seed(): Promise<void> {
         ru: {
           title: "White Shop",
           subtitle: "New collection",
-          buttonLabel: "Меню",
+          buttonLabel: "Մենյու",
           buttonUrl: "/ru/products",
         },
       },
