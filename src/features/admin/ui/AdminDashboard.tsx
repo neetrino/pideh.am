@@ -34,6 +34,9 @@ type TopProduct = {
   quantity: number;
 };
 
+const DASHBOARD_LIST_ROW =
+  'flex min-h-[4.75rem] w-full items-center gap-3 rounded-2xl border border-[#1e1e1e]/10 bg-[#fff8e7] p-4 text-left';
+
 type AdminDashboardProps = {
   locale: string;
   copy: Dictionary['admin'];
@@ -130,9 +133,9 @@ export function AdminDashboard({
                 <button
                   type="button"
                   onClick={() => drawer.openOrder(order.orderNumber)}
-                  className="block w-full rounded-2xl border border-[#1e1e1e]/10 bg-[#fff8e7] p-4 text-left transition hover:bg-[#ffd54a]/40"
+                  className={`${DASHBOARD_LIST_ROW} justify-between transition hover:bg-[#ffd54a]/40`}
                 >
-                  <div className="flex items-start justify-between gap-3">
+                  <div className="flex min-w-0 flex-1 items-start justify-between gap-3">
                     <div className="min-w-0 flex-1">
                       <div className="mb-1 flex flex-wrap items-center gap-2">
                         <p className="text-sm font-bold text-[#1e1e1e]">#{order.orderNumber}</p>
@@ -165,7 +168,7 @@ export function AdminDashboard({
           <StaggerGroup className="space-y-3">
             {topProducts.map((product, index) => (
               <StaggerItem key={`${product.productId}:${index}`} variants={fadeUp}>
-                <div className="flex items-center gap-4 rounded-2xl border border-[#1e1e1e]/10 bg-[#fff8e7] p-3">
+                <div className={DASHBOARD_LIST_ROW}>
                   <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#ff6b00] text-xs font-bold text-white">
                     {index + 1}
                   </div>

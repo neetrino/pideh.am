@@ -79,8 +79,8 @@ export function ProfileDashboard({
             {dictionary.noOrders}
           </p>
         ) : (
-          <ul className="grid grid-cols-1 gap-3 md:grid-cols-3">
-            {recentOrders.map((order) => (
+          <ul className="grid grid-cols-1 gap-3">
+            {recentOrders.slice(0, 5).map((order) => (
               <li key={order.id} className="h-full">
                 <RecentOrderCard
                   locale={locale}
