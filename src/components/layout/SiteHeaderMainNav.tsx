@@ -96,9 +96,7 @@ export function SiteHeaderMainNav({
 }: SiteHeaderMainNavProps) {
   const pathname = usePathname();
   const searchLabels = headerSearchLabels(dictionary.header);
-  const primaryNav = navItems.filter(
-    (item) => !item.href.includes('/blog') && !item.href.endsWith('/cart'),
-  );
+  const primaryNav = navItems.filter((item) => !item.href.endsWith('/cart'));
   const navRef = useRef<HTMLElement>(null);
   const [pill, setPill] = useState<PillRect | null>(null);
   const [motionReady, setMotionReady] = useState(false);
@@ -146,7 +144,7 @@ export function SiteHeaderMainNav({
       <div className={PAGE_CONTAINER}>
         <div
           data-header-pill
-          className="flex h-16 w-full items-center justify-between gap-3 rounded-[90px] bg-white px-4 shadow-[0_8px_30px_rgba(0,0,0,0.08)] sm:px-6 md:h-20 md:px-8"
+          className="flex h-16 w-full items-center justify-between gap-3 rounded-[90px] bg-white px-4 shadow-[0_8px_30px_rgba(0,0,0,0.08)] sm:px-6 md:h-20 md:px-5"
         >
           <AppLink
             href={`/${locale}`}
@@ -199,8 +197,8 @@ export function SiteHeaderMainNav({
                   aria-current={active ? 'page' : undefined}
                   className={
                     active
-                      ? 'relative z-10 inline-flex h-12 items-center rounded-[72px] px-4 text-base font-bold whitespace-nowrap text-white transition-colors duration-300 motion-reduce:transition-none'
-                      : 'relative z-10 inline-flex h-12 items-center rounded-[72px] px-4 text-base font-bold whitespace-nowrap text-[#364153] transition-colors duration-300 hover:text-[#ff6b00] motion-reduce:transition-none'
+                      ? 'relative z-10 inline-flex h-12 items-center rounded-[72px] px-3 text-base font-bold whitespace-nowrap text-white transition-colors duration-300 motion-reduce:transition-none'
+                      : 'relative z-10 inline-flex h-12 items-center rounded-[72px] px-3 text-base font-bold whitespace-nowrap text-[#364153] transition-colors duration-300 hover:text-[#ff6b00] motion-reduce:transition-none'
                   }
                 >
                   {item.label}
@@ -209,7 +207,7 @@ export function SiteHeaderMainNav({
             })}
           </nav>
 
-          <div data-header-actions className="flex items-center gap-2 md:gap-3.5">
+          <div data-header-actions className="flex items-center gap-2">
             <GroupOrderHeaderButton
               locale={locale}
               labels={dictionary.groupOrder}
@@ -239,7 +237,7 @@ export function SiteHeaderMainNav({
               </div>
             </div>
 
-            <div className="hidden items-center gap-[19px] md:flex">
+            <div className="hidden items-center gap-3 md:flex">
               {user ? (
                 <AccountControls
                   locale={locale}

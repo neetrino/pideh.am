@@ -2,16 +2,20 @@
 
 import { useMemo, useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
-import { Pencil, Plus, Trash2 } from 'lucide-react';
+import { Plus } from 'lucide-react';
 
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 import { ADMIN_INPUT } from '@/features/admin/ui/admin-form-classes';
 import { AdminPageHeading } from '@/features/admin/ui/AdminPageHeading';
-import { ADMIN_BADGE } from '@/features/admin/ui/status-badge';
-import { deleteBlogPostAction } from '@/features/blog/application/manage-blog';
+import {
+  archiveBlogPostAction,
+  deleteBlogPostAction,
+  publishBlogPostAction,
+} from '@/features/blog/application/manage-blog';
 import type { AdminBlogListItem } from '@/features/blog/application/queries';
+import { AdminBlogPostRow } from '@/features/blog/ui/AdminBlogPostRow';
 import { BlogPostDrawer } from '@/features/blog/ui/BlogPostDrawer';
 import type { Dictionary } from '@/lib/i18n/get-dictionary';
 
@@ -20,14 +24,6 @@ type AdminBlogViewProps = {
   posts: AdminBlogListItem[];
   copy: Dictionary['admin'];
 };
-
-function statusBadgeClass(status: string): string {
-  const normalized = status.toUpperCase();
-  if (normalized === 'PUBLISHED') return 'bg-green-100 text-green-800';
-  if (normalized === 'DRAFT') return 'bg-yellow-100 text-yellow-800';
-  if (normalized === 'ARCHIVED') return 'bg-gray-100 text-gray-800';
-  return 'bg-gray-100 text-gray-800';
-}
 
 export function AdminBlogView({ locale, posts, copy }: AdminBlogViewProps) {
   const router = useRouter();
@@ -67,6 +63,22 @@ export function AdminBlogView({ locale, posts, copy }: AdminBlogViewProps) {
 
   function requestDelete(postId: string, postTitle: string): void {
     setPendingDelete({ id: postId, title: postTitle });
+  }
+
+  function toggleActive(post: AdminBlogListItem): void {
+    startTransition(async () => {
+      setError(null);
+      const payload = { postId: post.id };
+      const result =
+        post.status === 'PUBLISHED'
+          ? await archiveBlogPostAction(locale, payload)
+          : await publishBlogPostAction(locale, payload);
+      if (!result.ok) {
+        setError(result.error.message);
+        return;
+      }
+      router.refresh();
+    });
   }
 
   function confirmDelete(): void {
@@ -119,60 +131,15 @@ export function AdminBlogView({ locale, posts, copy }: AdminBlogViewProps) {
           </Card>
         ) : (
           filtered.map((post) => (
-            <Card key={post.id} className="rounded-xl border border-gray-200 p-4 shadow-sm">
-              <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                <div className="flex min-w-0 items-start gap-3">
-                  <div className="h-16 w-16 shrink-0 overflow-hidden rounded-lg bg-gray-100">
-                    {post.coverUrl ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img src={post.coverUrl} alt="" className="h-full w-full object-cover" />
-                    ) : (
-                      <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-slate-700 to-slate-900 text-xs font-medium text-white/70">
-                        {copy.blog.coverFallback}
-                      </div>
-                    )}
-                  </div>
-                  <div className="min-w-0">
-                    <p className="truncate text-sm font-semibold text-gray-900">{post.title}</p>
-                    {post.excerpt ? (
-                      <p className="mt-0.5 line-clamp-1 text-sm text-gray-600">{post.excerpt}</p>
-                    ) : null}
-                    <p className="mt-1 text-xs text-gray-500">
-                      {post.path}
-                      {post.publishedAt ? ` · ${post.publishedAt}` : ''}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex flex-wrap items-center gap-1 sm:justify-end">
-                  <span className={`${ADMIN_BADGE} ${statusBadgeClass(post.status)}`}>
-                    {post.status === 'PUBLISHED'
-                      ? copy.blog.statusPublished
-                      : post.status === 'DRAFT'
-                        ? copy.blog.statusDraft
-                        : copy.blog.statusArchived}
-                  </span>
-                  <button
-                    type="button"
-                    disabled={isPending}
-                    onClick={() => openEdit(post)}
-                    className="rounded p-1.5 text-gray-500 hover:bg-gray-100 hover:text-gray-900 disabled:opacity-50"
-                    aria-label={copy.blog.editAria.replace('{title}', post.title)}
-                  >
-                    <Pencil className="h-4 w-4" />
-                  </button>
-                  <button
-                    type="button"
-                    disabled={isPending}
-                    onClick={() => requestDelete(post.id, post.title)}
-                    className="rounded p-1.5 text-red-600 hover:bg-red-50 disabled:opacity-50"
-                    aria-label={copy.blog.deleteAria.replace('{title}', post.title)}
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </button>
-                </div>
-              </div>
-            </Card>
+            <AdminBlogPostRow
+              key={post.id}
+              post={post}
+              disabled={isPending}
+              copy={copy.blog}
+              onEdit={() => openEdit(post)}
+              onDelete={() => requestDelete(post.id, post.title)}
+              onToggleActive={() => toggleActive(post)}
+            />
           ))
         )}
       </div>

@@ -104,10 +104,10 @@ export function BlogListSkeleton() {
   return (
     <div className={`${pulse} space-y-6`} aria-busy="true" aria-live="polite">
       <Block className="h-9 w-40" />
-      <div className="flex flex-col gap-4">
-        <Block className="h-36 w-full rounded-lg" />
-        <Block className="h-36 w-full rounded-lg" />
-        <Block className="h-36 w-full rounded-lg" />
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <Block className="aspect-[4/3] w-full rounded-[24px]" />
+        <Block className="aspect-[4/3] w-full rounded-[24px]" />
+        <Block className="aspect-[4/3] w-full rounded-[24px]" />
       </div>
     </div>
   );

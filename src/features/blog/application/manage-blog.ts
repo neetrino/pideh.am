@@ -9,6 +9,7 @@ import {
   persistBlogCoverImage,
   removeBlogCoverImage,
 } from '@/features/blog/application/persist-blog-media';
+import { plainTextToBlogHtml } from '@/features/blog/domain/blog-content';
 import {
   blogRuleErrorMessage,
   normalizeBlogSlug,
@@ -64,7 +65,7 @@ function buildLocaleCopy(data: UpsertBlogPostInput) {
     title: data.title.trim(),
     slug: normalizeBlogSlug(data.slug),
     excerpt: data.excerpt?.trim() || undefined,
-    content: sanitizeBlogHtml(data.content),
+    content: sanitizeBlogHtml(plainTextToBlogHtml(data.content)),
     seoTitle: data.seoTitle?.trim() || undefined,
     seoDescription: data.seoDescription?.trim() || undefined,
   };
@@ -82,7 +83,7 @@ function translationsForSave(
       title: copy.title.trim(),
       slug: normalizeBlogSlug(copy.slug),
       excerpt: copy.excerpt?.trim() || undefined,
-      content: sanitizeBlogHtml(copy.content),
+      content: sanitizeBlogHtml(plainTextToBlogHtml(copy.content)),
     };
   }
   if (!data.syncLocales) {

@@ -1,8 +1,7 @@
-import Image from 'next/image';
 import { notFound } from 'next/navigation';
 
-import { AppLink } from '@/components/ui/AppLink';
 import { listPublishedBlogPosts } from '@/features/blog/application/queries';
+import { BlogPostCard } from '@/features/blog/ui/BlogPostCard';
 import { isLocale } from '@/lib/i18n/config';
 import { getDictionary } from '@/lib/i18n/get-dictionary';
 
@@ -26,48 +25,15 @@ export default async function BlogPage({ params }: BlogPageProps) {
         {dictionary.nav.blog}
       </h1>
 
-      <div className="flex flex-col gap-4">
-        {posts.map((post) => (
-          <article
-            key={post.id}
-            className="flex min-w-0 flex-col gap-4 overflow-hidden rounded-[24px] border border-[#1e1e1e]/10 bg-white p-4 sm:flex-row"
-          >
-            {post.coverUrl ? (
-              <AppLink
-                href={`/${rawLocale}/blog/${post.copy.slug}`}
-                prefetchPolicy="auto"
-                className="relative block h-40 w-full shrink-0 overflow-hidden sm:h-28 sm:w-40"
-              >
-                <Image
-                  src={post.coverUrl}
-                  alt=""
-                  fill
-                  sizes="(max-width: 640px) 100vw, 160px"
-                  className="object-cover"
-                />
-              </AppLink>
-            ) : null}
-            <div className="min-w-0 flex-1">
-              <h2 className="text-xl font-medium">
-                <AppLink
-                  href={`/${rawLocale}/blog/${post.copy.slug}`}
-                  prefetchPolicy="auto"
-                  className="underline-offset-2 hover:underline"
-                >
-                  {post.copy.title}
-                </AppLink>
-              </h2>
-              {post.publishedAt ? (
-                <p className="text-sm text-[var(--muted)]">{post.publishedAt.slice(0, 10)}</p>
-              ) : null}
-              {post.copy.excerpt ? (
-                <p className="mt-2 text-[var(--muted)]">{post.copy.excerpt}</p>
-              ) : null}
-            </div>
-          </article>
-        ))}
-        {posts.length === 0 ? <p className="text-[var(--muted)]">{dictionary.blog.empty}</p> : null}
-      </div>
+      {posts.length === 0 ? (
+        <p className="text-[var(--muted)]">{dictionary.blog.empty}</p>
+      ) : (
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {posts.map((post) => (
+            <BlogPostCard key={post.id} locale={rawLocale} post={post} />
+          ))}
+        </div>
+      )}
     </section>
   );
 }
