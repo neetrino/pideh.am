@@ -5,11 +5,13 @@ import { RevealOnView } from '@/components/motion/RevealOnView';
 import { titleSweep } from '@/components/motion/presets';
 import { listStorefrontCategories } from '@/features/categories/application/list-storefront-categories';
 import { parseCatalogSearchParams } from '@/features/products/application/catalog-search-params';
-import { listCatalogProducts } from '@/features/products/application/list-catalog-products';
 import {
-  listCatalogSections,
-  type CatalogSection,
-} from '@/features/products/application/list-catalog-sections';
+  listCatalogProducts,
+  type CatalogListResult,
+} from '@/features/products/application/list-catalog-products';
+import type { CatalogSection } from '@/features/products/application/list-catalog-sections';
+import type { CatalogFilters } from '@/features/products/schemas/catalog-list';
+import type { CatalogProduct } from '@/features/products/types';
 import { CatalogControls } from '@/features/products/ui/CatalogControls';
 import { ShopProductGrid } from '@/features/products/ui/ShopProductGrid';
 import { MobileCatalog } from '@/features/products/ui/mobile/MobileCatalog';
@@ -17,9 +19,29 @@ import { buildMobileCatalogSections } from '@/features/products/ui/mobile/mobile
 import { getActivePlainCartQuantities } from '@/features/cart/get-active-plain-quantities';
 import { getWishlistProductIds } from '@/features/wishlist/queries';
 import { getCurrentUser } from '@/lib/auth/session';
-import { isLocale } from '@/lib/i18n/config';
+import { isLocale, type Locale } from '@/lib/i18n/config';
 import { getDictionary } from '@/lib/i18n/get-dictionary';
 import { createDisplayPriceFormatter, getSelectedCurrency } from '@/lib/money/display-price';
+import type { Currency } from '@/lib/money/currency';
+
+/** Mobile “All” has no infinite scroll, so it needs every page in shop order. */
+async function loadRemainingCatalogPages(
+  locale: Locale,
+  filters: CatalogFilters,
+  currency: Currency,
+  firstPage: CatalogListResult,
+): Promise<CatalogProduct[]> {
+  const pageCount = Math.ceil(firstPage.total / firstPage.pageSize);
+  if (pageCount <= 1) return firstPage.products;
+
+  const rest = await Promise.all(
+    Array.from({ length: pageCount - 1 }, (_, index) =>
+      listCatalogProducts(locale, { ...filters, page: index + 2 }, currency),
+    ),
+  );
+
+  return [firstPage.products, ...rest.map((page) => page.products)].flat();
+}
 
 type ProductsPageProps = {
   params: Promise<{ locale: string }>;
@@ -50,16 +72,17 @@ export default async function ProductsPage({ params, searchParams }: ProductsPag
   }));
 
   const activeCategory = categories.find((category) => category.slug === filters.category);
-  const sections: CatalogSection[] = filters.category
-    ? [
-        {
-          slug: filters.category,
-          title: activeCategory?.title ?? catalogCopy.title,
-          products: catalog.products,
-          total: catalog.total,
-        },
-      ]
-    : await listCatalogSections(rawLocale, categories, filters, currency);
+  const orderedProducts = filters.category
+    ? catalog.products
+    : await loadRemainingCatalogPages(rawLocale, filters, currency, catalog);
+  const sections: CatalogSection[] = [
+    {
+      slug: filters.category ?? 'all',
+      title: activeCategory?.title ?? catalogCopy.title,
+      products: orderedProducts,
+      total: catalog.total,
+    },
+  ];
 
   const wishlistTargets = new Set(
     catalog.products

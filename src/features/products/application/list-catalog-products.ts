@@ -127,21 +127,6 @@ async function buildWhere(
   return and(...conditions);
 }
 
-/** Products with no active category stay after every grouped category. */
-const UNGROUPED_CATEGORY_RANK = 2_147_483_647;
-
-/** Lowest admin category sortOrder, so the All view follows the category list. */
-function allViewCategoryRank(): SQL {
-  return sql`coalesce((
-    select min(${categories.sortOrder})
-    from ${productCategories}
-    inner join ${categories} on ${categories.id} = ${productCategories.categoryId}
-    where ${productCategories.productId} = ${products.id}
-      and ${categories.deletedAt} is null
-      and ${categories.status} = 'ACTIVE'
-  ), ${UNGROUPED_CATEGORY_RANK})`;
-}
-
 function orderByClause(sort: CatalogFilters['sort'], soldExpr: SQL) {
   switch (sort) {
     case 'price_asc':
@@ -187,8 +172,7 @@ async function loadCatalogProductsPage(
     .as('popularity');
 
   const soldExpr = sql`coalesce(${popularity.sold}, 0)`;
-  const sortOrder = orderByClause(filters.sort, soldExpr);
-  const orderBy = filters.category ? sortOrder : [asc(allViewCategoryRank()), ...sortOrder];
+  const orderBy = orderByClause(filters.sort, soldExpr);
 
   const [[countRow], rows] = await Promise.all([
     getDb()
@@ -233,7 +217,7 @@ export async function listCatalogProducts(
   displayCurrency: Currency,
 ): Promise<CatalogListResult> {
   const cacheKey = [
-    'catalog-products-page-v5',
+    'catalog-products-page-v6',
     locale,
     displayCurrency,
     filters.q ?? '',

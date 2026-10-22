@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation';
 
+import { TidioProfileMobileHide } from '@/components/layout/TidioProfileMobileHide';
 import { ProfileMobileShell } from '@/features/profile/ui/ProfileMobileShell';
 import { ProfileSidebar } from '@/features/profile/ui/ProfileSidebar';
 import { requireUser } from '@/lib/auth/policies';
@@ -23,6 +24,7 @@ export default async function ProfileLayout({ children, params }: ProfileLayoutP
 
   return (
     <div className="profile-desktop-page flex flex-col gap-6 pb-10 md:flex-1 md:flex-row md:items-start md:gap-8 md:pb-0">
+      <TidioProfileMobileHide />
       <div className="profile-desktop-sidebar profile-sticky-band storefront-desktop-tree hidden w-max max-w-full shrink-0 md:block">
         <ProfileSidebar locale={rawLocale} user={user} dictionary={dictionary.profile} />
       </div>
