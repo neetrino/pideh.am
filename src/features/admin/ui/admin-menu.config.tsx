@@ -8,6 +8,7 @@ import {
   LayoutDashboard,
   Mail,
   Megaphone,
+  Newspaper,
   Package,
   Percent,
   Settings,
@@ -120,6 +121,12 @@ export function getAdminMenuItems(
       label: nav.popups,
       href: `${base}/popups`,
       icon: navIcon(Megaphone),
+    },
+    {
+      id: 'blog',
+      label: nav.blog,
+      href: `${base}/blog`,
+      icon: navIcon(Newspaper),
     },
     {
       id: 'messages',

@@ -4,15 +4,19 @@ import { localeLabels, locales, type Locale } from '@/lib/i18n/config';
 
 type AdminLocaleTabsProps = {
   label: string;
+  /** Keeps `label` for assistive tech only. */
+  hideLabel?: boolean;
   active: Locale;
   onChange: (locale: Locale) => void;
 };
 
 /** Language tabs for admin forms that store a separate copy per locale. */
-export function AdminLocaleTabs({ label, active, onChange }: AdminLocaleTabsProps) {
+export function AdminLocaleTabs({ label, hideLabel = false, active, onChange }: AdminLocaleTabsProps) {
   return (
     <div>
-      <p className="mb-2 text-xs font-semibold tracking-wide text-gray-500 uppercase">{label}</p>
+      {hideLabel ? null : (
+        <p className="mb-2 text-xs font-semibold tracking-wide text-gray-500 uppercase">{label}</p>
+      )}
       <div className="flex flex-wrap gap-2" role="tablist" aria-label={label}>
         {locales.map((loc) => {
           const selected = loc === active;
