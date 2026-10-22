@@ -42,9 +42,9 @@ export default async function ProfileBonusesPage({ params }: ProfileBonusesPageP
       />
 
       <div className="grid gap-4 sm:grid-cols-3">
-        <ProfileStatCard label={copy.available} value={summary.availableBalance} suffix=" AMD" />
-        <ProfileStatCard label={copy.totalEarned} value={summary.totalEarned} suffix=" AMD" />
-        <ProfileStatCard label={copy.totalRedeemed} value={summary.totalRedeemed} suffix=" AMD" />
+        <ProfileStatCard label={copy.available} value={summary.availableBalance} suffix=" ֏" />
+        <ProfileStatCard label={copy.totalEarned} value={summary.totalEarned} suffix=" ֏" />
+        <ProfileStatCard label={copy.totalRedeemed} value={summary.totalRedeemed} suffix=" ֏" />
       </div>
 
       <div>

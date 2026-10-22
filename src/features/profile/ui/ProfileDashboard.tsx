@@ -58,7 +58,7 @@ export function ProfileDashboard({
           <ProfileStatCard label={dictionary.completedOrders} value={stats.completedOrders} />
         </StaggerItem>
         <StaggerItem variants={fadeUp}>
-          <ProfileStatCard label={dictionary.totalSpent} value={stats.totalSpent} suffix=" AMD" />
+          <ProfileStatCard label={dictionary.totalSpent} value={stats.totalSpent} suffix=" ֏" />
         </StaggerItem>
       </StaggerGroup>
 

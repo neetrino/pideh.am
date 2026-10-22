@@ -433,7 +433,7 @@
       "description": "Описание",
       "descriptionPlaceholder": "Описание товара",
       "price": "Цена",
-      "pricePlaceholder": "Цена в AMD",
+      "pricePlaceholder": "Цена в ֏",
       "sku": "SKU",
       "skuPlaceholder": "SKU",
       "quantity": "Количество",
@@ -477,9 +477,9 @@
       "exceptionSubtitle": "топпинг",
       "exceptionPlaceholder": "Новое исключение…",
       "empty": "Пусто",
-      "priceAmd": "({amount} AMD)",
-      "priceAmdAria": "Цена в AMD",
-      "pricePlaceholder": "AMD",
+      "priceAmd": "({amount} ֏)",
+      "priceAmdAria": "Цена в ֏",
+      "pricePlaceholder": "֏",
       "add": "+ Добавить",
       "removeAria": "Удалить {name}",
       "priceMustBeNonNegative": "Цена должна быть неотрицательным числом."
@@ -545,7 +545,7 @@
       "cancel": "Закрыть",
       "resolving": "Определяем адрес…"
     },
-    "pricePerKm": "Цена за километр (AMD)",
+    "pricePerKm": "Цена за километр (֏)",
     "pricePerKmPlaceholder": "1000",
     "pricePerKmExample": "Пример: 1.101 км → {amount}",
     "offerDelivery": "Предлагать доставку при оформлении заказа",
@@ -558,7 +558,7 @@
     "cashChange": {
       "title": "Купюры для сдачи",
       "hint": "Купюры, которые покупатель может выбрать при оформлении, чтобы курьер привёз нужную сдачу.",
-      "amount": "Сумма (AMD)",
+      "amount": "Сумма (֏)",
       "amountPlaceholder": "10000",
       "active": "Активна",
       "uploadImage": "Загрузить изображение",
@@ -602,7 +602,7 @@
       "cityPlaceholder": "Ереван",
       "area": "Район",
       "areaPlaceholder": "Шенгавит",
-      "priceAmd": "Цена (AMD)",
+      "priceAmd": "Цена (֏)",
       "pricePlaceholder": "600"
     }
   },
@@ -662,7 +662,7 @@
       "chooseOneTarget": "Выберите ровно одну цель: товар или категорию.",
       "discountType": "Тип скидки",
       "percentage": "PERCENTAGE",
-      "fixedAmd": "FIXED (минимальные единицы AMD)",
+      "fixedAmd": "FIXED (минимальные единицы ֏)",
       "discountValue": "Размер скидки",
       "maxDiscountOptional": "Максимальная скидка (необязательно)",
       "minOrderOptional": "Минимальный заказ (необязательно)",
@@ -694,7 +694,7 @@
       "validUntil": "Действует до",
       "actions": "Действия",
       "percentOff": "Скидка в процентах",
-      "fixedAmountAmd": "Фиксированная сумма (AMD)",
+      "fixedAmountAmd": "Фиксированная сумма (֏)",
       "editAria": "Редактировать {code}",
       "duplicateAria": "Дублировать {code}",
       "deleteAria": "Удалить {code}"
@@ -719,7 +719,7 @@
       "discountType": "Тип скидки",
       "discountTypeAria": "Тип скидки",
       "percentOff": "Скидка в процентах",
-      "fixedAmountAmd": "Фиксированная сумма (AMD)",
+      "fixedAmountAmd": "Фиксированная сумма (֏)",
       "value": "Значение",
       "quantity": "Количество",
       "expiresOptional": "Срок действия (необязательно)",
@@ -1066,10 +1066,10 @@
     },
     "exchangeRates": {
       "title": "Курсы валют",
-      "hint": "Цены в каталоге остаются в AMD. Укажите, сколько USD / RUB соответствует 1 AMD (десятичный разделитель — точка или запятая, например 0.2137 или 0,2137). Валюта отображения витрины использует эти курсы.",
-      "usdPerAmd": "USD за 1 AMD",
+      "hint": "Цены в каталоге остаются в ֏. Укажите, сколько USD / RUB соответствует 1 ֏ (десятичный разделитель — точка или запятая, например 0.2137 или 0,2137). Валюта отображения витрины использует эти курсы.",
+      "usdPerAmd": "USD за 1 ֏",
       "usdPlaceholder": "0.0026",
-      "rubPerAmd": "RUB за 1 AMD",
+      "rubPerAmd": "RUB за 1 ֏",
       "rubPlaceholder": "0.24",
       "saveExchangeRates": "Сохранить курсы валют"
     }
@@ -1102,7 +1102,7 @@
     "drawer": {
       "newTitle": "Новая подарочная карта",
       "newAria": "Новая подарочная карта",
-      "amount": "Сумма (AMD)",
+      "amount": "Сумма (֏)",
       "recipientName": "Имя получателя",
       "recipientEmail": "Email получателя",
       "recipientPhone": "Телефон получателя",

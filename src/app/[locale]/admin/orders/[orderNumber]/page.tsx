@@ -21,6 +21,7 @@ import {
 } from '@/features/admin/ui/status-badge';
 import { getAdminOrderDetailView } from '@/features/orders/application/order-detail-view';
 import { getAdminOrderByNumber } from '@/features/orders/application/queries';
+import { formatOrderDrawerMoney } from '@/features/orders/ui/order-drawer-format';
 import { cashChangeImageSrc } from '@/features/delivery/domain/cash-change';
 import { formatYerevanDateTime } from '@/features/delivery/domain/delivery-schedule';
 import { isLocale } from '@/lib/i18n/config';
@@ -32,7 +33,7 @@ type AdminOrderDetailPageProps = {
 };
 
 function formatMoney(amount: number, currency: string): string {
-  return `${amount.toLocaleString('en-US')} ${currency}`;
+  return formatOrderDrawerMoney(amount, currency);
 }
 
 export default async function AdminOrderDetailPage({ params }: AdminOrderDetailPageProps) {

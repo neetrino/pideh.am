@@ -433,7 +433,7 @@
       "description": "Description",
       "descriptionPlaceholder": "Product description",
       "price": "Price",
-      "pricePlaceholder": "AMD price",
+      "pricePlaceholder": "֏ price",
       "sku": "SKU",
       "skuPlaceholder": "SKU",
       "quantity": "Quantity",
@@ -477,9 +477,9 @@
       "exceptionSubtitle": "topping",
       "exceptionPlaceholder": "New exception...",
       "empty": "Empty",
-      "priceAmd": "({amount} AMD)",
-      "priceAmdAria": "Price AMD",
-      "pricePlaceholder": "AMD",
+      "priceAmd": "({amount} ֏)",
+      "priceAmdAria": "Price ֏",
+      "pricePlaceholder": "֏",
       "add": "+ Add",
       "removeAria": "Remove {name}",
       "priceMustBeNonNegative": "Price must be a non-negative number."
@@ -545,7 +545,7 @@
       "cancel": "Close",
       "resolving": "Resolving address…"
     },
-    "pricePerKm": "Price per kilometer (AMD)",
+    "pricePerKm": "Price per kilometer (֏)",
     "pricePerKmPlaceholder": "1000",
     "pricePerKmExample": "Example: 1.101 km → {amount}",
     "offerDelivery": "Offer delivery at checkout",
@@ -558,7 +558,7 @@
     "cashChange": {
       "title": "Cash change denominations",
       "hint": "Banknotes customers can select at checkout so the courier brings the right change.",
-      "amount": "Amount (AMD)",
+      "amount": "Amount (֏)",
       "amountPlaceholder": "10000",
       "active": "Active",
       "uploadImage": "Upload image",
@@ -602,7 +602,7 @@
       "cityPlaceholder": "Yerevan",
       "area": "District / area",
       "areaPlaceholder": "Shengavit",
-      "priceAmd": "Price (AMD)",
+      "priceAmd": "Price (֏)",
       "pricePlaceholder": "600"
     }
   },
@@ -662,7 +662,7 @@
       "chooseOneTarget": "Choose exactly one target: product or category.",
       "discountType": "Discount type",
       "percentage": "PERCENTAGE",
-      "fixedAmd": "FIXED (AMD minor units)",
+      "fixedAmd": "FIXED (֏ minor units)",
       "discountValue": "Discount value",
       "maxDiscountOptional": "Max discount (optional)",
       "minOrderOptional": "Min order (optional)",
@@ -694,7 +694,7 @@
       "validUntil": "Valid until",
       "actions": "Actions",
       "percentOff": "Percent off",
-      "fixedAmountAmd": "Fixed amount (AMD)",
+      "fixedAmountAmd": "Fixed amount (֏)",
       "editAria": "Edit {code}",
       "duplicateAria": "Duplicate {code}",
       "deleteAria": "Delete {code}"
@@ -719,7 +719,7 @@
       "discountType": "Discount type",
       "discountTypeAria": "Discount type",
       "percentOff": "Percent off",
-      "fixedAmountAmd": "Fixed amount (AMD)",
+      "fixedAmountAmd": "Fixed amount (֏)",
       "value": "Value",
       "quantity": "Quantity",
       "expiresOptional": "Expires (optional)",
@@ -1066,10 +1066,10 @@
     },
     "exchangeRates": {
       "title": "Exchange rates",
-      "hint": "Catalog prices stay in AMD. Enter how many USD / RUB equal 1 AMD (dot or comma decimals, e.g. 0.2137 or 0,2137). Storefront display currency uses these rates.",
-      "usdPerAmd": "USD per 1 AMD",
+      "hint": "Catalog prices stay in ֏. Enter how many USD / RUB equal 1 ֏ (dot or comma decimals, e.g. 0.2137 or 0,2137). Storefront display currency uses these rates.",
+      "usdPerAmd": "USD per 1 ֏",
       "usdPlaceholder": "0.0026",
-      "rubPerAmd": "RUB per 1 AMD",
+      "rubPerAmd": "RUB per 1 ֏",
       "rubPlaceholder": "0.24",
       "saveExchangeRates": "Save exchange rates"
     }
@@ -1102,7 +1102,7 @@
     "drawer": {
       "newTitle": "New gift card",
       "newAria": "New gift card",
-      "amount": "Amount (AMD)",
+      "amount": "Amount (֏)",
       "recipientName": "Recipient name",
       "recipientEmail": "Recipient email",
       "recipientPhone": "Recipient phone",

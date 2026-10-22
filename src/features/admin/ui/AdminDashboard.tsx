@@ -18,6 +18,7 @@ import {
   useAdminOrderDetailsDrawer,
 } from '@/features/orders/ui/useAdminOrderDetailsDrawer';
 import type { Dictionary } from '@/lib/i18n/get-dictionary';
+import { currencySymbols, isCurrency } from '@/lib/money/currency';
 
 type RecentOrder = {
   id: string;
@@ -146,7 +147,10 @@ export function AdminDashboard({
                       <p className="truncate text-xs text-[#1e1e1e]/55">{order.contactEmail}</p>
                     </div>
                     <p className="shrink-0 text-sm font-bold text-[#ff6b00]">
-                      {formatMoney(order.totalAmount)} {order.baseCurrency}
+                      {formatMoney(order.totalAmount)}{' '}
+                      {isCurrency(order.baseCurrency)
+                        ? currencySymbols[order.baseCurrency]
+                        : order.baseCurrency}
                     </p>
                   </div>
                 </button>

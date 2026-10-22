@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useState, useTransition } from 'react';
 
 import { Button } from '@/components/ui/Button';
+import { formatOrderDrawerMoney } from '@/features/orders/ui/order-drawer-format';
 import { Card } from '@/components/ui/Card';
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 import {
@@ -56,7 +57,7 @@ type BulkChangeOrderStatusFormProps = {
 };
 
 function formatMoney(amount: number, currency: string): string {
-  return `${amount.toLocaleString('en-US')} ${currency}`;
+  return formatOrderDrawerMoney(amount, currency);
 }
 
 function StackedColumnTitle({ label }: { label: string }) {
