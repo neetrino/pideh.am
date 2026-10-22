@@ -1,5 +1,6 @@
 'use client';
 
+import { LayoutGroup, motion, useReducedMotion } from 'motion/react';
 import Link from 'next/link';
 import { useState } from 'react';
 import { Coins, Gift, TicketPercent } from 'lucide-react';
@@ -118,6 +119,7 @@ export function AdminUserLoyaltySections({
   adminCopy,
 }: AdminUserLoyaltySectionsProps) {
   const [tab, setTab] = useState<LoyaltyTab>('orders');
+  const reduceMotion = useReducedMotion() ?? false;
   const tabs: Array<{ id: LoyaltyTab; label: string }> = [
     { id: 'orders', label: copy.recentOrders },
     { id: 'bonuses', label: copy.bonusesTitle },
@@ -133,25 +135,34 @@ export function AdminUserLoyaltySections({
   return (
     <div>
       <div className="mb-4 flex gap-6 overflow-x-auto border-b border-[#1e1e1e]/10" role="tablist">
-        {tabs.map((item) => {
-          const selected = tab === item.id;
-          return (
-            <button
-              key={item.id}
-              type="button"
-              role="tab"
-              aria-selected={selected}
-              onClick={() => setTab(item.id)}
-              className={`shrink-0 border-b-2 pb-2 text-sm font-semibold transition-colors ${
-                selected
-                  ? 'border-[#1a4d3a] text-[#1a4d3a]'
-                  : 'border-transparent text-[#1e1e1e]/45 hover:text-[#1e1e1e]'
-              }`}
-            >
-              {item.label}
-            </button>
-          );
-        })}
+        <LayoutGroup id="admin-loyalty-tabs">
+          {tabs.map((item) => {
+            const selected = tab === item.id;
+            return (
+              <button
+                key={item.id}
+                type="button"
+                role="tab"
+                aria-selected={selected}
+                onClick={() => setTab(item.id)}
+                className={`relative shrink-0 pb-2 text-sm font-semibold transition-colors duration-300 ${
+                  selected ? 'text-[#1a4d3a]' : 'text-[#1e1e1e]/45 hover:text-[#1e1e1e]'
+                }`}
+              >
+                {item.label}
+                {selected ? (
+                  <motion.span
+                    layoutId="admin-loyalty-tab-line"
+                    className="absolute inset-x-0 -bottom-px h-0.5 bg-[#1a4d3a]"
+                    transition={
+                      reduceMotion ? { duration: 0 } : { type: 'spring', stiffness: 380, damping: 34 }
+                    }
+                  />
+                ) : null}
+              </button>
+            );
+          })}
+        </LayoutGroup>
       </div>
 
       {tab === 'bonuses' ? (

@@ -96,12 +96,16 @@ function EmbeddedChoice({
   onClick,
   children,
   ariaLabel,
+  layoutId,
+  reduceMotion,
 }: {
   selected: boolean;
   disabled?: boolean;
   onClick: () => void;
   children: React.ReactNode;
   ariaLabel?: string;
+  layoutId: string;
+  reduceMotion: boolean;
 }) {
   return (
     <button
@@ -110,28 +114,37 @@ function EmbeddedChoice({
       aria-pressed={selected}
       aria-label={ariaLabel}
       onClick={onClick}
-      className={`flex min-w-0 flex-1 items-center justify-center rounded-full px-1 py-1.5 text-[11px] leading-none tracking-wide transition-colors ${
-        selected
-          ? 'bg-white font-bold text-[#1e1e1e] shadow-[0_1px_3px_rgba(30,30,30,0.14)]'
-          : 'font-semibold text-[#1e1e1e]/40'
+      className={`relative flex min-w-0 flex-1 items-center justify-center rounded-full px-1 py-1.5 text-[11px] leading-none tracking-wide transition-colors duration-300 ${
+        selected ? 'font-bold text-[#1e1e1e]' : 'font-semibold text-[#1e1e1e]/40'
       }`}
     >
-      {children}
+      {selected ? (
+        <motion.span
+          layoutId={layoutId}
+          className="absolute inset-0 rounded-full bg-white shadow-[0_1px_3px_rgba(30,30,30,0.14)]"
+          transition={reduceMotion ? { duration: 0 } : { type: 'spring', stiffness: 420, damping: 32 }}
+        />
+      ) : null}
+      <span className="relative z-[1]">{children}</span>
     </button>
   );
 }
 
 function EmbeddedTrack({
   label,
+  layoutId,
   children,
 }: {
   label: string;
+  layoutId: string;
   children: React.ReactNode;
 }) {
   return (
     <div className="min-w-0 flex-1">
       <p className="mb-1.5 px-1 text-xs font-medium text-[#1e1e1e]/45">{label}</p>
-      <div className="flex items-center rounded-full bg-[#f1f1f1] p-1">{children}</div>
+      <LayoutGroup id={layoutId}>
+        <div className="flex items-center rounded-full bg-[#f1f1f1] p-1">{children}</div>
+      </LayoutGroup>
     </div>
   );
 }
@@ -304,10 +317,12 @@ export function LocaleCurrencySwitcher({
   if (embedded) {
     return (
       <div className="flex items-start gap-4">
-        <EmbeddedTrack label={languageLabel}>
+        <EmbeddedTrack label={languageLabel} layoutId="embedded-locale">
           {locales.map((code) => (
             <EmbeddedChoice
               key={code}
+              layoutId="embedded-locale-pill"
+              reduceMotion={reduceMotion}
               selected={code === locale}
               ariaLabel={`${embeddedLocaleLabels[code]}: ${localeLabels[code]}`}
               onClick={() => selectLocale(code)}
@@ -316,10 +331,12 @@ export function LocaleCurrencySwitcher({
             </EmbeddedChoice>
           ))}
         </EmbeddedTrack>
-        <EmbeddedTrack label={currencyLabel}>
+        <EmbeddedTrack label={currencyLabel} layoutId="embedded-currency">
           {currencies.map((code) => (
             <EmbeddedChoice
               key={code}
+              layoutId="embedded-currency-pill"
+              reduceMotion={reduceMotion}
               selected={code === currency}
               disabled={pending}
               onClick={() => selectCurrency(code)}

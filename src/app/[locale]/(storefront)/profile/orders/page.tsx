@@ -5,6 +5,7 @@ import { listCustomerOrders } from '@/features/orders/application/queries';
 import { parseAdminOrderListKind } from '@/features/orders/domain/admin-order-list-kind';
 import { adminOrdersFilterSchema } from '@/features/orders/schemas/change-status';
 import { CustomerOrdersView } from '@/features/orders/ui/CustomerOrdersView';
+import { ProfileOrderKindTabs } from '@/features/profile/ui/ProfileOrderKindTabs';
 import { ProfilePageHeading } from '@/features/profile/ui/ProfilePageHeading';
 import { requireUser } from '@/lib/auth/policies';
 import { isLocale } from '@/lib/i18n/config';
@@ -71,7 +72,7 @@ export default async function OrdersPage({ params, searchParams }: OrdersPagePro
         title={dictionary.profile.orders}
       />
 
-      <OrderKindTabs
+      <ProfileOrderKindTabs
         locale={locale}
         kind={filters.kind ?? 'all'}
         ariaLabel={dictionary.profile.orderTabsAria}
@@ -125,49 +126,5 @@ export default async function OrdersPage({ params, searchParams }: OrdersPagePro
         </nav>
       ) : null}
     </section>
-  );
-}
-
-function OrderKindTabs({
-  locale,
-  kind,
-  ariaLabel,
-  labels,
-}: {
-  locale: string;
-  kind: 'all' | 'individual' | 'group';
-  ariaLabel: string;
-  labels: { all: string; individual: string; group: string };
-}) {
-  const tabs = [
-    { id: 'all' as const, label: labels.all },
-    { id: 'individual' as const, label: labels.individual },
-    { id: 'group' as const, label: labels.group },
-  ];
-
-  return (
-    <nav
-      aria-label={ariaLabel}
-      className="flex w-full items-center justify-between gap-1 rounded-full border border-[#1e1e1e]/10 bg-white p-1 md:w-fit md:justify-start"
-    >
-      {tabs.map((tab) => {
-        const active = kind === tab.id;
-        return (
-          <AppLink
-            key={tab.id}
-            href={`/${locale}/profile/orders${buildOrdersQuery(tab.id, 1)}`}
-            prefetchPolicy="intent"
-            aria-current={active ? 'page' : undefined}
-            className={`shrink-0 rounded-full px-4 py-2 text-center text-sm font-semibold whitespace-nowrap ${
-              active
-                ? 'border border-[#ff6b00] text-[#1e1e1e]'
-                : 'border border-transparent text-[#1e1e1e]/45'
-            }`}
-          >
-            {tab.label}
-          </AppLink>
-        );
-      })}
-    </nav>
   );
 }
