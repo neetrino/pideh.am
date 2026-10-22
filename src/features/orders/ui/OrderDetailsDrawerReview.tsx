@@ -31,12 +31,9 @@ export function OrderDetailsDrawerReview({
 
   if (existing) {
     return (
-      <section className="rounded-2xl border border-gray-200 px-5 py-4">
-        <h3 className="mb-3 text-base font-semibold text-gray-900">{copy.reviewTitle}</h3>
+      <section className="rounded-[22px] border border-[#1e1e1e]/10 bg-white px-4 py-4">
         <RatingStars average={existing.rating} />
-        {existing.comment ? (
-          <p className="mt-3 text-sm whitespace-pre-wrap text-gray-800">{existing.comment}</p>
-        ) : null}
+        <p className="mt-3 text-sm leading-snug text-[#6b7280]">{copy.reviewThanks}</p>
       </section>
     );
   }
@@ -45,16 +42,18 @@ export function OrderDetailsDrawerReview({
     return null;
   }
 
+  const ready = rating >= 1;
+
   return (
-    <section className="rounded-2xl border border-gray-200 px-5 py-4">
-      <h3 className="mb-1 text-base font-semibold text-gray-900">{copy.reviewTitle}</h3>
-      <p className="mb-4 text-sm text-gray-500">{copy.reviewHint}</p>
+    <section className="rounded-[22px] border border-[#1e1e1e]/10 px-4 py-4">
+      <h3 className="font-display mb-3 text-lg !leading-none text-[#1e1e1e] uppercase">
+        {copy.reviewTitle}
+      </h3>
       <form
-        className="flex flex-col gap-4"
+        className="flex flex-col gap-3"
         onSubmit={(event) => {
           event.preventDefault();
-          const comment = commentDraft.trim();
-          if (rating < 1 || comment.length === 0) {
+          if (!ready) {
             return;
           }
           setError(null);
@@ -62,7 +61,7 @@ export function OrderDetailsDrawerReview({
             const result = await submitOrderReviewAction(locale, {
               orderNumber: detail.orderNumber,
               rating,
-              comment,
+              comment: commentDraft.trim() || undefined,
             });
             if (!result.ok) {
               setError(result.error.message);
@@ -73,7 +72,7 @@ export function OrderDetailsDrawerReview({
               canSubmitReview: false,
               customerReview: {
                 rating,
-                comment,
+                comment: commentDraft.trim() || null,
                 reviewedAt: new Date().toISOString(),
               },
             });
@@ -84,31 +83,31 @@ export function OrderDetailsDrawerReview({
           value={rating}
           onChange={setRating}
           label={copy.reviewRating}
+          hideLabel
           disabled={pending}
         />
-        <div className="flex flex-col gap-2">
-          <label className="text-sm font-medium text-gray-900" htmlFor="order-review-comment">
-            {copy.reviewComment}
-          </label>
-          <textarea
-            id="order-review-comment"
-            rows={4}
-            maxLength={2000}
-            required
-            disabled={pending}
-            value={commentDraft}
-            onChange={(event) => setCommentDraft(event.target.value)}
-            placeholder={copy.reviewPlaceholder}
-            className="min-h-[6rem] resize-y rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 placeholder:text-gray-400 disabled:opacity-60"
-          />
-        </div>
+        <label className="sr-only" htmlFor="order-review-comment">
+          {copy.reviewComment}
+        </label>
+        <textarea
+          id="order-review-comment"
+          rows={4}
+          maxLength={2000}
+          disabled={pending}
+          value={commentDraft}
+          onChange={(event) => setCommentDraft(event.target.value)}
+          placeholder={copy.reviewPlaceholder}
+          className="min-h-[5.5rem] w-full resize-y rounded-[22px] border border-[#1e1e1e]/15 bg-white px-4 py-3 text-sm text-[#1e1e1e] outline-none placeholder:text-[#1e1e1e]/35 focus:border-[#ff6b00]/40 disabled:opacity-60"
+        />
         {error ? <p className="text-sm text-red-700">{error}</p> : null}
         <button
           type="submit"
-          disabled={pending || rating < 1 || commentDraft.trim().length === 0}
-          className="inline-flex w-fit rounded-full bg-[#ff6b00] px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-[#e85f00] disabled:cursor-not-allowed disabled:opacity-60"
+          disabled={pending || !ready}
+          className="flex h-12 w-full items-center justify-center rounded-[42px] bg-[#ff6b00] px-6 text-white transition hover:brightness-105 disabled:cursor-not-allowed disabled:opacity-50"
         >
-          {pending ? copy.reviewSubmitting : copy.reviewSubmit}
+          <span className="font-display text-xl !leading-none uppercase">
+            {pending ? copy.reviewSubmitting : copy.reviewSubmit}
+          </span>
         </button>
       </form>
     </section>

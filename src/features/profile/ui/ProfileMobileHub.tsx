@@ -10,7 +10,6 @@ import {
   LogOut,
   MapPin,
   Package,
-  Sparkles,
   Trash2,
   User,
 } from 'lucide-react';
@@ -25,6 +24,7 @@ type ProfileMobileHubProps = {
   locale: Locale;
   user: SessionUser;
   dictionary: Dictionary['profile'];
+  bonusAmount: string;
   /** Opens the dashboard sheet while already on the profile hub route. */
   onOpenDashboard: () => void;
 };
@@ -47,6 +47,7 @@ export function ProfileMobileHub({
   locale,
   user,
   dictionary,
+  bonusAmount,
   onOpenDashboard,
 }: ProfileMobileHubProps) {
   const pathname = usePathname() ?? '';
@@ -67,6 +68,24 @@ export function ProfileMobileHub({
   return (
     <div className="mx-auto flex w-full max-w-md flex-col gap-4">
       <ProfileHubHeader user={user} displayName={displayName} label={dictionary.title} />
+      <AppLink
+        href={`/${locale}/profile/bonuses`}
+        prefetchPolicy="intent"
+        className="flex items-center gap-3 rounded-[22px] border border-[#ff6b00]/15 bg-white px-4 py-3.5"
+      >
+        <img
+          src="/brand/pideh/piggy-points.svg"
+          alt=""
+          width={28}
+          height={28}
+          className="shrink-0"
+        />
+        <span className="min-w-0 flex-1 truncate text-sm font-bold tracking-wide text-[#1e1e1e] uppercase">
+          {dictionary.accumulatedPoints}
+        </span>
+        <span className="shrink-0 text-sm font-bold text-[#1e1e1e]">{bonusAmount}</span>
+        <ChevronRight className="size-[18px] shrink-0 text-[#1e1e1e]/35" aria-hidden />
+      </AppLink>
       <nav
         className="overflow-hidden rounded-[26px] border border-[#ff6b00]/15 bg-white"
         aria-label={dictionary.title}
@@ -135,11 +154,6 @@ function buildMenuItems(
       href: `/${locale}/profile/orders`,
       label: dictionary.orders,
       icon: <Package className="h-5 w-5" />,
-    },
-    {
-      href: `/${locale}/profile/bonuses`,
-      label: dictionary.bonuses,
-      icon: <Sparkles className="h-5 w-5" />,
     },
     {
       href: `/${locale}/profile/gift-cards`,

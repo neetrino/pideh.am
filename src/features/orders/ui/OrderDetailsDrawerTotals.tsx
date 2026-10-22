@@ -27,7 +27,7 @@ export function OrderDetailsDrawerTotals({
   const discountLabel = `−${formatOrderDrawerMoney(detail.discountAmount, detail.baseCurrency)}`;
 
   return (
-    <div className={isGroup ? 'px-1 py-2' : 'rounded-2xl border border-gray-200 px-5 py-4'}>
+    <div className={isGroup ? 'px-1 py-2' : 'rounded-2xl border border-gray-200 bg-white px-5 py-4'}>
       <div className="space-y-3 text-sm">
         <div className="flex items-center justify-between gap-4">
           <span className="text-gray-600">{d.subtotal}</span>

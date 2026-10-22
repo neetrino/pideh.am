@@ -17,7 +17,7 @@ export function OrderDetailsDrawerSummary({
   const d = copy.orders.drawer;
 
   return (
-    <section className="rounded-2xl border border-gray-200 px-5 py-4">
+    <section className="rounded-2xl border border-gray-200 bg-white px-5 py-4">
       <h3
         className={`mb-4 text-base font-semibold text-gray-900 ${
           variant === 'customer' ? 'uppercase tracking-wide' : ''

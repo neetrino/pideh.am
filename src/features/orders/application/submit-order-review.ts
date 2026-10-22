@@ -32,10 +32,7 @@ export async function submitOrderReviewAction(
   }
 
   const user = await requireUser(locale as Locale);
-  const comment = sanitizeReviewComment(parsed.data.comment);
-  if (!comment) {
-    return err('VALIDATION_ERROR', 'Review comment is required.');
-  }
+  const comment = sanitizeReviewComment(parsed.data.comment) || null;
 
   const orderNumber = parsed.data.orderNumber;
   const now = new Date();

@@ -9,7 +9,7 @@ import {
 export const submitOrderReviewSchema = z.object({
   orderNumber: z.string().trim().min(1).max(64),
   rating: z.number().int().min(REVIEW_RATING_MIN).max(REVIEW_RATING_MAX),
-  comment: z.string().trim().min(1).max(REVIEW_COMMENT_MAX_LENGTH),
+  comment: z.string().trim().max(REVIEW_COMMENT_MAX_LENGTH).optional(),
 });
 
 export type SubmitOrderReviewInput = z.infer<typeof submitOrderReviewSchema>;

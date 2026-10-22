@@ -69,8 +69,11 @@ export function OrderDetailsDrawer({
                 ) : null}
                 <OrderStatusPills
                   className="sm:hidden"
+                  compact
                   statusLabel={statusLabel}
                   paymentLabel={paymentLabel}
+                  statusDone={detail.status === 'DELIVERED'}
+                  paymentDone={detail.paymentStatus === 'PAID' || detail.paymentStatus === 'CAPTURED'}
                   statusAriaLabel={`${copy.orders.drawer.status} ${statusLabel}`}
                   paymentAriaLabel={`${copy.orders.drawer.payment} ${paymentLabel}`}
                 />
@@ -82,6 +85,8 @@ export function OrderDetailsDrawer({
               className="hidden shrink-0 sm:flex"
               statusLabel={statusLabel}
               paymentLabel={paymentLabel}
+              statusDone={detail.status === 'DELIVERED'}
+              paymentDone={detail.paymentStatus === 'PAID' || detail.paymentStatus === 'CAPTURED'}
               statusAriaLabel={`${copy.orders.drawer.status} ${statusLabel}`}
               paymentAriaLabel={`${copy.orders.drawer.payment} ${paymentLabel}`}
             />
@@ -96,6 +101,12 @@ export function OrderDetailsDrawer({
         {error ? <p className="py-4 text-sm text-red-700">{error}</p> : null}
         {!isLoading && !error && detail ? (
           <>
+            <OrderDetailsDrawerReview
+              detail={detail}
+              copy={copy.orders.drawer}
+              locale={locale}
+              onReviewSubmitted={onReviewSubmitted}
+            />
             {detail.customerNote ? (
               <section className="rounded-2xl border border-[#ff6b00]/30 bg-[#fff8e7] px-5 py-4">
                 <h3 className="mb-2 text-base font-semibold text-[#ff6b00]">
@@ -127,12 +138,6 @@ export function OrderDetailsDrawer({
               copy={copy}
               variant={isGroup ? 'group' : 'full'}
             />
-            <OrderDetailsDrawerReview
-              detail={detail}
-              copy={copy.orders.drawer}
-              locale={locale}
-              onReviewSubmitted={onReviewSubmitted}
-            />
           </>
         ) : null}
       </div>
@@ -142,21 +147,39 @@ export function OrderDetailsDrawer({
 
 function OrderStatusPills({
   className,
+  compact = false,
   statusLabel,
   paymentLabel,
+  statusDone,
+  paymentDone,
   statusAriaLabel,
   paymentAriaLabel,
 }: {
   className: string;
+  compact?: boolean;
   statusLabel: string;
   paymentLabel: string;
+  statusDone: boolean;
+  paymentDone: boolean;
   statusAriaLabel: string;
   paymentAriaLabel: string;
 }) {
   return (
-    <div className={`flex flex-nowrap items-center gap-2 ${className}`}>
-      <OrderMetaPill icon={Package} label={statusLabel} ariaLabel={statusAriaLabel} />
-      <OrderMetaPill icon={CreditCard} label={paymentLabel} ariaLabel={paymentAriaLabel} />
+    <div className={`flex flex-nowrap items-center gap-1.5 sm:gap-2 ${className}`}>
+      <OrderMetaPill
+        icon={Package}
+        label={statusLabel}
+        ariaLabel={statusAriaLabel}
+        done={statusDone}
+        compact={compact}
+      />
+      <OrderMetaPill
+        icon={CreditCard}
+        label={paymentLabel}
+        ariaLabel={paymentAriaLabel}
+        done={paymentDone}
+        compact={compact}
+      />
     </div>
   );
 }
@@ -165,17 +188,23 @@ function OrderMetaPill({
   icon: Icon,
   label,
   ariaLabel,
+  done,
+  compact = false,
 }: {
   icon: LucideIcon;
   label: string;
   ariaLabel: string;
+  done: boolean;
+  compact?: boolean;
 }) {
   return (
     <span
-      className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-[#fff4cc] px-3 py-1.5 text-sm font-bold whitespace-nowrap text-[#8a5a20]"
+      className={`inline-flex shrink-0 items-center rounded-full font-bold whitespace-nowrap ${
+        compact ? 'gap-1 px-2.5 py-1 text-sm' : 'gap-1.5 px-3 py-1.5 text-sm'
+      } ${done ? 'bg-emerald-100 text-emerald-800' : 'bg-[#fff4cc] text-[#8a5a20]'}`}
       aria-label={ariaLabel}
     >
-      <Icon className="size-4 shrink-0" aria-hidden />
+      <Icon className={compact ? 'size-3.5 shrink-0' : 'size-4 shrink-0'} aria-hidden />
       {label}
     </span>
   );

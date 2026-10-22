@@ -3,6 +3,7 @@
 import { Calendar } from 'lucide-react';
 
 import { orderStatusBadgeClass } from '@/features/admin/ui/status-badge';
+import { formatStorefrontDate } from '@/features/checkout/ui/delivery-slot-calendar';
 import {
   formatOrderDrawerMoney,
   orderDrawerStatusLabel,
@@ -18,6 +19,7 @@ type CustomerOrderRow = {
   baseCurrency: string;
   placedAt: string | Date;
   itemCount: number;
+  customerReviewRating?: number | null;
 };
 
 type CustomerOrdersTableProps = {
@@ -31,7 +33,9 @@ type CustomerOrdersTableProps = {
     orderPlaced: string;
     orderItemsOne: string;
     orderItemsMany: string;
+    rateOrder: string;
   };
+  ratedOrderNumbers?: ReadonlySet<string>;
 };
 
 export function CustomerOrdersTable({
@@ -40,6 +44,7 @@ export function CustomerOrdersTable({
   onOpenOrder,
   copy,
   labels,
+  ratedOrderNumbers,
 }: CustomerOrdersTableProps) {
   if (orders.length === 0) {
     return <p className="px-1 text-sm text-[#1e1e1e]/65">{labels.noOrders}</p>;
@@ -54,6 +59,10 @@ export function CustomerOrdersTable({
             locale={locale}
             labels={labels}
             statusLabel={orderDrawerStatusLabel(order.status, copy.orders.statusLabels)}
+            rated={
+              order.customerReviewRating != null ||
+              (ratedOrderNumbers?.has(order.orderNumber) ?? false)
+            }
             onOpen={() => onOpenOrder(order.orderNumber)}
           />
         </li>
@@ -67,19 +76,22 @@ function OrderCard({
   locale,
   labels,
   statusLabel,
+  rated,
   onOpen,
 }: {
   order: CustomerOrderRow;
   locale: string;
   labels: CustomerOrdersTableProps['labels'];
   statusLabel: string;
+  rated: boolean;
   onOpen: () => void;
 }) {
   const itemsLabel =
     order.itemCount === 1
       ? labels.orderItemsOne
       : labels.orderItemsMany.replace('{count}', String(order.itemCount));
-  const placed = labels.orderPlaced.replace('{date}', formatPlacedDate(order.placedAt, locale));
+  const placed = formatPlacedDate(order.placedAt, locale);
+  const showRate = order.status === 'DELIVERED' && !rated;
 
   return (
     <button
@@ -107,26 +119,28 @@ function OrderCard({
           </span>
         ) : null}
       </div>
-      <div className="mt-auto flex items-center gap-3 pt-4">
-        <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-[#1e1e1e] text-white">
-          <Calendar className="size-5" aria-hidden="true" />
+      {showRate ? (
+        <span className="mt-4 flex h-12 w-full items-center justify-center rounded-[42px] bg-[#ff6b00] px-6">
+          <span className="font-display text-xl !leading-none text-white uppercase">
+            {labels.rateOrder}
+          </span>
         </span>
-        <span className="min-w-0">
-          <span className="block text-sm font-bold text-[#1e1e1e]">{itemsLabel}</span>
-          <span className="block text-sm text-[#1e1e1e]/55">{placed}</span>
-        </span>
-      </div>
+      ) : (
+        <div className="mt-auto flex items-center gap-3 pt-4">
+          <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-[#1e1e1e] text-white">
+            <Calendar className="size-5" aria-hidden="true" />
+          </span>
+          <span className="min-w-0">
+            <span className="block text-sm font-bold text-[#1e1e1e]">{itemsLabel}</span>
+            <span className="block text-sm text-[#1e1e1e]/55">{placed}</span>
+          </span>
+        </div>
+      )}
     </button>
   );
 }
 
 function formatPlacedDate(value: string | Date, locale: string): string {
   const date = value instanceof Date ? value : new Date(value);
-  const tag = locale === 'hy' ? 'hy-AM' : locale === 'ru' ? 'ru-RU' : 'en-US';
-  return new Intl.DateTimeFormat(tag, {
-    day: 'numeric',
-    month: 'short',
-    year: 'numeric',
-    timeZone: 'Asia/Yerevan',
-  }).format(date);
+  return formatStorefrontDate(date, locale);
 }

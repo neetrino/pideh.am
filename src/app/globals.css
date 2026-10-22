@@ -494,6 +494,16 @@ body:has([role='dialog'][aria-modal='true'], [role='alertdialog'][aria-modal='tr
     display: none !important;
   }
 
+  /* About: bar is taken out of the flow so the photo starts at the top of the screen. */
+  .storefront-shell:has(.pideh-about) .mobile-storefront-header {
+    position: fixed !important;
+    top: 0;
+    right: 0;
+    left: 0;
+    z-index: 50;
+    background: transparent;
+  }
+
   .storefront-shell:has(.pideh-home) .group-order-banner,
   .storefront-shell:has(.pideh-about) .group-order-banner,
   .storefront-shell:has(.pideh-login) .group-order-banner {
@@ -507,6 +517,10 @@ body:has([role='dialog'][aria-modal='true'], [role='alertdialog'][aria-modal='tr
   .storefront-shell .storefront-mobile-tree,
   .storefront-shell .mobile-storefront-header {
     display: block !important;
+  }
+
+  .storefront-shell:has(.pideh-about) .mobile-header-search {
+    display: none !important;
   }
 
   .storefront-shell:has(.pideh-home-mobile) .storefront-main {

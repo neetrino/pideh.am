@@ -1,5 +1,6 @@
 'use client';
 
+import { LayoutGroup, motion, useReducedMotion } from 'motion/react';
 import { useMemo, useState } from 'react';
 
 import { BuyGiftCardDrawer } from '@/features/gift-cards/ui/BuyGiftCardDrawer';
@@ -81,6 +82,7 @@ export function MyGiftCardsView({
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [drawerKey, setDrawerKey] = useState(0);
   const [activeFilter, setActiveFilter] = useState<CustomerGiftCardBucket>('mine');
+  const reduceMotion = useReducedMotion() ?? false;
 
   const filteredDetails = useMemo(
     () => details.filter(({ card }) => card.bucket === activeFilter),
@@ -113,7 +115,7 @@ export function MyGiftCardsView({
         >
           <span
             aria-hidden
-            className="pointer-events-none absolute top-1 bottom-1 rounded-full bg-white shadow-sm transition-transform duration-300 ease-[cubic-bezier(0.32,0.72,0,1)]"
+            className="pointer-events-none absolute top-1 bottom-1 rounded-full bg-white shadow-sm transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]"
             style={{
               width: 'calc((100% - 0.5rem) / 3)',
               left: '0.25rem',
@@ -145,25 +147,34 @@ export function MyGiftCardsView({
         role="tablist"
         aria-label={copy.title}
       >
-        {FILTER_ORDER.map((bucket) => {
-          const isActive = activeFilter === bucket;
-          return (
-            <button
-              key={bucket}
-              type="button"
-              role="tab"
-              aria-selected={isActive}
-              onClick={() => setActiveFilter(bucket)}
-              className={`inline-flex min-h-10 flex-1 items-center justify-center rounded-full px-3 py-2 text-center text-xs leading-tight font-bold transition ${
-                isActive
-                  ? 'bg-[#ff6b00] text-white'
-                  : 'bg-[#ff6b00]/12 text-[#1e1e1e] hover:bg-[#ff6b00]/20'
-              }`}
-            >
-              {copy.filters[bucket]}
-            </button>
-          );
-        })}
+        <LayoutGroup id="gift-card-sections">
+          {FILTER_ORDER.map((bucket) => {
+            const isActive = activeFilter === bucket;
+            return (
+              <button
+                key={bucket}
+                type="button"
+                role="tab"
+                aria-selected={isActive}
+                onClick={() => setActiveFilter(bucket)}
+                className={`relative inline-flex min-h-10 flex-1 items-center justify-center rounded-full px-3 py-2 text-center text-xs leading-tight font-bold transition-colors duration-300 ${
+                  isActive ? 'text-white' : 'bg-[#ff6b00]/12 text-[#1e1e1e] hover:bg-[#ff6b00]/20'
+                }`}
+              >
+                {isActive ? (
+                  <motion.span
+                    layoutId="gift-card-section-pill"
+                    className="absolute inset-0 rounded-full bg-[#ff6b00]"
+                    transition={
+                      reduceMotion ? { duration: 0 } : { type: 'spring', stiffness: 380, damping: 34 }
+                    }
+                  />
+                ) : null}
+                <span className="relative z-[1]">{copy.filters[bucket]}</span>
+              </button>
+            );
+          })}
+        </LayoutGroup>
       </div>
 
       {filteredDetails.length === 0 ? (

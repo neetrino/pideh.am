@@ -8,9 +8,10 @@ type ProfileSidebarProps = {
   locale: Locale;
   user: SessionUser;
   dictionary: Dictionary['profile'];
+  bonusAmount: string;
 };
 
-export function ProfileSidebar({ locale, user, dictionary }: ProfileSidebarProps) {
+export function ProfileSidebar({ locale, user, dictionary, bonusAmount }: ProfileSidebarProps) {
   const logoutWithLocale = logoutAction.bind(null, locale);
 
   return (
@@ -33,14 +34,25 @@ export function ProfileSidebar({ locale, user, dictionary }: ProfileSidebarProps
             {user.firstName.slice(0, 1).toUpperCase()}
             {user.lastName.slice(0, 1).toUpperCase()}
           </div>
-          <div className="space-y-0.5">
-            <p className="font-display text-2xl leading-[0.9] text-[#1e1e1e] uppercase">
-              {user.firstName}
-            </p>
-            <p className="text-xs font-bold tracking-wide text-[#1e1e1e]/60">{user.lastName}</p>
-          </div>
-          <div className="w-max max-w-full rounded-2xl bg-white/85 px-3.5 py-2.5 text-left text-xs font-medium whitespace-nowrap text-[#1e1e1e]/75 sm:text-sm">
-            {user.email}
+          <p className="font-display text-2xl leading-[0.9] text-[#1e1e1e] uppercase">
+            {user.firstName} {user.lastName}
+          </p>
+          <div className="flex w-max max-w-full flex-col items-stretch gap-2">
+            <div className="flex h-10 items-center justify-center rounded-2xl bg-white/85 px-3.5 text-center text-xs font-medium whitespace-nowrap text-[#1e1e1e]/75 sm:text-sm">
+              {user.email}
+            </div>
+            <div className="flex h-10 items-center justify-center gap-2 rounded-2xl bg-white/85 px-3.5 text-xs font-medium whitespace-nowrap text-[#1e1e1e] sm:text-sm">
+              <img
+                src="/brand/pideh/piggy-points.svg"
+                alt=""
+                width={28}
+                height={28}
+                className="size-7 shrink-0"
+              />
+              <span>
+                {dictionary.pointsShort}: {bonusAmount}
+              </span>
+            </div>
           </div>
         </div>
       </div>

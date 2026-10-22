@@ -5,7 +5,7 @@ export type Currency = (typeof currencies)[number];
 export const defaultCurrency: Currency = 'AMD';
 
 export const currencyLabels: Record<Currency, string> = {
-  AMD: 'AMD',
+  AMD: '֏',
   USD: 'USD',
   RUB: 'RUB',
 };

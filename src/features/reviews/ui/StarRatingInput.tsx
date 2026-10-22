@@ -8,6 +8,7 @@ type StarRatingInputProps = {
   onChange: (rating: number) => void;
   label: string;
   disabled?: boolean;
+  hideLabel?: boolean;
 };
 
 export function StarRatingInput({
@@ -15,13 +16,14 @@ export function StarRatingInput({
   onChange,
   label,
   disabled = false,
+  hideLabel = false,
 }: StarRatingInputProps) {
   const [hovered, setHovered] = useState<number | null>(null);
   const active = hovered ?? value;
 
   return (
     <fieldset className="flex flex-col gap-2" disabled={disabled}>
-      <legend className="text-sm font-medium text-gray-900">{label}</legend>
+      <legend className={hideLabel ? 'sr-only' : 'text-sm font-medium text-gray-900'}>{label}</legend>
       <div
         className="flex items-center gap-1"
         onMouseLeave={() => setHovered(null)}
@@ -45,7 +47,7 @@ export function StarRatingInput({
               className="rounded p-0.5 transition hover:scale-110 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-400 disabled:opacity-50"
             >
               <Star
-                className={`h-8 w-8 ${
+                className={`h-9 w-9 ${
                   isFilled ? 'fill-amber-400 text-amber-400' : 'fill-gray-200 text-gray-200'
                 }`}
                 aria-hidden

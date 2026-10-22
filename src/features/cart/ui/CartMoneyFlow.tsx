@@ -2,7 +2,7 @@
 
 import NumberFlow from '@number-flow/react';
 
-import type { Currency } from '@/lib/money/currency';
+import { currencySymbols, type Currency } from '@/lib/money/currency';
 import { getCurrencyMeta } from '@/lib/money/currency-meta';
 
 type CartMoneyFlowProps = {
@@ -19,7 +19,7 @@ export function CartMoneyFlow({ amount, currency, className }: CartMoneyFlowProp
     <span className={className}>
       <NumberFlow
         value={major}
-        suffix={` ${currency}`}
+        suffix={` ${currencySymbols[currency]}`}
         format={{
           minimumFractionDigits: meta.fractionDigits,
           maximumFractionDigits: meta.fractionDigits,

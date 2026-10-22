@@ -52,7 +52,7 @@ export default async function CartPage({ params }: CartPageProps) {
                 </p>
               ) : null}
               <p className="text-sm">
-                {unit} AMD × {item.quantity}
+                {unit} ֏ × {item.quantity}
               </p>
             </div>
             <div className="flex flex-wrap gap-2">
@@ -84,7 +84,7 @@ export default async function CartPage({ params }: CartPageProps) {
           </div>
         );
       })}
-      <p className="font-medium">Total: {total} AMD</p>
+      <p className="font-medium">Total: {total} ֏</p>
       {items.length ? (
         <AppLink
           href={`/${locale}/checkout`}

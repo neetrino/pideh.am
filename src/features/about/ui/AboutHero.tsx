@@ -32,7 +32,7 @@ export function AboutHero({ copy }: AboutHeroProps) {
           fill
           priority
           sizes="100vw"
-          className="object-cover object-center"
+          className="object-cover object-top lg:object-center"
         />
       </div>
       <div className={`relative z-[1] ${PAGE_CONTAINER}`}>
