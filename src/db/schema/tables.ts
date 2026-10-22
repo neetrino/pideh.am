@@ -41,6 +41,7 @@ export const CANONICAL_TABLES = [
   'group_order_items',
   'group_order_item_modifiers',
   'group_order_events',
+  'admin_push_subscriptions',
 ] as const;
 
 export type CanonicalTable = (typeof CANONICAL_TABLES)[number];

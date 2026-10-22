@@ -18,9 +18,11 @@ import { AdminOrdersFilters } from '@/features/orders/ui/AdminOrdersFilters';
 import { AdminOrdersKindSwitcher } from '@/features/orders/ui/AdminOrdersKindSwitcher';
 import { AdminOrdersNewSwitch } from '@/features/orders/ui/AdminOrdersNewSwitch';
 import { AdminOrdersView } from '@/features/orders/ui/AdminOrdersView';
+import { AdminPushToggle } from '@/features/orders/ui/AdminPushToggle';
 import { isLocale, type Locale } from '@/lib/i18n/config';
 import { getDictionary, type Dictionary } from '@/lib/i18n/get-dictionary';
 import { getSelectedCurrency } from '@/lib/money/display-price';
+import { getWebPushPublicKey } from '@/lib/push/web-push-sender';
 
 type AdminOrdersPageProps = {
   params: Promise<{ locale: string }>;
@@ -96,6 +98,11 @@ function AdminOrdersPageShell({
           kind={kind}
           onlyNew={onlyNew}
           labels={copy.orders.newSwitch}
+        />
+        <AdminPushToggle
+          locale={locale}
+          publicKey={getWebPushPublicKey()}
+          labels={copy.orders.pushToggle}
         />
       </div>
       {children}
