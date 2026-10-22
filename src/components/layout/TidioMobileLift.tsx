@@ -5,13 +5,13 @@ import { useEffect } from 'react';
 const LIFT_STYLE_ID = 'pideh-tidio-lift';
 /**
  * Tidio renders inside an open shadow root on #tidio-chat, so page CSS cannot reach it.
- * 440px frame: the closed bubble and its label sit above the mobile dock icons.
+ * 440px frame: the closed bubble and its label sit just above the mobile dock icons.
  */
 const LIFT_CSS = `
 @media (max-width: 767px), (orientation: portrait) and (max-width: 1199px) {
   #button.chat-closed,
   .widgetLabel {
-    translate: 0 calc(-1 * (100vw * 168 / 440 + env(safe-area-inset-bottom, 0px))) !important;
+    translate: 0 calc(-1 * (100vw * 132 / 440 + env(safe-area-inset-bottom, 0px))) !important;
   }
 }`;
 
