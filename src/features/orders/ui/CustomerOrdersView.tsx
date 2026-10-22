@@ -20,6 +20,7 @@ type CustomerOrdersViewOrder = {
   baseCurrency: string;
   placedAt: string | Date;
   itemCount: number;
+  customerReviewRating?: number | null;
 };
 
 type CustomerOrdersViewProps = {
@@ -32,6 +33,7 @@ type CustomerOrdersViewProps = {
     orderPlaced: string;
     orderItemsOne: string;
     orderItemsMany: string;
+    rateOrder: string;
   };
   /** When set (e.g. from bonuses history), open this order on mount. */
   initialOrderNumber?: string;
@@ -48,6 +50,7 @@ export function CustomerOrdersView({
   const [detail, setDetail] = useState<AdminOrderDetailView | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
+  const [ratedOrderNumbers, setRatedOrderNumbers] = useState<ReadonlySet<string>>(new Set());
   const openedInitialRef = useRef(false);
 
   function openOrder(orderNumber: string): void {
@@ -103,6 +106,7 @@ export function CustomerOrdersView({
         onOpenOrder={openOrder}
         copy={copy}
         labels={labels}
+        ratedOrderNumbers={ratedOrderNumbers}
       />
       <OrderDetailsDrawer
         open={drawerOpen}
@@ -112,7 +116,10 @@ export function CustomerOrdersView({
         isLoading={isPending}
         copy={copy}
         locale={reviewLocale}
-        onReviewSubmitted={setDetail}
+        onReviewSubmitted={(next) => {
+          setRatedOrderNumbers((current) => new Set(current).add(next.orderNumber));
+          setDetail(next);
+        }}
       />
     </>
   );

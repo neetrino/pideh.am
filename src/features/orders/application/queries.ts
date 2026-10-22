@@ -61,6 +61,7 @@ export type AdminOrderListItem = {
 export type CustomerOrderListItem = AdminOrderListItem & {
   isGroup: boolean;
   itemCount: number;
+  customerReviewRating: number | null;
 };
 
 export type AdminUnseenOrderAlert = {
@@ -236,6 +237,7 @@ export async function listCustomerOrders(
           from ${orderItems}
           where ${orderItems.orderId} = ${orders.id}
         ), 0)`.mapWith(Number),
+        customerReviewRating: orders.customerReviewRating,
       })
       .from(orders)
       .leftJoin(

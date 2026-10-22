@@ -92,6 +92,7 @@ export default async function OrdersPage({ params, searchParams }: OrdersPagePro
           orderPlaced: dictionary.profile.orderPlaced,
           orderItemsOne: dictionary.profile.orderItemsOne,
           orderItemsMany: dictionary.profile.orderItemsMany,
+          rateOrder: dictionary.profile.rateOrder,
         }}
         initialOrderNumber={firstParam(raw.order)}
       />

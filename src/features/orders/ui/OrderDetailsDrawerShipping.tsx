@@ -19,7 +19,7 @@ export function OrderDetailsDrawerShipping({
 
   if (variant === 'address') {
     return (
-      <section className="rounded-2xl border border-gray-200 px-5 py-4">
+      <section className="rounded-2xl border border-gray-200 bg-white px-5 py-4">
         <h3 className="mb-4 text-base font-semibold tracking-wide text-gray-900 uppercase">
           {d.shippingAddress}
         </h3>
@@ -39,7 +39,7 @@ export function OrderDetailsDrawerShipping({
   }
 
   return (
-    <section className="rounded-2xl border border-gray-200 px-5 py-4">
+    <section className="rounded-2xl border border-gray-200 bg-white px-5 py-4">
         <h3 className="mb-4 text-base font-semibold text-gray-900">{d.shippingAddress}</h3>
         <dl className="space-y-3 text-sm">
           <div className="flex flex-wrap items-center gap-x-2">
