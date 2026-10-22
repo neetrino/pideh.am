@@ -59,7 +59,7 @@ export function HomeHero({
     return () => window.clearInterval(timer);
   }, [slides.length, reduceMotion]);
 
-  const ctaLabel = active?.copy.buttonLabel ?? fallbackCtaLabel;
+  const ctaLabel = fallbackCtaLabel;
   const ctaHref = active?.copy.buttonUrl ?? fallbackCtaHref;
 
   return (

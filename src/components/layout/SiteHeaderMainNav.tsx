@@ -150,7 +150,7 @@ export function SiteHeaderMainNav({
             href={`/${locale}`}
             prefetchPolicy="intent"
             data-header-logo
-            className="relative h-12 w-[62px] shrink-0 md:h-14 md:w-[72px]"
+            className="relative ml-2 h-12 w-[62px] shrink-0 md:ml-3 md:h-14 md:w-[72px]"
             aria-label={dictionary.brand}
             onClick={(event) => {
               if (pathname === `/${locale}`) {

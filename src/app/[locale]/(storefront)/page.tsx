@@ -119,7 +119,7 @@ export default async function HomePage({ params }: HomePageProps) {
         <HomeHero
           slides={heroSlides}
           fallbackTitleAccent={dictionary.home.heroTitleLine2}
-          fallbackCtaLabel={dictionary.home.viewAllMenu}
+          fallbackCtaLabel={dictionary.home.heroButton}
           fallbackCtaHref={`/${locale}/products`}
         />
 
