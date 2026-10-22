@@ -29,6 +29,14 @@ const envSchema = z.object({
     .string()
     .regex(/^[a-z0-9]+$/i)
     .optional(),
+  /** VAPID key pair for admin Web Push; push is disabled unless both are set. */
+  VAPID_PUBLIC_KEY: z.string().min(1).optional(),
+  VAPID_PRIVATE_KEY: z.string().min(1).optional(),
+  /** `mailto:` or `https:` contact for push services; defaults to the HTTPS app origin. */
+  VAPID_SUBJECT: z
+    .string()
+    .regex(/^(mailto:|https:\/\/)/)
+    .optional(),
 });
 
 export type AppEnv = z.infer<typeof envSchema>;
@@ -67,6 +75,9 @@ export function getEnv(): AppEnv {
     RESEND_API_KEY: optionalEnv(process.env.RESEND_API_KEY),
     GOOGLE_MAPS_API_KEY: optionalEnv(process.env.GOOGLE_MAPS_API_KEY),
     TIDIO_PUBLIC_KEY: optionalEnv(process.env.TIDIO_PUBLIC_KEY),
+    VAPID_PUBLIC_KEY: optionalEnv(process.env.VAPID_PUBLIC_KEY),
+    VAPID_PRIVATE_KEY: optionalEnv(process.env.VAPID_PRIVATE_KEY),
+    VAPID_SUBJECT: optionalEnv(process.env.VAPID_SUBJECT),
   });
 
   if (!parsed.success) {

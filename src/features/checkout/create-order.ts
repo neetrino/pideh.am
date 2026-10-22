@@ -4,6 +4,7 @@ import { createHash } from 'node:crypto';
 
 import { and, eq, inArray, sql } from 'drizzle-orm';
 import { cookies } from 'next/headers';
+import { after } from 'next/server';
 
 import { getProviders } from '@/config/providers';
 import {
@@ -76,6 +77,7 @@ import {
   formatDeliverySlotSnapshot,
   isDeliverySlotAvailable,
 } from '@/features/delivery/domain/delivery-schedule';
+import { notifyAdminsOfNewOrder } from '@/features/orders/application/notify-admins-new-order';
 import { loadPrimaryProductImageObjectKeys } from '@/features/orders/application/order-item-images';
 import {
   ORDER_NUMBER_LOCK_KEY,
@@ -883,6 +885,7 @@ export async function createOrderAction(raw: CheckoutInput): Promise<CreateOrder
     });
 
     await revalidateCartPaths();
+    after(() => notifyAdminsOfNewOrder(orderNumber));
     return { ok: true, orderNumber };
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Unable to place order.';

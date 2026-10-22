@@ -99,6 +99,13 @@
       "when": 1788200000000,
       "tag": "0013_product_shop_sort_order",
       "breakpoints": true
+    },
+    {
+      "idx": 14,
+      "version": "7",
+      "when": 1788300000000,
+      "tag": "0014_admin_push_subscriptions",
+      "breakpoints": true
     }
   ]
 }

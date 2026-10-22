@@ -149,6 +149,13 @@
       "aria": "Show only new orders",
       "new": "New"
     },
+    "pushToggle": {
+      "enable": "Enable notifications",
+      "enabled": "Notifications on",
+      "blocked": "Notifications blocked",
+      "blockedHint": "Allow notifications for this site in the browser settings.",
+      "error": "Could not enable — try again"
+    },
     "newOrderAlert": {
       "header": "New order ({count} waiting)",
       "orderTitle": "Order #{orderNumber}",

@@ -30,6 +30,7 @@ export * from '@/db/schema/enums';
 export { contactMessages, reviews } from '@/db/schema/engagement';
 export { mediaAssets, storeSettings } from '@/db/schema/media';
 export { storePopups } from '@/db/schema/popups';
+export { adminPushSubscriptions } from '@/db/schema/push-subscriptions';
 export {
   orderEvents,
   orderItems,

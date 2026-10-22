@@ -15,6 +15,11 @@ import { useRouter } from 'next/navigation';
 
 import { pollAdminUnseenOrdersAction } from '@/features/orders/application/admin-order-alerts';
 import type { AdminUnseenOrderAlert } from '@/features/orders/application/queries';
+import {
+  requestOrderNotificationPermission,
+  showNewOrderSystemNotification,
+  useUnseenOrdersTitleBadge,
+} from '@/features/orders/ui/admin-order-browser-alerts';
 import { NewOrderAlertPopup } from '@/features/orders/ui/NewOrderAlertPopup';
 import type { Dictionary } from '@/lib/i18n/get-dictionary';
 
@@ -126,6 +131,7 @@ export function AdminOrderAlertsProvider({
   const [popupOpen, setPopupOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
   const heardIdsRef = useRef<Set<string>>(new Set());
+  const notifiedIdsRef = useRef<Set<string>>(new Set());
   const audioRef = useRef<AlertAudioController | null>(null);
   const pollInFlightRef = useRef(false);
 
@@ -135,6 +141,7 @@ export function AdminOrderAlertsProvider({
 
     function unlock(): void {
       audioRef.current?.unlock();
+      requestOrderNotificationPermission();
     }
 
     document.addEventListener('pointerdown', unlock, { once: true });
@@ -160,11 +167,19 @@ export function AdminOrderAlertsProvider({
         return;
       }
 
+      const fresh = pending.filter((order) => !notifiedIdsRef.current.has(order.id));
+      for (const order of fresh) {
+        notifiedIdsRef.current.add(order.id);
+      }
+      if (fresh[0]) {
+        showNewOrderSystemNotification(fresh[0], copy, locale, count);
+      }
+
       setAlertOrders(pending);
       setPopupOpen(true);
       audioRef.current?.start();
     },
-    [],
+    [copy, locale],
   );
 
   const refreshUnseen = useCallback(() => {
@@ -191,8 +206,19 @@ export function AdminOrderAlertsProvider({
   useEffect(() => {
     refreshUnseen();
     const timer = window.setInterval(refreshUnseen, POLL_INTERVAL_MS);
-    return () => window.clearInterval(timer);
+
+    function handleVisibilityChange(): void {
+      if (document.visibilityState === 'visible') refreshUnseen();
+    }
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => {
+      window.clearInterval(timer);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
   }, [refreshUnseen]);
+
+  useUnseenOrdersTitleBadge(unseenCount);
 
   const notifyOrderOpened = useCallback(
     (orderNumber: string) => {
