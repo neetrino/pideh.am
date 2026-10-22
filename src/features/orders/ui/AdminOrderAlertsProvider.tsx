@@ -16,7 +16,6 @@ import { useRouter } from 'next/navigation';
 import { pollAdminUnseenOrdersAction } from '@/features/orders/application/admin-order-alerts';
 import type { AdminUnseenOrderAlert } from '@/features/orders/application/queries';
 import {
-  requestOrderNotificationPermission,
   showNewOrderSystemNotification,
   useUnseenOrdersTitleBadge,
 } from '@/features/orders/ui/admin-order-browser-alerts';
@@ -141,7 +140,6 @@ export function AdminOrderAlertsProvider({
 
     function unlock(): void {
       audioRef.current?.unlock();
-      requestOrderNotificationPermission();
     }
 
     document.addEventListener('pointerdown', unlock, { once: true });

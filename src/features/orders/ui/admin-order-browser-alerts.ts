@@ -18,12 +18,6 @@ function notificationsSupported(): boolean {
   return typeof window !== 'undefined' && 'Notification' in window;
 }
 
-/** Must be called from a user gesture handler; browsers ignore prompts otherwise. */
-export function requestOrderNotificationPermission(): void {
-  if (!notificationsSupported() || Notification.permission !== 'default') return;
-  void Notification.requestPermission().catch(() => undefined);
-}
-
 /**
  * Shows an OS-level notification for a new order while the admin tab is hidden,
  * so the alert is visible from other tabs and applications.

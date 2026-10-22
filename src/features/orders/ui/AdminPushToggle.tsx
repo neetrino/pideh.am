@@ -24,7 +24,7 @@ type AdminPushToggleProps = {
 
 async function enablePush(locale: string, publicKey: string): Promise<PushState> {
   const payload = await subscribeToWebPush(publicKey);
-  if (!payload) return 'blocked';
+  if (!payload) return Notification.permission === 'denied' ? 'blocked' : 'off';
   const result = await saveAdminPushSubscriptionAction(locale, payload);
   return result.ok ? 'on' : 'error';
 }
