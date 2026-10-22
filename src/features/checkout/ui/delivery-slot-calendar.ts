@@ -63,6 +63,21 @@ function calendarLocale(locale: string): CalendarLocale {
   return 'en';
 }
 
+/** `21.10.2026` in Asia/Yerevan. Numeric so the date does not depend on month names. */
+export function formatStorefrontDate(value: Date, locale: string): string {
+  void locale;
+  const parts = new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'Asia/Yerevan',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).formatToParts(value);
+  const year = parts.find((part) => part.type === 'year')?.value ?? '';
+  const month = parts.find((part) => part.type === 'month')?.value ?? '';
+  const day = parts.find((part) => part.type === 'day')?.value ?? '';
+  return `${day}.${month}.${year}`;
+}
+
 /** `5 հոկտեմբեր 2026` — fixed names, same on server and in the browser. */
 export function formatCalendarDate(ymd: string, locale: string): string {
   const { year, monthIndex, day } = parseYmd(ymd);

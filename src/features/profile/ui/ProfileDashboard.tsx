@@ -10,6 +10,7 @@ import {
   formatOrderDrawerMoney,
   orderDrawerStatusLabel,
 } from '@/features/orders/ui/order-drawer-format';
+import { formatStorefrontDate } from '@/features/checkout/ui/delivery-slot-calendar';
 import { ProfilePageHeading } from '@/features/profile/ui/ProfilePageHeading';
 import { ProfileStatCard } from '@/features/profile/ui/ProfileStatCard';
 import { PROFILE_PANEL } from '@/features/profile/ui/profile-ui-classes';
@@ -88,7 +89,6 @@ export function ProfileDashboard({
                   orderNumberLabel={dictionary.orderNumber}
                   itemsOneLabel={dictionary.orderItemsOne}
                   itemsManyLabel={dictionary.orderItemsMany}
-                  placedLabel={dictionary.orderPlaced}
                   statusLabel={orderDrawerStatusLabel(order.status, statusLabels)}
                 />
               </li>
@@ -106,7 +106,6 @@ function RecentOrderCard({
   orderNumberLabel,
   itemsOneLabel,
   itemsManyLabel,
-  placedLabel,
   statusLabel,
 }: {
   locale: Locale;
@@ -114,14 +113,13 @@ function RecentOrderCard({
   orderNumberLabel: string;
   itemsOneLabel: string;
   itemsManyLabel: string;
-  placedLabel: string;
   statusLabel: string;
 }) {
   const itemsLabel =
     order.itemCount === 1
       ? itemsOneLabel
       : itemsManyLabel.replace('{count}', String(order.itemCount));
-  const placed = placedLabel.replace('{date}', formatPlacedDate(order.placedAt, locale));
+  const placed = formatStorefrontDate(order.placedAt, locale);
 
   return (
     <AppLink
@@ -160,14 +158,4 @@ function RecentOrderCard({
       </span>
     </AppLink>
   );
-}
-
-function formatPlacedDate(value: Date, locale: string): string {
-  const tag = locale === 'hy' ? 'hy-AM' : locale === 'ru' ? 'ru-RU' : 'en-US';
-  return new Intl.DateTimeFormat(tag, {
-    day: 'numeric',
-    month: 'short',
-    year: 'numeric',
-    timeZone: 'Asia/Yerevan',
-  }).format(value);
 }

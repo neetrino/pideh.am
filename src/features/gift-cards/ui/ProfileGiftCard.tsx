@@ -7,6 +7,7 @@ import type {
   CustomerGiftCardListItem,
   GiftCardDetail,
 } from '@/features/gift-cards/application/queries';
+import { formatStorefrontDate } from '@/features/checkout/ui/delivery-slot-calendar';
 import type { Locale } from '@/lib/i18n/config';
 import { formatMoneyAmount } from '@/lib/money/format';
 
@@ -36,12 +37,7 @@ const STATUS_PILL: Record<CustomerGiftCardListItem['status'], string> = {
 };
 
 function formatCardDate(value: Date, locale: Locale): string {
-  return new Intl.DateTimeFormat(locale, {
-    timeZone: 'Asia/Yerevan',
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric',
-  }).format(value);
+  return formatStorefrontDate(value, locale);
 }
 
 function MetaRow({

@@ -3,6 +3,7 @@
 import { Calendar } from 'lucide-react';
 
 import { orderStatusBadgeClass } from '@/features/admin/ui/status-badge';
+import { formatStorefrontDate } from '@/features/checkout/ui/delivery-slot-calendar';
 import {
   formatOrderDrawerMoney,
   orderDrawerStatusLabel,
@@ -89,7 +90,7 @@ function OrderCard({
     order.itemCount === 1
       ? labels.orderItemsOne
       : labels.orderItemsMany.replace('{count}', String(order.itemCount));
-  const placed = labels.orderPlaced.replace('{date}', formatPlacedDate(order.placedAt, locale));
+  const placed = formatPlacedDate(order.placedAt, locale);
   const showRate = order.status === 'DELIVERED' && !rated;
 
   return (
@@ -141,11 +142,5 @@ function OrderCard({
 
 function formatPlacedDate(value: string | Date, locale: string): string {
   const date = value instanceof Date ? value : new Date(value);
-  const tag = locale === 'hy' ? 'hy-AM' : locale === 'ru' ? 'ru-RU' : 'en-US';
-  return new Intl.DateTimeFormat(tag, {
-    day: 'numeric',
-    month: 'short',
-    year: 'numeric',
-    timeZone: 'Asia/Yerevan',
-  }).format(date);
+  return formatStorefrontDate(date, locale);
 }
