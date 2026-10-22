@@ -69,6 +69,7 @@ export function OrderDetailsDrawer({
                 ) : null}
                 <OrderStatusPills
                   className="sm:hidden"
+                  compact
                   statusLabel={statusLabel}
                   paymentLabel={paymentLabel}
                   statusDone={detail.status === 'DELIVERED'}
@@ -146,6 +147,7 @@ export function OrderDetailsDrawer({
 
 function OrderStatusPills({
   className,
+  compact = false,
   statusLabel,
   paymentLabel,
   statusDone,
@@ -154,6 +156,7 @@ function OrderStatusPills({
   paymentAriaLabel,
 }: {
   className: string;
+  compact?: boolean;
   statusLabel: string;
   paymentLabel: string;
   statusDone: boolean;
@@ -162,9 +165,21 @@ function OrderStatusPills({
   paymentAriaLabel: string;
 }) {
   return (
-    <div className={`flex flex-nowrap items-center gap-2 ${className}`}>
-      <OrderMetaPill icon={Package} label={statusLabel} ariaLabel={statusAriaLabel} done={statusDone} />
-      <OrderMetaPill icon={CreditCard} label={paymentLabel} ariaLabel={paymentAriaLabel} done={paymentDone} />
+    <div className={`flex flex-nowrap items-center gap-1.5 sm:gap-2 ${className}`}>
+      <OrderMetaPill
+        icon={Package}
+        label={statusLabel}
+        ariaLabel={statusAriaLabel}
+        done={statusDone}
+        compact={compact}
+      />
+      <OrderMetaPill
+        icon={CreditCard}
+        label={paymentLabel}
+        ariaLabel={paymentAriaLabel}
+        done={paymentDone}
+        compact={compact}
+      />
     </div>
   );
 }
@@ -174,20 +189,22 @@ function OrderMetaPill({
   label,
   ariaLabel,
   done,
+  compact = false,
 }: {
   icon: LucideIcon;
   label: string;
   ariaLabel: string;
   done: boolean;
+  compact?: boolean;
 }) {
   return (
     <span
-      className={`inline-flex shrink-0 items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-bold whitespace-nowrap ${
-        done ? 'bg-emerald-100 text-emerald-800' : 'bg-[#fff4cc] text-[#8a5a20]'
-      }`}
+      className={`inline-flex shrink-0 items-center rounded-full font-bold whitespace-nowrap ${
+        compact ? 'gap-1 px-2.5 py-1 text-sm' : 'gap-1.5 px-3 py-1.5 text-sm'
+      } ${done ? 'bg-emerald-100 text-emerald-800' : 'bg-[#fff4cc] text-[#8a5a20]'}`}
       aria-label={ariaLabel}
     >
-      <Icon className="size-4 shrink-0" aria-hidden />
+      <Icon className={compact ? 'size-3.5 shrink-0' : 'size-4 shrink-0'} aria-hidden />
       {label}
     </span>
   );
