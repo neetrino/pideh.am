@@ -31,7 +31,7 @@ function formatAsapLabel(template: string, schedule: DeliveryScheduleSettings): 
     .replace('{to}', String(schedule.asapToMinutes));
 }
 
-type CheckoutDeliveryZoneOption = {
+export type CheckoutDeliveryZoneOption = {
   id: string;
   label: string;
   priceAmount: number;
