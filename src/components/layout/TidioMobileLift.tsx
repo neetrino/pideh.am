@@ -16,19 +16,13 @@ const LIFT_CSS = `
 }`;
 
 const OVERLAY_QUERY = '[data-side-sheet]';
-/** Side sheets start at z-50. The bubble stays above every other layer. */
+/** Above the header (80), bottom nav (50), and sticky summary cards. */
+const ABOVE_PAGE_Z = '90';
+/** Side sheets start at z-50. The bubble stays behind an open sheet. */
 const BELOW_OVERLAY_Z = '30';
 
-function stackUnderOverlay(node: HTMLElement, covered: boolean): void {
-  const zIndex = node.style.getPropertyValue('z-index');
-  const priority = node.style.getPropertyPriority('z-index');
-  const sunk = zIndex === BELOW_OVERLAY_Z && priority === 'important';
-  if (covered) {
-    if (sunk) return;
-    node.style.setProperty('z-index', BELOW_OVERLAY_Z, 'important');
-    return;
-  }
-  if (sunk) node.style.removeProperty('z-index');
+function stackChat(node: HTMLElement, covered: boolean): void {
+  node.style.setProperty('z-index', covered ? BELOW_OVERLAY_Z : ABOVE_PAGE_Z, 'important');
 }
 
 function ensureLiftStyle(root: ShadowRoot): void {
@@ -45,9 +39,13 @@ export function TidioMobileLift() {
     let shadowObserver: MutationObserver | undefined;
 
     const apply = () => {
+      const covered = document.querySelector(OVERLAY_QUERY) != null;
+      for (const id of ['tidio-chat', 'tidio-chat-iframe']) {
+        const node = document.getElementById(id);
+        if (node instanceof HTMLElement) stackChat(node, covered);
+      }
       const host = document.getElementById('tidio-chat');
       if (!(host instanceof HTMLElement)) return;
-      stackUnderOverlay(host, document.querySelector(OVERLAY_QUERY) != null);
       const root = host.shadowRoot;
       if (!root) return;
       ensureLiftStyle(root);

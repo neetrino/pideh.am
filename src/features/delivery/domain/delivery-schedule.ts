@@ -13,6 +13,10 @@ export type DeliveryScheduleSettings = {
   timezone: 'Asia/Yerevan';
   /** Length of each bookable slot in minutes. */
   slotMinutes: number;
+  /** Lower bound shown as “approximately from–to minutes” on checkout. */
+  asapFromMinutes: number;
+  /** Upper bound shown as “approximately from–to minutes” on checkout. */
+  asapToMinutes: number;
   /** How many calendar days ahead (including today) customers may book. */
   maxDaysAhead: number;
   weekly: Record<IsoWeekday, DayHours>;
@@ -50,6 +54,8 @@ const DEFAULT_DAY_CLOSED: DayHours = {
 export const DEFAULT_DELIVERY_SCHEDULE: DeliveryScheduleSettings = {
   timezone: 'Asia/Yerevan',
   slotMinutes: 60,
+  asapFromMinutes: 30,
+  asapToMinutes: 45,
   maxDaysAhead: 7,
   weekly: {
     1: { ...DEFAULT_DAY_OPEN },
@@ -110,6 +116,12 @@ function minutesToTime(total: number): string {
   return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
 }
 
+function readAsapMinutes(value: unknown, fallback: number): number {
+  return typeof value === 'number' && Number.isInteger(value) && value >= 1 && value <= 240
+    ? value
+    : fallback;
+}
+
 function parseDayHours(value: unknown, fallback: DayHours): DayHours {
   if (!value || typeof value !== 'object') {
     return { ...fallback };
@@ -145,6 +157,8 @@ export function parseDeliverySchedule(value: unknown): DeliveryScheduleSettings 
     record.slotMinutes <= 240
       ? record.slotMinutes
       : DEFAULT_DELIVERY_SCHEDULE.slotMinutes;
+  const asapFromMinutes = readAsapMinutes(record.asapFromMinutes, DEFAULT_DELIVERY_SCHEDULE.asapFromMinutes);
+  const asapToMinutes = readAsapMinutes(record.asapToMinutes, DEFAULT_DELIVERY_SCHEDULE.asapToMinutes);
   const maxDaysAhead =
     typeof record.maxDaysAhead === 'number' &&
     Number.isInteger(record.maxDaysAhead) &&
@@ -179,6 +193,8 @@ export function parseDeliverySchedule(value: unknown): DeliveryScheduleSettings 
   return {
     timezone: 'Asia/Yerevan',
     slotMinutes,
+    asapFromMinutes: Math.min(asapFromMinutes, asapToMinutes),
+    asapToMinutes: Math.max(asapFromMinutes, asapToMinutes),
     maxDaysAhead,
     weekly,
     closedDates,

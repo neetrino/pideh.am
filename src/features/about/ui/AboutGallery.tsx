@@ -223,13 +223,30 @@ export function AboutGallery({ copy }: AboutGalleryProps) {
   return (
     <section
       ref={sectionRef}
-      className="relative z-40 h-[100svh] w-full overflow-hidden bg-pideh-cream p-3 sm:p-5"
+      className="relative z-40 w-full bg-pideh-cream p-3 md:h-[100svh] md:overflow-hidden sm:p-5"
     >
+      <div className="flex flex-col gap-4 md:hidden">
+        {ABOUT_GALLERY.slice(1).map((photo, index) => {
+          const note = storyUnderPhoto(copy, photo.id);
+          return (
+            <div key={photo.id} className="flex flex-col gap-3">
+              <GalleryPhoto
+                slide={photo}
+                alt={galleryAlt(copy, photo)}
+                priority={index === 0}
+                reduceMotion
+                paired={false}
+              />
+              {note ? <GalleryCaption note={note} /> : null}
+            </div>
+          );
+        })}
+      </div>
       <div
         className={
           reduceMotion
-            ? 'flex h-full flex-col gap-4 overflow-y-auto'
-            : 'absolute inset-3 overflow-hidden bg-pideh-cream [container-type:size] sm:inset-5'
+            ? 'hidden h-full flex-col gap-4 overflow-y-auto md:flex'
+            : 'absolute inset-3 hidden overflow-hidden bg-pideh-cream [container-type:size] sm:inset-5 md:block'
         }
       >
         <GalleryTrack copy={copy} reduceMotion={reduceMotion} />

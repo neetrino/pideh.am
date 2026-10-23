@@ -5,6 +5,7 @@ import { Truck, UserRound, type LucideIcon } from 'lucide-react';
 import type { CheckoutShippingMethod } from '@/features/checkout/domain/shipping-methods';
 import {
   CHECKOUT_PANEL,
+  CHECKOUT_RADIO,
   CHECKOUT_RADIO_OFF,
   CHECKOUT_RADIO_ON,
   CHECKOUT_SECTION_TITLE,
@@ -70,7 +71,7 @@ export function CheckoutShippingMethods({
                 value={option.id}
                 checked={selected}
                 onChange={() => onChange(option.id)}
-                className="mt-0.5 size-4 shrink-0 accent-[#ff6b00]"
+                className={`${CHECKOUT_RADIO} mt-0.5`}
                 disabled={disabled}
               />
               <span className="min-w-0">
@@ -104,7 +105,7 @@ export function CheckoutShippingMethods({
                   value={branch.id}
                   checked={selected}
                   onChange={() => onPickupBranchChange(branch.id)}
-                  className="size-4 shrink-0 accent-[#ff6b00]"
+                  className={CHECKOUT_RADIO}
                   disabled={disabled}
                 />
                 <span className="text-sm font-medium text-[#1e1e1e]">{branch.address}</span>

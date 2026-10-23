@@ -25,6 +25,8 @@ describe('parseDeliverySchedule', () => {
     });
 
     expect(parsed.slotMinutes).toBe(30);
+    expect(parsed.asapFromMinutes).toBe(DEFAULT_DELIVERY_SCHEDULE.asapFromMinutes);
+    expect(parsed.asapToMinutes).toBe(DEFAULT_DELIVERY_SCHEDULE.asapToMinutes);
     expect(parsed.maxDaysAhead).toBe(5);
     expect(parsed.weekly[7]).toEqual({
       isOpen: true,

@@ -8,6 +8,7 @@ import {
 } from '@/features/checkout/domain/payment-methods';
 import {
   CHECKOUT_PANEL,
+  CHECKOUT_RADIO,
   CHECKOUT_RADIO_OFF,
   CHECKOUT_RADIO_ON,
   CHECKOUT_SECTION_TITLE,
@@ -70,7 +71,7 @@ export function CheckoutPaymentMethods({
                 onChange={() => {
                   if (!unavailable) onChange(option.id);
                 }}
-                className="mr-3 accent-[#ff6b00] disabled:cursor-not-allowed"
+                className={`${CHECKOUT_RADIO} mr-3`}
                 disabled={disabled || unavailable}
               />
               <div

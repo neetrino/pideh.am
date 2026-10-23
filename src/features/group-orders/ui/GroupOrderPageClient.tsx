@@ -349,10 +349,10 @@ export function GroupOrderPageClient({
       <div className="space-y-6">
       <section className="flex flex-col gap-3 rounded-[26px] border-2 border-pideh-ink/10 bg-white p-4 shadow-[0px_12px_14px_rgba(31,20,8,0.08)] sm:flex-row sm:items-center sm:justify-between">
         <div className="min-w-0">
-          <p className="font-display text-sm leading-none text-pideh-ink uppercase">
+          <p className="font-display text-lg leading-none text-pideh-ink uppercase">
             {labels.inviteLink}
           </p>
-          <p className="mt-1 truncate text-xs text-pideh-muted">{view.invitePath}</p>
+          <p className="mt-1.5 truncate text-sm text-pideh-muted">{view.invitePath}</p>
         </div>
         <div className="flex shrink-0 gap-2">
           <GhostPillButton compact onClick={() => void copyLink()}>
@@ -427,7 +427,7 @@ export function GroupOrderPageClient({
                 {labels.deliveryFieldHint}
               </span>
             </label>
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-[minmax(7.5rem,11rem)_minmax(0,1fr)]">
               <div className="min-w-0 space-y-1.5">
                 <span className="text-sm font-bold text-pideh-ink">{labels.deliveryLocation}</span>
                 <SelectDropdown
@@ -445,6 +445,7 @@ export function GroupOrderPageClient({
                   disabled={pending || deliveryZones.length === 0}
                   tone="brand"
                   className="w-full"
+                  triggerClassName={`${INPUT_CLASS} flex items-center justify-between gap-3 text-left disabled:cursor-not-allowed disabled:opacity-50`}
                 />
               </div>
               <div
@@ -474,13 +475,6 @@ export function GroupOrderPageClient({
                 ? labels.deliverySplitHint
                 : labels.deliveryOrganizerPaysHint}
             </p>
-            {deliveryRuleId && view.deliveryDistanceLabel ? (
-              <p className="text-sm font-bold text-pideh-orange">
-                {labels.deliveryQuoteReady
-                  .replace('{amount}', view.deliveryFormatted)
-                  .replace('{distance}', view.deliveryDistanceLabel)}
-              </p>
-            ) : null}
           </div>
 
         </section>

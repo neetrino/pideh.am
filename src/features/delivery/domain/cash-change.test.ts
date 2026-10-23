@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import {
+  cashNotesCoveringPayable,
   createDefaultCashChangeDenominations,
   findActiveCashChangeByAmount,
   listActiveCashChangeDenominations,
@@ -58,6 +59,14 @@ describe('cash-change denominations', () => {
     ]);
     expect(active).toHaveLength(1);
     expect(active[0]?.amount).toBe(20_000);
+  });
+
+  it('hides banknotes smaller than the amount due', () => {
+    const notes = createDefaultCashChangeDenominations();
+    expect(cashNotesCoveringPayable(notes, 3500).map((item) => item.amount)).toEqual([
+      5_000, 10_000, 20_000, 50_000, 100_000,
+    ]);
+    expect(cashNotesCoveringPayable(notes, 5000).map((item) => item.amount)[0]).toBe(5_000);
   });
 
   it('finds an active denomination by amount', () => {

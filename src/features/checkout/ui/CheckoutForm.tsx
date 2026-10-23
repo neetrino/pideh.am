@@ -33,7 +33,10 @@ import {
 } from '@/features/gift-cards/domain/gift-card-rules';
 import type { DeliveryScheduleSettings } from '@/features/delivery/domain/delivery-schedule';
 import type { SelectedDeliverySlot } from '@/features/delivery/domain/delivery-schedule';
-import type { CashChangeDenominationView } from '@/features/delivery/domain/cash-change';
+import {
+  CASH_CHANGE_NOT_NEEDED,
+  type CashChangeDenominationView,
+} from '@/features/delivery/domain/cash-change';
 import type { Locale } from '@/lib/i18n/config';
 import { formatMoneyAmount } from '@/lib/money/format';
 
@@ -139,6 +142,7 @@ type CheckoutLabels = {
   bonusAmount: string;
   bonusUseMax: string;
   bonusApplied: string;
+  bonusEarn: string;
   bonusGuestWarning: string;
   bonusRegister: string;
   storePickup: string;
@@ -377,21 +381,25 @@ export function CheckoutForm({
     : 0;
   const cartComputedTotal = Math.max(0, payableBeforeGiftCard - giftCardRedeem);
   const isGuest = bonusAvailableBalance == null;
-  const guestEarnPoints = isGuest
-    ? calculateBonusEarnAmount(
-        bonusEligibleAfterGiftCard({
-          subtotalAmount,
-          discountAmount,
-          giftCardAmount: giftCardRedeem,
-        }),
-        bonusAccrualPercent,
-      )
-    : 0;
+  const earnPoints = calculateBonusEarnAmount(
+    bonusEligibleAfterGiftCard({
+      subtotalAmount,
+      discountAmount,
+      giftCardAmount: giftCardRedeem,
+    }),
+    bonusAccrualPercent,
+  );
+  const guestEarnPoints = isGuest ? earnPoints : 0;
   const splitPrepaid = Boolean(groupOrderCheckout?.splitOthersPrepaid);
   const othersPrepaidAmount = groupOrderCheckout?.othersPrepaidAmount ?? 0;
   const amountDue = splitPrepaid
     ? (groupOrderCheckout?.organizerPayableAmount ?? 0)
     : cartComputedTotal;
+
+  useEffect(() => {
+    if (cashChangeAmount == null || cashChangeAmount === CASH_CHANGE_NOT_NEEDED) return;
+    if (cashChangeAmount < amountDue) setCashChangeAmount(null);
+  }, [amountDue, cashChangeAmount]);
 
   const shippingFormatted = isPickup
     ? null
@@ -619,6 +627,7 @@ export function CheckoutForm({
             deliverySlot={deliverySlot}
             onDeliverySlotChange={setDeliverySlot}
             cashChangeOptions={cashChangeOptions}
+            payableAmount={amountDue}
             cashChangeAmount={cashChangeAmount}
             onCashChangeAmountChange={setCashChangeAmount}
             deliveryZones={deliveryZones}
@@ -706,6 +715,7 @@ export function CheckoutForm({
                     maxRedeem: maxBonusRedeem,
                     useBonuses,
                     redeemAmount: appliedBonus,
+                    earnPoints,
                     onToggle: (enabled) => {
                       setUseBonuses(enabled);
                       setGiftCardPreview(null);
@@ -730,6 +740,7 @@ export function CheckoutForm({
                       amount: labels.bonusAmount,
                       useMax: labels.bonusUseMax,
                       applied: labels.bonusApplied,
+                      earn: labels.bonusEarn,
                     },
                     formatMoney,
                   }

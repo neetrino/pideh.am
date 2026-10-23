@@ -217,6 +217,7 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
         bonusAmount: copy.bonus.amount,
         bonusUseMax: copy.bonus.useMax,
         bonusApplied: copy.bonus.applied,
+        bonusEarn: copy.bonus.earn,
         bonusGuestWarning: copy.bonus.guestWarning,
         bonusRegister: copy.bonus.register,
         storePickup: copy.shipping.storePickup,

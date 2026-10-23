@@ -25,6 +25,12 @@ import type { DeliveryScheduleSettings } from '@/features/delivery/domain/delive
 import type { SelectedDeliverySlot } from '@/features/delivery/domain/delivery-schedule';
 import type { Locale } from '@/lib/i18n/config';
 
+function formatAsapLabel(template: string, schedule: DeliveryScheduleSettings): string {
+  return template
+    .replace('{from}', String(schedule.asapFromMinutes))
+    .replace('{to}', String(schedule.asapToMinutes));
+}
+
 export type CheckoutDeliveryZoneOption = {
   id: string;
   label: string;
@@ -92,6 +98,7 @@ type CheckoutDetailsSectionsProps = {
   deliverySlot: SelectedDeliverySlot | null;
   onDeliverySlotChange: (value: SelectedDeliverySlot | null) => void;
   cashChangeOptions: CashChangeDenominationView[];
+  payableAmount: number;
   cashChangeAmount: number | null;
   onCashChangeAmountChange: (amount: number) => void;
   deliveryZones: CheckoutDeliveryZoneOption[];
@@ -123,6 +130,7 @@ export function CheckoutDetailsSections({
   deliverySlot,
   onDeliverySlotChange,
   cashChangeOptions,
+  payableAmount,
   cashChangeAmount,
   onCashChangeAmountChange,
   deliveryZones,
@@ -264,6 +272,7 @@ export function CheckoutDetailsSections({
                   />
                 </label>
               </div>
+              <div className="pt-3">
               <DeliverySlotPicker
                 schedule={deliverySchedule}
                 selected={deliverySlot}
@@ -273,9 +282,12 @@ export function CheckoutDetailsSections({
                 labels={{
                   title: labels.scheduleTitle,
                   deliverTo: labels.scheduleDeliverTo,
-                  approximatelyOneHour: labels.scheduleApproximatelyOneHour,
+                  approximatelyOneHour: formatAsapLabel(
+                    labels.scheduleApproximatelyOneHour,
+                    deliverySchedule,
+                  ),
                   change: labels.scheduleChange,
-                  useAsap: labels.scheduleUseAsap,
+                  useAsap: formatAsapLabel(labels.scheduleUseAsap, deliverySchedule),
                   pickDate: labels.schedulePickDate,
                   pickTime: labels.schedulePickTime,
                   deliveryDay: labels.scheduleDeliveryDay,
@@ -288,6 +300,7 @@ export function CheckoutDetailsSections({
                   nextMonth: labels.scheduleNextMonth,
                 }}
               />
+              </div>
         </div>
       </section>
       ) : pickupBranches.length === 0 ? (
@@ -309,6 +322,7 @@ export function CheckoutDetailsSections({
         afterCash={
           <CashChangePicker
             options={cashChangeOptions}
+            payableAmount={payableAmount}
             value={cashChangeAmount}
             onChange={onCashChangeAmountChange}
             disabled={pending}

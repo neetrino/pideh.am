@@ -3,13 +3,7 @@
 import Link from 'next/link';
 
 import { Button } from '@/components/ui/Button';
-import {
-  CHECKOUT_APPLY_BTN,
-  CHECKOUT_FIELD,
-  CHECKOUT_INSET,
-  CHECKOUT_PANEL,
-  CHECKOUT_PRIMARY_BTN,
-} from '@/features/checkout/ui/checkout-ui-classes';
+import { CHECKOUT_APPLY_BTN, CHECKOUT_PANEL, CHECKOUT_PRIMARY_BTN } from '@/features/checkout/ui/checkout-ui-classes';
 
 type CheckoutMemberBonus = {
   mode: 'member';
@@ -18,6 +12,7 @@ type CheckoutMemberBonus = {
   maxRedeem: number;
   useBonuses: boolean;
   redeemAmount: number;
+  earnPoints: number;
   onToggle: (enabled: boolean) => void;
   onAmountChange: (amount: number) => void;
   onUseMax: () => void;
@@ -28,6 +23,7 @@ type CheckoutMemberBonus = {
     amount: string;
     useMax: string;
     applied: string;
+    earn: string;
   };
   formatMoney: (amount: number) => string;
 };
@@ -143,16 +139,19 @@ export function CheckoutOrderSummary({
   processingLabel,
   bonus,
 }: CheckoutOrderSummaryProps) {
+  const codeRowClass =
+    'flex h-14 items-center gap-2 rounded-[20px] border-[1.5px] border-[#1e1e1e]/12 bg-[#fff8e7] pr-1.5 pl-4';
+  const codeInputClass =
+    'h-full min-w-0 flex-1 bg-transparent text-sm text-[#1e1e1e] outline-none placeholder:text-[#1e1e1e]/35 disabled:opacity-60';
+  const codeButtonClass = CHECKOUT_APPLY_BTN;
+
   return (
     <div>
       <aside className={`${CHECKOUT_PANEL} sticky top-[5.75rem] md:top-28`}>
         <h2 className="font-display mb-5 text-2xl leading-none text-[#1e1e1e] uppercase">{title}</h2>
 
-        <div className={`mb-6 ${CHECKOUT_INSET}`}>
-          <p className="mb-3 font-display text-sm leading-none tracking-wide text-[#ff6b00] uppercase">
-            {couponTitle}
-          </p>
-          <div className="flex gap-2">
+        <div className="mb-5 flex flex-col gap-3">
+          <div className={codeRowClass}>
             <input
               type="text"
               name="couponCodeDraft"
@@ -167,31 +166,24 @@ export function CheckoutOrderSummary({
               placeholder={couponPlaceholder}
               autoComplete="off"
               disabled={isSubmitting || isApplyingCoupon}
-              className={`${CHECKOUT_FIELD} min-w-0 flex-1 !bg-white`}
+              aria-label={couponTitle}
+              className={codeInputClass}
             />
-            <Button
+            <button
               type="button"
-              variant="secondary"
-              size="md"
-              className={CHECKOUT_APPLY_BTN}
+              className={`${codeButtonClass} mr-0.5`}
               disabled={isSubmitting || isApplyingCoupon || !couponDraft.trim()}
               onClick={onApplyCoupon}
             >
               {isApplyingCoupon ? couponApplyingLabel : couponApplyLabel}
-            </Button>
+            </button>
           </div>
           {couponError ? (
             <p className="mt-2 text-sm text-red-600" role="alert">
               {couponError}
             </p>
           ) : null}
-        </div>
-
-        <div className={`mb-6 ${CHECKOUT_INSET}`}>
-          <p className="mb-3 font-display text-sm leading-none tracking-wide text-[#ff6b00] uppercase">
-            {giftCardTitle}
-          </p>
-          <div className="flex gap-2">
+          <div className={codeRowClass}>
             <input
               type="text"
               name="giftCardCodeDraft"
@@ -206,18 +198,17 @@ export function CheckoutOrderSummary({
               placeholder={giftCardPlaceholder}
               autoComplete="off"
               disabled={isSubmitting || isApplyingGiftCard}
-              className={`${CHECKOUT_FIELD} min-w-0 flex-1 !bg-white`}
+              aria-label={giftCardTitle}
+              className={codeInputClass}
             />
-            <Button
+            <button
               type="button"
-              variant="secondary"
-              size="md"
-              className={CHECKOUT_APPLY_BTN}
+              className={`${codeButtonClass} mr-0.5`}
               disabled={isSubmitting || isApplyingGiftCard || !giftCardDraft.trim()}
               onClick={onApplyGiftCard}
             >
               {isApplyingGiftCard ? giftCardApplyingLabel : giftCardApplyLabel}
-            </Button>
+            </button>
           </div>
           {giftCardError ? (
             <p className="mt-2 text-sm text-red-600" role="alert">
@@ -246,52 +237,24 @@ export function CheckoutOrderSummary({
               </div>
             </dl>
           ) : null}
-        </div>
-
-        <label className={`mb-6 block lg:hidden ${CHECKOUT_INSET}`}>
-          <span className="mb-3 block font-display text-sm leading-none tracking-wide text-[#ff6b00] uppercase">
-            {orderNoteLabel}
-          </span>
-          <textarea
-            name="orderNote"
-            value={orderNote}
-            onChange={(event) => onOrderNoteChange(event.target.value)}
-            rows={3}
-            maxLength={500}
-            placeholder={orderNotePlaceholder}
-            disabled={isSubmitting}
-            className={`${CHECKOUT_FIELD} h-auto min-h-24 resize-none py-3 !bg-white`}
-          />
-        </label>
-
-        {bonus?.mode === 'guest' ? (
-          <div className={`mb-6 ${CHECKOUT_INSET}`}>
-            <p className="text-sm leading-snug text-[#1e1e1e]">
-              {bonus.labels.warning.replace('{amount}', String(bonus.earnPoints))}
-            </p>
-            <Link
-              href={bonus.registerHref}
-              className="mt-3 inline-flex font-display text-sm leading-none tracking-wide text-[#ff6b00] uppercase underline-offset-2 hover:underline"
-            >
-              {bonus.labels.register}
-            </Link>
-          </div>
-        ) : null}
 
         {bonus?.mode === 'member' && bonus.enabled ? (
-          <div className={`mb-6 ${CHECKOUT_INSET}`}>
-            <label className="flex cursor-pointer items-center gap-2 text-sm font-bold text-[#1e1e1e]">
+          <div>
+            <label className={`${codeRowClass} cursor-pointer text-sm font-bold text-[#1e1e1e]`}>
               <input
                 type="checkbox"
                 checked={bonus.useBonuses}
                 disabled={isSubmitting || bonus.maxRedeem <= 0}
                 onChange={(event) => bonus.onToggle(event.target.checked)}
-                className="h-4 w-4 rounded border-[#ff6b00]/40 text-[#ff6b00] accent-[#ff6b00] focus:ring-[#ff6b00]"
+                className="size-5 shrink-0 rounded border-[#ff6b00]/40 bg-white accent-[#ff6b00]"
               />
-              {bonus.labels.useBonuses}
+              <span className="min-w-0 flex-1 truncate">{bonus.labels.useBonuses}</span>
+              <span className="shrink-0 text-sm font-medium">
+                {bonus.labels.available.replace('{amount}', bonus.formatMoney(bonus.availableBalance))}
+              </span>
             </label>
             {bonus.useBonuses ? (
-              <div className="mt-3 flex gap-2">
+              <div className="mt-2 flex gap-2">
                 <input
                   type="number"
                   min={0}
@@ -304,28 +267,52 @@ export function CheckoutOrderSummary({
                   }}
                   disabled={isSubmitting}
                   aria-label={bonus.labels.amount}
-                  className={`${CHECKOUT_FIELD} min-w-0 flex-1 !bg-white`}
+                  className="h-10 min-w-0 flex-1 rounded-full border-[1.5px] border-[#1e1e1e]/12 bg-white px-4 text-sm text-[#1e1e1e] outline-none"
                 />
-                <Button
+                <button
                   type="button"
-                  variant="secondary"
-                  size="md"
-                  className={`${CHECKOUT_APPLY_BTN} !whitespace-nowrap`}
+                  className={codeButtonClass}
                   disabled={isSubmitting || bonus.maxRedeem <= 0}
                   onClick={bonus.onUseMax}
                 >
-                  {bonus.labels.available.replace(
-                    '{amount}',
-                    bonus.formatMoney(bonus.availableBalance),
-                  )}
-                </Button>
+                  {bonus.labels.useMax}
+                </button>
               </div>
             ) : null}
           </div>
         ) : null}
+        </div>
 
-        <div className="mb-5 space-y-2.5 text-sm">
-          <div className="flex items-center justify-between gap-3 text-[#1e1e1e]/70">
+        <label className="mb-4 block">
+          <span className="mb-2 block text-sm font-bold text-[#1e1e1e]">{orderNoteLabel}</span>
+          <textarea
+            name="orderNote"
+            value={orderNote}
+            onChange={(event) => onOrderNoteChange(event.target.value)}
+            rows={3}
+            maxLength={500}
+            placeholder={orderNotePlaceholder}
+            disabled={isSubmitting}
+            className="h-auto min-h-24 w-full resize-none rounded-[18px] border-[1.5px] border-[#1e1e1e]/12 bg-[#fff8e7] px-4 py-3 text-sm text-[#1e1e1e] outline-none placeholder:text-[#1e1e1e]/35"
+          />
+        </label>
+
+        {bonus?.mode === 'guest' ? (
+          <div className="mb-4 rounded-[18px] border border-[#ff6b00]/15 bg-[#fff8e7]/70 px-4 py-3">
+            <p className="text-sm leading-snug text-[#1e1e1e]">
+              {bonus.labels.warning.replace('{amount}', String(bonus.earnPoints))}
+            </p>
+            <Link
+              href={bonus.registerHref}
+              className="mt-3 inline-flex text-sm font-bold text-[#ff6b00] underline-offset-2 hover:underline"
+            >
+              {bonus.labels.register}
+            </Link>
+          </div>
+        ) : null}
+
+        <div className="mb-5 space-y-4 text-sm">
+          <div className="flex items-center justify-between gap-3 text-[#1e1e1e]/80">
             <span>{subtotalLabel}</span>
             <span className="flex items-center gap-2">
               <span className="font-bold text-[#1e1e1e]">{subtotalFormatted}</span>
@@ -337,36 +324,40 @@ export function CheckoutOrderSummary({
             </span>
           </div>
           {discountFormatted ? (
-            <div className="flex items-baseline justify-between gap-3 text-[#1e1e1e]/70">
+            <div className="flex items-baseline justify-between gap-3 text-[#1e1e1e]/80">
               <span>{discountLabel}</span>
               <span className="text-[#ff6b00]">-{discountFormatted}</span>
             </div>
           ) : null}
           {giftCardPreview && giftCardPreview.redeemAmount > 0 ? (
-            <div className="flex items-baseline justify-between gap-3 text-[#1e1e1e]/70">
+            <div className="flex items-baseline justify-between gap-3 text-[#1e1e1e]/80">
               <span>{giftCardAppliedLabel}</span>
               <span className="text-[#ff6b00]">-{formatMoney(giftCardPreview.redeemAmount)}</span>
             </div>
           ) : null}
-          {shippingFormatted ? (
-            <div className="flex items-baseline justify-between gap-3 text-[#1e1e1e]/70">
-              <span className="shrink-0">{shippingLabel}</span>
-              <span className="max-w-[62%] text-right text-xs leading-snug font-bold text-[#1e1e1e]">
-                {shippingFormatted}
-              </span>
-            </div>
-          ) : null}
+          <div className="flex items-baseline justify-between gap-3 text-[#1e1e1e]/80">
+            <span className="shrink-0">{shippingLabel}</span>
+            <span className="max-w-[62%] text-right font-bold text-[#1e1e1e]">
+              {shippingFormatted ?? '—'}
+            </span>
+          </div>
           {participantsPrepaidFormatted && participantsPrepaidLabel ? (
-            <div className="flex items-baseline justify-between gap-3 text-[#1e1e1e]/70">
+            <div className="flex items-baseline justify-between gap-3 text-[#1e1e1e]/80">
               <span>{participantsPrepaidLabel}</span>
               <span className="text-[#ff6b00]">-{participantsPrepaidFormatted}</span>
             </div>
           ) : null}
-          <div className="mt-1 flex items-end justify-between gap-3 rounded-[18px] bg-[#fff8e7] px-4 py-3">
+          {bonus?.mode === 'member' && bonus.earnPoints > 0 ? (
+            <div className="flex items-baseline justify-between gap-3 text-[#ff6b00]">
+              <span>{bonus.labels.earn}</span>
+              <span className="font-bold">+{bonus.earnPoints}</span>
+            </div>
+          ) : null}
+          <div className="mt-1 flex items-end justify-between gap-3 border-t border-[#1e1e1e]/10 pt-3">
             <span className="font-display text-xl leading-none text-[#1e1e1e] uppercase">
               {totalLabel}
             </span>
-            <span className="font-display text-2xl leading-none text-[#ff6b00]">{totalFormatted}</span>
+            <span className="font-display text-2xl leading-none text-[#1e1e1e]">{totalFormatted}</span>
           </div>
         </div>
 

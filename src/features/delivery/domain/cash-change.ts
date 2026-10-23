@@ -150,6 +150,21 @@ export function listActiveCashChangeDenominations(
     .sort((a, b) => a.sortOrder - b.sortOrder || a.amount - b.amount);
 }
 
+/**
+ * Banknotes the customer can hand over for this payable amount.
+ * A 1000 note is not offered when the order is 3500 — the smallest covering note is 5000.
+ */
+export function cashNotesCoveringPayable<T extends { amount: number }>(
+  options: readonly T[],
+  payableAmount: number,
+): T[] {
+  const due = Math.max(0, Math.ceil(payableAmount));
+  const covering = options.filter((item) => item.amount >= due);
+  if (covering.length > 0) return [...covering];
+  const largest = [...options].sort((left, right) => right.amount - left.amount)[0];
+  return largest ? [largest] : [];
+}
+
 /** Finds an active denomination by amount, or null. */
 export function findActiveCashChangeByAmount(
   denominations: CashChangeDenomination[],

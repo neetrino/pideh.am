@@ -51,14 +51,6 @@ export async function MobileStorefrontHeader({
           backLabel={dictionary.catalog.back}
           searchLabel={dictionary.catalog.searchLabel}
           searchPlaceholder={dictionary.home.searchPlaceholder}
-          navLabel={dictionary.nav.navigation}
-          navItems={[
-            { href: `/${locale}`, label: dictionary.nav.home },
-            { href: `/${locale}/products`, label: dictionary.nav.menu },
-            { href: `/${locale}/about`, label: dictionary.nav.about },
-            { href: `/${locale}/contact`, label: dictionary.nav.contact },
-            { href: `/${locale}/blog`, label: dictionary.nav.blog },
-          ]}
         />
       </div>
     </>

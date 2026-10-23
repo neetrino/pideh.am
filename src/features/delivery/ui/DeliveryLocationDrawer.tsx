@@ -121,39 +121,40 @@ function DeliveryLocationForm({ locale, location, onClose, copy }: DeliveryLocat
         });
       }}
     >
-      <div className="flex-1 space-y-8 overflow-y-auto px-5 py-5">
+      <div className="flex flex-1 flex-col gap-8 overflow-y-auto px-5 py-5">
         <AdminLocaleTabs
           label={tabFields.translations}
           active={activeLocale}
           onChange={setActiveLocale}
         />
 
+        <div className="flex flex-col gap-5">
         <label>
-          <span className={ADMIN_LABEL}>{tabFields.city}</span>
+          <span className={`${ADMIN_LABEL} !text-base`}>{tabFields.city}</span>
           <input
             value={draft.city}
             onChange={(event) => updateDraft({ city: event.target.value })}
             placeholder={tabFields.cityPlaceholder}
             required={activeLocale === 'hy'}
-            className={ADMIN_INPUT}
+            className={`${ADMIN_INPUT} !text-base`}
             disabled={isPending}
           />
         </label>
 
         <label>
-          <span className={ADMIN_LABEL}>{tabFields.area}</span>
+          <span className={`${ADMIN_LABEL} !text-base`}>{tabFields.area}</span>
           <input
             value={draft.area}
             onChange={(event) => updateDraft({ area: event.target.value })}
             placeholder={tabFields.areaPlaceholder}
             required={activeLocale === 'hy'}
-            className={ADMIN_INPUT}
+            className={`${ADMIN_INPUT} !text-base`}
             disabled={isPending}
           />
         </label>
 
         <label>
-          <span className={ADMIN_LABEL}>{copy.locationDrawer.priceAmd}</span>
+          <span className={`${ADMIN_LABEL} !text-base`}>{copy.locationDrawer.priceAmd}</span>
           <input
             type="number"
             min={0}
@@ -162,10 +163,11 @@ function DeliveryLocationForm({ locale, location, onClose, copy }: DeliveryLocat
             value={priceAmount}
             onChange={(event) => setPriceAmount(event.target.value)}
             placeholder={copy.locationDrawer.pricePlaceholder}
-            className={ADMIN_INPUT}
+            className={`${ADMIN_INPUT} !text-base`}
             disabled={isPending}
           />
         </label>
+        </div>
 
         {error ? <p className="text-sm text-red-700">{error}</p> : null}
       </div>

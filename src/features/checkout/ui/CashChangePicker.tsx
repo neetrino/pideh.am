@@ -2,6 +2,7 @@
 
 import {
   CASH_CHANGE_NOT_NEEDED,
+  cashNotesCoveringPayable,
   type CashChangeDenominationView,
 } from '@/features/delivery/domain/cash-change';
 import { formatMoneyAmount } from '@/lib/money/format';
@@ -16,6 +17,7 @@ type CashChangePickerLabels = {
 
 type CashChangePickerProps = {
   options: CashChangeDenominationView[];
+  payableAmount: number;
   value: number | null;
   onChange: (amount: number) => void;
   disabled?: boolean;
@@ -25,13 +27,16 @@ type CashChangePickerProps = {
 
 export function CashChangePicker({
   options,
+  payableAmount,
   value,
   onChange,
   disabled = false,
   locale,
   labels,
 }: CashChangePickerProps) {
-  if (options.length === 0) {
+  const visibleOptions = cashNotesCoveringPayable(options, payableAmount);
+
+  if (visibleOptions.length === 0) {
     return null;
   }
 
@@ -43,12 +48,13 @@ export function CashChangePicker({
       disabled={disabled}
       data-checkout-field="cashChange"
     >
-      <legend className="float-left w-full font-display text-lg leading-none text-[#1e1e1e] uppercase">
-        {labels.title}
-      </legend>
-      <p className="mt-1 text-xs text-[#1e1e1e]/60">{labels.hint}</p>
+      <legend className="sr-only">{labels.title}</legend>
+      <div className="flex flex-col gap-4">
+        <p className="font-display text-2xl leading-none text-[#1e1e1e] uppercase">{labels.title}</p>
+        <p className="text-xs text-[#1e1e1e]/60">{labels.hint}</p>
+      </div>
       <div
-        className="mt-2 grid grid-cols-3 gap-2 sm:grid-cols-4"
+        className="mt-2 grid grid-cols-2 gap-2.5 sm:grid-cols-4"
         role="radiogroup"
         aria-label={labels.ariaLabel}
       >
@@ -66,7 +72,7 @@ export function CashChangePicker({
         >
           {labels.notNeeded}
         </button>
-        {options.map((option) => {
+        {visibleOptions.map((option) => {
           const selected = value === option.amount;
           const amountLabel = formatMoneyAmount(option.amount, 'AMD', locale);
           return (

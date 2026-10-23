@@ -37,9 +37,9 @@
   "schedule": {
     "title": "Date and time",
     "deliverTo": "Deliver to",
-    "approximatelyOneHour": "Approximately 30-45 minutes",
+    "approximatelyOneHour": "Approximately {from}-{to} minutes",
     "change": "Change",
-    "useAsap": "As soon as possible (30-45 minutes)",
+    "useAsap": "As soon as possible ({from}-{to} minutes)",
     "pickDate": "Pick a date",
     "pickTime": "Delivery time slot",
     "deliveryDay": "Delivery day",
@@ -129,6 +129,7 @@
     "amount": "Bonus points to use",
     "useMax": "Use max",
     "applied": "Bonuses",
+    "earn": "Loyalty points",
     "guestWarning": "Because you are not registered, you will lose {amount} loyalty points",
     "register": "Register"
   }
