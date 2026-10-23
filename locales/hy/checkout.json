@@ -83,7 +83,7 @@
   },
   "coupon": {
     "title": "Ունե՞ք պրոմոկոդ",
-    "placeholder": "Մուտքագրեք պրոմոկոդը",
+    "placeholder": "Ունե՞ք կոդը",
     "apply": "Կիրառել",
     "applying": "Կիրառվում է…"
   },
@@ -113,7 +113,7 @@
   },
   "giftCard": {
     "title": "Gift Card կոդ",
-    "placeholder": "PID-XXXX-XXXX",
+    "placeholder": "Ունե՞ք Gift Card կոդ",
     "apply": "Կիրառել",
     "applying": "Կիրառվում է…",
     "initial": "Gift Card-ի արժեք",

@@ -677,6 +677,13 @@ export async function createOrderAction(raw: CheckoutInput): Promise<CreateOrder
       }
 
       const totalAmount = Math.max(0, payableBeforeGiftCard - giftCardAmount);
+      if (
+        input.paymentMethod === 'cash_on_delivery' &&
+        cashChangeAmount != null &&
+        cashChangeAmount < totalAmount
+      ) {
+        throw new Error('Selected banknote is smaller than the amount due.');
+      }
       const orderId = createId();
       await tx.execute(sql`select pg_advisory_xact_lock(${ORDER_NUMBER_LOCK_KEY})`);
       const [maxRow] = await tx

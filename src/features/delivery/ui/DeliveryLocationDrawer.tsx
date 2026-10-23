@@ -130,31 +130,31 @@ function DeliveryLocationForm({ locale, location, onClose, copy }: DeliveryLocat
 
         <div className="flex flex-col gap-5">
         <label>
-          <span className={ADMIN_LABEL}>{tabFields.city}</span>
+          <span className={`${ADMIN_LABEL} !text-base`}>{tabFields.city}</span>
           <input
             value={draft.city}
             onChange={(event) => updateDraft({ city: event.target.value })}
             placeholder={tabFields.cityPlaceholder}
             required={activeLocale === 'hy'}
-            className={ADMIN_INPUT}
+            className={`${ADMIN_INPUT} !text-base`}
             disabled={isPending}
           />
         </label>
 
         <label>
-          <span className={ADMIN_LABEL}>{tabFields.area}</span>
+          <span className={`${ADMIN_LABEL} !text-base`}>{tabFields.area}</span>
           <input
             value={draft.area}
             onChange={(event) => updateDraft({ area: event.target.value })}
             placeholder={tabFields.areaPlaceholder}
             required={activeLocale === 'hy'}
-            className={ADMIN_INPUT}
+            className={`${ADMIN_INPUT} !text-base`}
             disabled={isPending}
           />
         </label>
 
         <label>
-          <span className={ADMIN_LABEL}>{copy.locationDrawer.priceAmd}</span>
+          <span className={`${ADMIN_LABEL} !text-base`}>{copy.locationDrawer.priceAmd}</span>
           <input
             type="number"
             min={0}
@@ -163,7 +163,7 @@ function DeliveryLocationForm({ locale, location, onClose, copy }: DeliveryLocat
             value={priceAmount}
             onChange={(event) => setPriceAmount(event.target.value)}
             placeholder={copy.locationDrawer.pricePlaceholder}
-            className={ADMIN_INPUT}
+            className={`${ADMIN_INPUT} !text-base`}
             disabled={isPending}
           />
         </label>

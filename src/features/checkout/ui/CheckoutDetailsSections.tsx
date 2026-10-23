@@ -98,6 +98,7 @@ type CheckoutDetailsSectionsProps = {
   deliverySlot: SelectedDeliverySlot | null;
   onDeliverySlotChange: (value: SelectedDeliverySlot | null) => void;
   cashChangeOptions: CashChangeDenominationView[];
+  payableAmount: number;
   cashChangeAmount: number | null;
   onCashChangeAmountChange: (amount: number) => void;
   deliveryZones: CheckoutDeliveryZoneOption[];
@@ -129,6 +130,7 @@ export function CheckoutDetailsSections({
   deliverySlot,
   onDeliverySlotChange,
   cashChangeOptions,
+  payableAmount,
   cashChangeAmount,
   onCashChangeAmountChange,
   deliveryZones,
@@ -320,6 +322,7 @@ export function CheckoutDetailsSections({
         afterCash={
           <CashChangePicker
             options={cashChangeOptions}
+            payableAmount={payableAmount}
             value={cashChangeAmount}
             onChange={onCashChangeAmountChange}
             disabled={pending}
