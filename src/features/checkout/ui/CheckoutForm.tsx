@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useMemo, useState, useTransition, type FormEvent } from 'react';
+import { useEffect, useMemo, useRef, useState, useTransition, type FormEvent } from 'react';
 
 import { CHECKOUT_PANEL } from '@/features/checkout/ui/checkout-ui-classes';
 import type { CheckoutOrderProduct } from '@/features/checkout/ui/checkout-order-product';
@@ -36,6 +36,20 @@ import type { SelectedDeliverySlot } from '@/features/delivery/domain/delivery-s
 import type { CashChangeDenominationView } from '@/features/delivery/domain/cash-change';
 import type { Locale } from '@/lib/i18n/config';
 import { formatMoneyAmount } from '@/lib/money/format';
+
+function scrollCheckoutField(field: string): void {
+  const target = document.querySelector(`[data-checkout-field="${field}"]`);
+  if (!(target instanceof HTMLElement)) {
+    return;
+  }
+  target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  const focusable = target.matches('input, button, select, textarea')
+    ? target
+    : target.querySelector('input, button, select, textarea');
+  if (focusable instanceof HTMLElement) {
+    focusable.focus({ preventScroll: true });
+  }
+}
 
 type CheckoutLabels = {
   title: string;
@@ -73,10 +87,14 @@ type CheckoutLabels = {
   scheduleUseAsap: string;
   schedulePickDate: string;
   schedulePickTime: string;
+  scheduleDeliveryDay: string;
+  scheduleDeliveryTime: string;
   scheduleTimeHint: string;
   scheduleNoSlots: string;
   schedulePrevMonth: string;
   scheduleNextMonth: string;
+  scheduleApply: string;
+  scheduleClose: string;
   selectCashChange: string;
   cashChangeTitle: string;
   cashChangeHint: string;
@@ -163,6 +181,25 @@ type CheckoutFormProps = {
   } | null;
 };
 
+/** UUID for the order request. `randomUUID` is missing in some mobile browsers. */
+function createIdempotencyKey(): string {
+  if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+    return crypto.randomUUID();
+  }
+  const bytes = new Uint8Array(16);
+  if (typeof crypto !== 'undefined' && typeof crypto.getRandomValues === 'function') {
+    crypto.getRandomValues(bytes);
+  } else {
+    for (let index = 0; index < bytes.length; index += 1) {
+      bytes[index] = Math.floor(Math.random() * 256);
+    }
+  }
+  bytes[6] = ((bytes[6] ?? 0) & 0x0f) | 0x40;
+  bytes[8] = ((bytes[8] ?? 0) & 0x3f) | 0x80;
+  const hex = Array.from(bytes, (byte) => byte.toString(16).padStart(2, '0')).join('');
+  return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20)}`;
+}
+
 export function CheckoutForm({
   locale,
   labels,
@@ -187,7 +224,7 @@ export function CheckoutForm({
   groupOrderCheckout = null,
 }: CheckoutFormProps) {
   const router = useRouter();
-  const idempotencyKey = useMemo(() => crypto.randomUUID(), []);
+  const idempotencyKey = useMemo(() => createIdempotencyKey(), []);
   const [shippingMethod, setShippingMethod] = useState<CheckoutShippingMethod>('delivery');
   const [pickupBranchId, setPickupBranchId] = useState(pickupBranches[0]?.id ?? '');
   const [deliveryRuleId, setDeliveryRuleId] = useState(defaultDeliveryRuleId);
@@ -201,6 +238,22 @@ export function CheckoutForm({
   const isGroupOrderCheckout = groupOrderCheckout != null;
   const [paymentMethod, setPaymentMethod] = useState<CheckoutPaymentMethod | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const formRef = useRef<HTMLFormElement>(null);
+
+  useEffect(() => {
+    const form = formRef.current;
+    if (!form) {
+      return;
+    }
+    function onInvalid(event: Event): void {
+      const target = event.target;
+      if (target instanceof HTMLElement) {
+        target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }
+    form.addEventListener('invalid', onInvalid, true);
+    return () => form.removeEventListener('invalid', onInvalid, true);
+  }, [hasItems]);
   const [couponDraft, setCouponDraft] = useState('');
   const [appliedCouponCode, setAppliedCouponCode] = useState<string | null>(null);
   const [discountAmount, setDiscountAmount] = useState(0);
@@ -348,9 +401,6 @@ export function CheckoutForm({
         ? formatMoney(shippingAmount)
         : labels.selectDeliveryLocation;
 
-  const deliveryFeeHint =
-    !isPickup && selectedZone ? `${selectedZone.label} · ${formatMoney(shippingAmount)}` : null;
-
   function clearAppliedCoupon(): void {
     setAppliedCouponCode(null);
     setDiscountAmount(0);
@@ -453,17 +503,26 @@ export function CheckoutForm({
     if (shippingMethod === 'delivery') {
       if (!deliveryRuleId || !selectedZone) {
         setError(labels.selectDeliveryLocation);
+        scrollCheckoutField('deliveryRuleId');
         return;
       }
 
       if (!line1.trim() || line1.trim().length < 3) {
         setError(labels.enterDeliveryAddress);
+        scrollCheckoutField('line1');
+        return;
+      }
+
+      if (document.querySelector('[data-checkout-field="deliveryTime"][data-time-missing="true"]')) {
+        setError(labels.schedulePickTime.replace(/\n/g, ' '));
+        scrollCheckoutField('deliveryTime');
         return;
       }
     }
 
     if (!paymentMethod) {
       setError(labels.selectPaymentMethod);
+      scrollCheckoutField('paymentMethod');
       return;
     }
 
@@ -473,6 +532,7 @@ export function CheckoutForm({
       cashChangeAmount == null
     ) {
       setError(labels.selectCashChange);
+      scrollCheckoutField('cashChange');
       return;
     }
 
@@ -534,7 +594,7 @@ export function CheckoutForm({
         onCartChanged={clearAppliedCoupon}
       />
 
-      <form onSubmit={onSubmit}>
+      <form ref={formRef} onSubmit={onSubmit}>
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
           <CheckoutDetailsSections
             labels={labels}
@@ -566,7 +626,6 @@ export function CheckoutForm({
             onDeliveryRuleIdChange={setDeliveryRuleId}
             line1={line1}
             onLine1Change={setLine1}
-            deliveryFeeHint={deliveryFeeHint}
             paymentMethod={paymentMethod}
             onPaymentMethodChange={(method) => {
               setPaymentMethod(method);

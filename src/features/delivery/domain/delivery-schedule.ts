@@ -314,5 +314,5 @@ export function formatDeliverySlotSnapshot(selected: SelectedDeliverySlot): stri
   return `${selected.date} ${selected.startTime}–${selected.endTime}`;
 }
 
-/** Stored when the customer keeps the default ASAP promise (~1 hour). */
-export const ASAP_DELIVERY_ESTIMATE_SNAPSHOT = 'approximately 1 hour';
+/** Stored when the customer keeps the default ASAP promise (30-45 minutes). */
+export const ASAP_DELIVERY_ESTIMATE_SNAPSHOT = 'approximately 30-45 minutes';

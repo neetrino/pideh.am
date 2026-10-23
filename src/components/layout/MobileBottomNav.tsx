@@ -55,7 +55,7 @@ function NavBadge({ count }: { count: number }) {
   );
 }
 
-function NavGlyph({ src, size }: { src: string; size: number }) {
+function NavGlyph({ src, size, active }: { src: string; size: number; active: boolean }) {
   return (
     // eslint-disable-next-line @next/next/no-img-element
     <img
@@ -63,7 +63,7 @@ function NavGlyph({ src, size }: { src: string; size: number }) {
       alt=""
       width={size}
       height={size}
-      className="block size-full object-contain"
+      className={`block size-full object-contain ${active ? 'brightness-0' : ''}`}
       draggable={false}
     />
   );
@@ -142,7 +142,7 @@ export function MobileBottomNav({
                 aria-current={shopActive ? 'page' : undefined}
                 className="flex size-full items-center justify-center"
               >
-                <NavGlyph src={MOBILE_HOME_ASSETS.navChef} size={ICON_CHEF} />
+                <NavGlyph src={MOBILE_HOME_ASSETS.navChef} size={ICON_CHEF} active={shopActive} />
               </AppLink>
             </IconHit>
 
@@ -163,7 +163,7 @@ export function MobileBottomNav({
                     data-cart-target=""
                     className="relative flex size-full items-center justify-center"
                   >
-                    <NavGlyph src={MOBILE_HOME_ASSETS.navCart} size={ICON_CART} />
+                    <NavGlyph src={MOBILE_HOME_ASSETS.navCart} size={ICON_CART} active={open} />
                     <NavBadge count={badgeCount} />
                   </button>
                 )}
@@ -180,7 +180,7 @@ export function MobileBottomNav({
               aria-current={homeActive ? 'page' : undefined}
               className="flex size-full items-center justify-center"
             >
-              <NavGlyph src={MOBILE_HOME_ASSETS.navHome} size={ICON_HOME} />
+              <NavGlyph src={MOBILE_HOME_ASSETS.navHome} size={ICON_HOME} active={false} />
             </AppLink>
           </IconHit>
 
@@ -194,7 +194,7 @@ export function MobileBottomNav({
                 aria-current={wishlistActive ? 'page' : undefined}
                 className="relative flex size-full items-center justify-center"
               >
-                <NavGlyph src={MOBILE_HOME_ASSETS.navHeart} size={ICON_HEART} />
+                <NavGlyph src={MOBILE_HOME_ASSETS.navHeart} size={ICON_HEART} active={wishlistActive} />
                 <NavBadge count={wishlistBadgeCount} />
               </AppLink>
             </IconHit>
@@ -207,7 +207,7 @@ export function MobileBottomNav({
                 aria-current={profileActive ? 'page' : undefined}
                 className="flex size-full items-center justify-center"
               >
-                <NavGlyph src={MOBILE_HOME_ASSETS.navUser} size={ICON_USER} />
+                <NavGlyph src={MOBILE_HOME_ASSETS.navUser} size={ICON_USER} active={profileActive} />
               </AppLink>
             </IconHit>
           </div>

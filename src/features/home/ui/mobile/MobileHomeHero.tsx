@@ -161,6 +161,7 @@ export function MobileHomeHero({
       <form
         role="search"
         onSubmit={handleSearchSubmit}
+        suppressHydrationWarning
         className="absolute top-[150px] left-1/2 z-40 h-14 w-[286px] -translate-x-1/2 overflow-hidden rounded-[40px] bg-white"
         onClick={() => searchInputRef.current?.focus()}
       >
@@ -178,6 +179,7 @@ export function MobileHomeHero({
         </span>
         <input
           ref={searchInputRef}
+          suppressHydrationWarning
           id="mobile-home-search"
           type="search"
           name="q"

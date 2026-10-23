@@ -41,6 +41,7 @@ export function CashChangePicker({
     <fieldset
       className="rounded-2xl border border-[#1e1e1e]/10 bg-[#fffaf3] p-3"
       disabled={disabled}
+      data-checkout-field="cashChange"
     >
       <legend className="float-left w-full font-display text-lg leading-none text-[#1e1e1e] uppercase">
         {labels.title}

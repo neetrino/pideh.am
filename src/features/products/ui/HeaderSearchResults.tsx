@@ -17,7 +17,6 @@ type HeaderSearchResultsProps = {
   pending: boolean;
   products: HeaderSearchProduct[];
   searchedQuery: string;
-  total: number;
   viewAllHref: string;
   onNavigate: () => void;
 };
@@ -31,7 +30,6 @@ export function HeaderSearchResults({
   pending,
   products,
   searchedQuery,
-  total,
   viewAllHref,
   onNavigate,
 }: HeaderSearchResultsProps) {
@@ -127,7 +125,7 @@ export function HeaderSearchResults({
         ) : null}
       </div>
 
-      {searchedQuery && total > products.length ? (
+      {searchedQuery && products.length > 0 ? (
         <div className="border-t-2 border-[#1e1e1e]/10 px-4 py-3">
           <AppLink
             href={viewAllHref}
