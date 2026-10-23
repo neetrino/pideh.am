@@ -84,7 +84,7 @@ export function HomeProductCard({
             imageUrl={imageUrl}
             priority={priority}
           />
-          <span className="absolute top-0 right-0 z-40" onPointerDown={stopCardPress}>
+          <span className="absolute top-0 right-0 z-[70]" onPointerDown={stopCardPress}>
             <WishlistButton
               locale={locale}
               productId={productId}
