@@ -20,7 +20,7 @@ export function WishlistHeaderLink({ locale, label, count }: WishlistHeaderLinkP
       href={`/${locale}/wishlist`}
       prefetchPolicy="intent"
       aria-label={label}
-      className="relative inline-flex h-11 w-11 items-center justify-center rounded-lg text-gray-700 transition-colors duration-150 hover:text-gray-900"
+      className="relative z-10 inline-flex h-11 w-11 items-center justify-center rounded-full text-[#1e1e1e] transition-colors duration-150 hover:bg-[#ffd54a] hover:text-[#1e1e1e]"
     >
       <Heart className="h-5 w-5" aria-hidden="true" />
       {badgeCount > 0 ? (

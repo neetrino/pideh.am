@@ -169,6 +169,7 @@ export function SideSheet({
   return createPortal(
     <div
       className={`fixed inset-0 ${zIndexClassName}`}
+      data-side-sheet=""
       role="dialog"
       aria-modal="true"
       aria-label={open ? ariaLabel : snapshotAriaLabelRef.current}

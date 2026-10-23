@@ -15,9 +15,8 @@ const LIFT_CSS = `
   }
 }`;
 
-const OVERLAY_QUERY =
-  '[role="dialog"][aria-modal="true"], [role="alertdialog"][aria-modal="true"]';
-/** Side sheets and modals start at z-50. */
+const OVERLAY_QUERY = '[data-side-sheet]';
+/** Side sheets start at z-50. The bubble stays above every other layer. */
 const BELOW_OVERLAY_Z = '30';
 
 function stackUnderOverlay(node: HTMLElement, covered: boolean): void {
@@ -40,7 +39,7 @@ function ensureLiftStyle(root: ShadowRoot): void {
   root.appendChild(style);
 }
 
-/** Keeps the chat above the mobile dock, and behind open modals and side sheets. */
+/** Keeps the chat above the page, and behind an open side sheet. */
 export function TidioMobileLift() {
   useEffect(() => {
     let shadowObserver: MutationObserver | undefined;

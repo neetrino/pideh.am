@@ -435,9 +435,9 @@ body {
   background: #ff6b00;
 }
 
-/* Sheets and modals start at z-50. Keep the chat bubble behind them. */
-body:has([role='dialog'][aria-modal='true'], [role='alertdialog'][aria-modal='true']) #tidio-chat,
-body:has([role='dialog'][aria-modal='true'], [role='alertdialog'][aria-modal='true']) #tidio-chat-iframe {
+/* Side sheets cover the chat. Everything else, including bottom sheets, stays under it. */
+body:has([data-side-sheet]) #tidio-chat,
+body:has([data-side-sheet]) #tidio-chat-iframe {
   z-index: 30 !important;
 }
 
