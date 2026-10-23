@@ -158,6 +158,9 @@ export function DeliverySlotWheelSheet({
   }, [rendered, onClose]);
 
   function onHandlePointerDown(event: ReactPointerEvent<HTMLDivElement>): void {
+    if (event.target instanceof Element && event.target.closest('button')) {
+      return;
+    }
     dragStartY.current = event.clientY;
     panelRef.current?.setPointerCapture(event.pointerId);
     if (panelRef.current) {
@@ -273,9 +276,13 @@ export function DeliverySlotWheelSheet({
           <button
             type="button"
             onClick={onApply}
-            className="mt-6 w-full rounded-full bg-[#ff6b00] py-3.5 text-base font-semibold text-white"
+            onPointerDown={(event) => event.stopPropagation()}
+            className="font-noto-armenian relative z-10 mt-6 flex h-12 w-full items-center justify-center rounded-full bg-[#ff6b00] text-base font-bold"
+            style={{ color: '#ffffff' }}
           >
-            {applyLabel}
+            <span className="font-noto-armenian text-base font-bold" style={{ color: '#ffffff' }}>
+              {applyLabel}
+            </span>
           </button>
         </div>
       </div>

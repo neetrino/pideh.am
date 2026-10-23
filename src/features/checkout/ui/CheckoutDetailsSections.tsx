@@ -285,12 +285,12 @@ export function CheckoutDetailsSections({
                   pickTime: labels.schedulePickTime,
                   deliveryDay: labels.scheduleDeliveryDay,
                   deliveryTime: labels.scheduleDeliveryTime,
+                  apply: labels.scheduleApply,
+                  close: labels.scheduleClose,
                   timeHint: labels.scheduleTimeHint,
                   noSlots: labels.scheduleNoSlots,
                   prevMonth: labels.schedulePrevMonth,
                   nextMonth: labels.scheduleNextMonth,
-                  apply: labels.scheduleApply,
-                  close: labels.scheduleClose,
                 }}
               />
         </div>

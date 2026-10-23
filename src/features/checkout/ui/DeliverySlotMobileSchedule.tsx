@@ -7,7 +7,7 @@ import {
   DeliverySlotWheelSheet,
   DeliverySlotWheels,
 } from '@/features/checkout/ui/DeliverySlotWheelSheet';
-import { monthLabel, parseYmd } from '@/features/checkout/ui/delivery-slot-calendar';
+import { parseYmd, shortMonthLabel } from '@/features/checkout/ui/delivery-slot-calendar';
 import type { DeliveryDayAvailability } from '@/features/delivery/domain/delivery-schedule';
 
 type Slot = { startTime: string; endTime: string; label: string };
@@ -74,7 +74,7 @@ export function DeliverySlotMobileSchedule({
   const dateButtonText = chosenDate
     ? (() => {
         const part = parseYmd(chosenDate);
-        return `${part.day} ${monthLabel(part.year, part.monthIndex, locale)}`;
+        return `${part.day} ${shortMonthLabel(part.monthIndex, locale)} ${part.year}`;
       })()
     : datePlaceholder;
   const timeButtonText = pickedSlot ? formatClock(pickedSlot.startTime) : timePlaceholder;

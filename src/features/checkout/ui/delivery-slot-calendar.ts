@@ -48,6 +48,12 @@ const MONTH_NAMES = {
   ],
 } as const;
 
+const MONTH_SHORT = {
+  en: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+  hy: ['հունվ.', 'փետր.', 'մարտ', 'ապր.', 'մայիս', 'հունիս', 'հուլ.', 'օգոստ.', 'սեպտ.', 'հոկտ.', 'նոյ.', 'դեկտ.'],
+  ru: ['янв.', 'февр.', 'мар.', 'апр.', 'мая', 'июн.', 'июл.', 'авг.', 'сент.', 'окт.', 'нояб.', 'дек.'],
+} as const;
+
 const WEEKDAY_LABELS = {
   en: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
   hy: ['Երկ', 'Երք', 'Չրք', 'Հնգ', 'Ուրբ', 'Շբթ', 'Կիր'],
@@ -82,6 +88,12 @@ export function formatStorefrontDate(value: Date, locale: string): string {
 export function formatCalendarDate(ymd: string, locale: string): string {
   const { year, monthIndex, day } = parseYmd(ymd);
   return `${day} ${monthLabel(year, monthIndex, locale)}`;
+}
+
+/** Short month, e.g. `հոկտ.` */
+export function shortMonthLabel(monthIndex: number, locale: string): string {
+  const months = MONTH_SHORT[calendarLocale(locale)];
+  return months[monthIndex] ?? months[0];
 }
 
 export function monthLabel(year: number, monthIndex: number, locale: string): string {
