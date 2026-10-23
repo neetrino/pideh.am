@@ -99,7 +99,6 @@ type CheckoutDetailsSectionsProps = {
   onDeliveryRuleIdChange: (id: string) => void;
   line1: string;
   onLine1Change: (value: string) => void;
-  deliveryFeeHint: string | null;
   paymentMethod: CheckoutPaymentMethod | null;
   onPaymentMethodChange: (method: CheckoutPaymentMethod) => void;
   paymentOptions: PaymentOption[];
@@ -131,7 +130,6 @@ export function CheckoutDetailsSections({
   onDeliveryRuleIdChange,
   line1,
   onLine1Change,
-  deliveryFeeHint,
   paymentMethod,
   onPaymentMethodChange,
   paymentOptions,
@@ -216,7 +214,7 @@ export function CheckoutDetailsSections({
         <h2 className={CHECKOUT_SECTION_TITLE}>{labels.shippingAddress}</h2>
         <div className="space-y-4">
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                <div className="min-w-0 space-y-1.5">
+                <div className="min-w-0 space-y-1.5" data-checkout-field="deliveryRuleId">
                   <span className="text-sm font-bold text-[#1e1e1e]">{labels.deliveryLocation}</span>
                   <SelectDropdown
                     ariaLabel={labels.deliveryLocation}
@@ -231,11 +229,8 @@ export function CheckoutDetailsSections({
                     tone="brand"
                     className="w-full"
                   />
-                  {deliveryFeeHint ? (
-                    <p className="text-sm text-[#1e1e1e]/65">{deliveryFeeHint}</p>
-                  ) : null}
                 </div>
-                <div className="min-w-0 space-y-1.5">
+                <div className="min-w-0 space-y-1.5" data-checkout-field="line1">
                   <span className="text-sm font-bold text-[#1e1e1e]">{labels.address}</span>
                   <AddressAutocomplete
                     name="line1"

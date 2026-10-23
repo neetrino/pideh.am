@@ -41,7 +41,7 @@ export function CheckoutPaymentMethods({
   const [logoErrors, setLogoErrors] = useState<Record<string, boolean>>({});
 
   return (
-    <section className={CHECKOUT_PANEL}>
+    <section className={CHECKOUT_PANEL} data-checkout-field="paymentMethod">
       <h2 className={CHECKOUT_SECTION_TITLE}>{title}</h2>
       <div className="space-y-2">
         {options.map((option) => {

@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 
 import { DeliveryDateStrip } from '@/features/checkout/ui/DeliveryDateStrip';
 import {
@@ -62,6 +62,7 @@ export function DeliverySlotMobileSchedule({
   onDateApplied,
   onTimeApplied,
 }: DeliverySlotMobileScheduleProps) {
+  const timeButtonRef = useRef<HTMLButtonElement>(null);
   const [dateOpen, setDateOpen] = useState(false);
   const [timeOpen, setTimeOpen] = useState(false);
   const [chosenDate, setChosenDate] = useState<string | null>(pickedDate);
@@ -77,7 +78,8 @@ export function DeliverySlotMobileSchedule({
         return `${part.day} ${shortMonthLabel(part.monthIndex, locale)} ${part.year}`;
       })()
     : datePlaceholder;
-  const timeButtonText = pickedSlot ? formatClock(pickedSlot.startTime) : timePlaceholder;
+  const timeButtonText = pickedSlot && pickedDate === chosenDate ? formatClock(pickedSlot.startTime) : timePlaceholder;
+  const timeMissing = Boolean(chosenDate) && (!pickedSlot || pickedDate !== chosenDate);
 
   function openDate(): void {
     setDraftDate(chosenDate ?? days[0]?.date ?? '');
@@ -107,6 +109,13 @@ export function DeliverySlotMobileSchedule({
     }
     setChosenDate(draftDate);
     onDateApplied(draftDate);
+    const slotMatches =
+      pickedSlot != null && pickedDate === draftDate;
+    if (!slotMatches) {
+      window.requestAnimationFrame(() => {
+        timeButtonRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      });
+    }
   }
 
   function applyTime(): void {
@@ -140,10 +149,16 @@ export function DeliverySlotMobileSchedule({
           {dateButtonText}
         </button>
         <button
+          ref={timeButtonRef}
           type="button"
           disabled={disabled || !chosenDate}
           onClick={openTime}
-          className={`${BUTTON_CLASS} whitespace-pre-line`}
+          data-checkout-field="deliveryTime"
+          data-time-missing={timeMissing ? 'true' : 'false'}
+          aria-invalid={timeMissing || undefined}
+          className={`${BUTTON_CLASS} whitespace-pre-line ${
+            timeMissing ? 'bg-red-600 ring-2 ring-inset ring-red-800 hover:bg-red-700' : ''
+          }`}
         >
           {timeButtonText}
         </button>
