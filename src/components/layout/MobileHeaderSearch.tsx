@@ -10,21 +10,13 @@ import {
   DEFAULT_CATALOG_PAGE_SIZE,
   DEFAULT_CATALOG_SORT,
 } from '@/features/products/schemas/catalog-list';
-import { AppLink } from '@/components/ui/AppLink';
 import type { Locale } from '@/lib/i18n/config';
-
-type MobileHeaderNavItem = {
-  href: string;
-  label: string;
-};
 
 type MobileHeaderSearchProps = {
   locale: Locale;
   backLabel: string;
   searchLabel: string;
   searchPlaceholder: string;
-  navLabel: string;
-  navItems: readonly MobileHeaderNavItem[];
 };
 
 /**
@@ -37,8 +29,6 @@ export function MobileHeaderSearch({
   backLabel,
   searchLabel,
   searchPlaceholder,
-  navLabel,
-  navItems,
 }: MobileHeaderSearchProps) {
   const router = useRouter();
   const pathname = usePathname() ?? `/${locale}`;
@@ -66,7 +56,6 @@ export function MobileHeaderSearch({
   }
 
   return (
-    <div className="space-y-3">
     <div className="flex items-center gap-2">
       {showBack ? (
         <button
@@ -118,28 +107,6 @@ export function MobileHeaderSearch({
           className="font-montserrat-arm text-pideh-ink size-full bg-transparent pr-5 pl-[54px] text-base leading-[21px] font-medium outline-none placeholder:text-[rgba(179,96,37,0.5)] [&::-webkit-search-cancel-button]:appearance-none"
         />
       </form>
-    </div>
-      <nav aria-label={navLabel} className="flex gap-4 overflow-x-auto pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-        {navItems.map((item) => {
-          const active = pathname === item.href || pathname.startsWith(`${item.href}/`);
-          const homeHref = `/${locale}`;
-          const isHomeItem = item.href === homeHref || item.href === `${homeHref}/`;
-          const current = isHomeItem ? isHome : active && !isHome;
-          return (
-            <AppLink
-              key={item.href}
-              href={item.href}
-              prefetchPolicy="intent"
-              aria-current={current ? 'page' : undefined}
-              className={`font-noto-armenian shrink-0 text-sm font-bold ${
-                current ? 'text-[#1e1e1e]' : 'text-[#1e1e1e]/45'
-              }`}
-            >
-              {item.label}
-            </AppLink>
-          );
-        })}
-      </nav>
     </div>
   );
 }
