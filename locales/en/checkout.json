@@ -129,6 +129,7 @@
     "amount": "Bonus points to use",
     "useMax": "Use max",
     "applied": "Bonuses",
+    "earn": "Loyalty points",
     "guestWarning": "Because you are not registered, you will lose {amount} loyalty points",
     "register": "Register"
   }

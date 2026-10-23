@@ -12,6 +12,7 @@ type CheckoutMemberBonus = {
   maxRedeem: number;
   useBonuses: boolean;
   redeemAmount: number;
+  earnPoints: number;
   onToggle: (enabled: boolean) => void;
   onAmountChange: (amount: number) => void;
   onUseMax: () => void;
@@ -22,6 +23,7 @@ type CheckoutMemberBonus = {
     amount: string;
     useMax: string;
     applied: string;
+    earn: string;
   };
   formatMoney: (amount: number) => string;
 };
@@ -281,7 +283,7 @@ export function CheckoutOrderSummary({
         ) : null}
         </div>
 
-        <label className="mb-4 block lg:hidden">
+        <label className="mb-4 block">
           <span className="mb-2 block text-sm font-bold text-[#1e1e1e]">{orderNoteLabel}</span>
           <textarea
             name="orderNote"
@@ -343,6 +345,12 @@ export function CheckoutOrderSummary({
             <div className="flex items-baseline justify-between gap-3 text-[#1e1e1e]/80">
               <span>{participantsPrepaidLabel}</span>
               <span className="text-[#ff6b00]">-{participantsPrepaidFormatted}</span>
+            </div>
+          ) : null}
+          {bonus?.mode === 'member' && bonus.earnPoints > 0 ? (
+            <div className="flex items-baseline justify-between gap-3 text-[#ff6b00]">
+              <span>{bonus.labels.earn}</span>
+              <span className="font-bold">+{bonus.earnPoints}</span>
             </div>
           ) : null}
           <div className="mt-1 flex items-end justify-between gap-3 border-t border-[#1e1e1e]/10 pt-3">
