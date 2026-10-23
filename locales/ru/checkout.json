@@ -37,9 +37,9 @@
   "schedule": {
     "title": "Дата и время",
     "deliverTo": "Доставка",
-    "approximatelyOneHour": "Примерно 30-45 минут",
+    "approximatelyOneHour": "Примерно {from}-{to} минут",
     "change": "Изменить",
-    "useAsap": "Как можно скорее (30-45 минут)",
+    "useAsap": "Как можно скорее ({from}-{to} минут)",
     "pickDate": "Выберите день",
     "pickTime": "Интервал доставки",
     "deliveryDay": "День доставки",

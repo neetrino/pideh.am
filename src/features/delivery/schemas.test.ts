@@ -10,6 +10,8 @@ describe('deliverySettingsSchema', () => {
     isActive: true,
     schedule: {
       slotMinutes: DEFAULT_DELIVERY_SCHEDULE.slotMinutes,
+      asapFromMinutes: DEFAULT_DELIVERY_SCHEDULE.asapFromMinutes,
+      asapToMinutes: DEFAULT_DELIVERY_SCHEDULE.asapToMinutes,
       maxDaysAhead: DEFAULT_DELIVERY_SCHEDULE.maxDaysAhead,
       weekly: DEFAULT_DELIVERY_SCHEDULE.weekly,
       closedDates: [] as string[],

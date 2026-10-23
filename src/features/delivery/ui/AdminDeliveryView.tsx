@@ -120,6 +120,8 @@ export function AdminDeliveryView({
         isActive,
         schedule: {
           slotMinutes: nextSchedule.slotMinutes,
+          asapFromMinutes: nextSchedule.asapFromMinutes,
+          asapToMinutes: nextSchedule.asapToMinutes,
           maxDaysAhead: nextSchedule.maxDaysAhead,
           weekly,
           closedDates: nextSchedule.closedDates,

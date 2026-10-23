@@ -121,13 +121,14 @@ function DeliveryLocationForm({ locale, location, onClose, copy }: DeliveryLocat
         });
       }}
     >
-      <div className="flex-1 space-y-8 overflow-y-auto px-5 py-5">
+      <div className="flex flex-1 flex-col gap-8 overflow-y-auto px-5 py-5">
         <AdminLocaleTabs
           label={tabFields.translations}
           active={activeLocale}
           onChange={setActiveLocale}
         />
 
+        <div className="flex flex-col gap-5">
         <label>
           <span className={ADMIN_LABEL}>{tabFields.city}</span>
           <input
@@ -166,6 +167,7 @@ function DeliveryLocationForm({ locale, location, onClose, copy }: DeliveryLocat
             disabled={isPending}
           />
         </label>
+        </div>
 
         {error ? <p className="text-sm text-red-700">{error}</p> : null}
       </div>

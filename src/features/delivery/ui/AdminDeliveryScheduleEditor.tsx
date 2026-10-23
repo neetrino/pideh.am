@@ -34,6 +34,55 @@ function minutesToTime(total: number): string {
   return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
 }
 
+/** Lets the field be cleared and retyped; commits only a whole number in range. */
+function ScheduleNumberField({
+  label,
+  value,
+  min,
+  max,
+  disabled,
+  onCommit,
+}: {
+  label: string;
+  value: number;
+  min: number;
+  max: number;
+  disabled: boolean;
+  onCommit: (next: number) => void;
+}) {
+  const [draft, setDraft] = useState<string | null>(null);
+
+  return (
+    <label>
+      <span className={ADMIN_LABEL}>{label}</span>
+      <input
+        type="text"
+        inputMode="numeric"
+        value={draft ?? String(value)}
+        disabled={disabled}
+        className={ADMIN_INPUT}
+        onFocus={() => setDraft(String(value))}
+        onChange={(event) => {
+          const next = event.target.value.replace(/\D/g, '');
+          setDraft(next);
+          if (next === '') return;
+          const parsed = Number(next);
+          if (parsed >= min && parsed <= max) onCommit(parsed);
+        }}
+        onBlur={() => {
+          if (draft == null || draft === '') {
+            setDraft(null);
+            return;
+          }
+          const parsed = Number(draft);
+          onCommit(Math.min(max, Math.max(min, parsed)));
+          setDraft(null);
+        }}
+      />
+    </label>
+  );
+}
+
 /** Keeps close strictly after open for bookable days. */
 function withValidOpenClose(
   hours: DayHours,
@@ -125,42 +174,39 @@ export function AdminDeliveryScheduleEditor({
         <h2 className="text-base font-semibold text-gray-900">{copy.title}</h2>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2 sm:items-end">
-        <label>
-          <span className={ADMIN_LABEL}>{copy.slotLength}</span>
-          <input
-            type="number"
-            min={15}
-            max={240}
-            step={15}
-            value={value.slotMinutes}
-            disabled={disabled}
-            className={ADMIN_INPUT}
-            onChange={(event) =>
-              onChange({
-                ...value,
-                slotMinutes: Number(event.target.value),
-              })
-            }
-          />
-        </label>
-        <label>
-          <span className={ADMIN_LABEL}>{copy.bookableDaysAhead}</span>
-          <input
-            type="number"
-            min={1}
-            max={60}
-            value={value.maxDaysAhead}
-            disabled={disabled}
-            className={ADMIN_INPUT}
-            onChange={(event) =>
-              onChange({
-                ...value,
-                maxDaysAhead: Number(event.target.value),
-              })
-            }
-          />
-        </label>
+      <div className="grid grid-cols-2 items-end gap-4">
+        <ScheduleNumberField
+          label={copy.slotLength}
+          value={value.slotMinutes}
+          min={15}
+          max={240}
+          disabled={disabled}
+          onCommit={(slotMinutes) => onChange({ ...value, slotMinutes })}
+        />
+        <ScheduleNumberField
+          label={copy.bookableDaysAhead}
+          value={value.maxDaysAhead}
+          min={1}
+          max={60}
+          disabled={disabled}
+          onCommit={(maxDaysAhead) => onChange({ ...value, maxDaysAhead })}
+        />
+        <ScheduleNumberField
+          label={copy.asapFrom}
+          value={value.asapFromMinutes}
+          min={1}
+          max={240}
+          disabled={disabled}
+          onCommit={(asapFromMinutes) => onChange({ ...value, asapFromMinutes })}
+        />
+        <ScheduleNumberField
+          label={copy.asapTo}
+          value={value.asapToMinutes}
+          min={1}
+          max={240}
+          disabled={disabled}
+          onCommit={(asapToMinutes) => onChange({ ...value, asapToMinutes })}
+        />
       </div>
 
       <div className="overflow-x-auto rounded-2xl border border-gray-200">

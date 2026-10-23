@@ -572,6 +572,8 @@
     "schedule": {
       "title": "Delivery schedule",
       "slotLength": "Slot length (minutes)",
+      "asapFrom": "Approximately from (minutes)",
+      "asapTo": "Approximately to (minutes)",
       "bookableDaysAhead": "Bookable days ahead",
       "day": "Day",
       "open": "Open",

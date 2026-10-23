@@ -25,7 +25,13 @@ import type { DeliveryScheduleSettings } from '@/features/delivery/domain/delive
 import type { SelectedDeliverySlot } from '@/features/delivery/domain/delivery-schedule';
 import type { Locale } from '@/lib/i18n/config';
 
-export type CheckoutDeliveryZoneOption = {
+function formatAsapLabel(template: string, schedule: DeliveryScheduleSettings): string {
+  return template
+    .replace('{from}', String(schedule.asapFromMinutes))
+    .replace('{to}', String(schedule.asapToMinutes));
+}
+
+type CheckoutDeliveryZoneOption = {
   id: string;
   label: string;
   priceAmount: number;
@@ -264,6 +270,7 @@ export function CheckoutDetailsSections({
                   />
                 </label>
               </div>
+              <div className="pt-3">
               <DeliverySlotPicker
                 schedule={deliverySchedule}
                 selected={deliverySlot}
@@ -273,9 +280,12 @@ export function CheckoutDetailsSections({
                 labels={{
                   title: labels.scheduleTitle,
                   deliverTo: labels.scheduleDeliverTo,
-                  approximatelyOneHour: labels.scheduleApproximatelyOneHour,
+                  approximatelyOneHour: formatAsapLabel(
+                    labels.scheduleApproximatelyOneHour,
+                    deliverySchedule,
+                  ),
                   change: labels.scheduleChange,
-                  useAsap: labels.scheduleUseAsap,
+                  useAsap: formatAsapLabel(labels.scheduleUseAsap, deliverySchedule),
                   pickDate: labels.schedulePickDate,
                   pickTime: labels.schedulePickTime,
                   deliveryDay: labels.scheduleDeliveryDay,
@@ -288,6 +298,7 @@ export function CheckoutDetailsSections({
                   nextMonth: labels.scheduleNextMonth,
                 }}
               />
+              </div>
         </div>
       </section>
       ) : pickupBranches.length === 0 ? (

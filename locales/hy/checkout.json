@@ -37,9 +37,9 @@
   "schedule": {
     "title": "Ամսաթիվ և ժամ",
     "deliverTo": "Առաքում",
-    "approximatelyOneHour": "Մոտավորապես 30-45 րոպե",
+    "approximatelyOneHour": "Մոտավորապես {from}-{to} րոպե",
     "change": "Փոխել",
-    "useAsap": "Հնարավորինս շուտ (30-45 րոպե)",
+    "useAsap": "Հնարավորինս շուտ ({from}-{to} րոպե)",
     "pickDate": "Ընտրեք օրը",
     "pickTime": "Առաքման ժամային\nմիջակայք",
     "deliveryDay": "Առաքման օր",
