@@ -78,6 +78,7 @@ export function MobileHeaderSearch({
         role="search"
         onSubmit={handleSubmit}
         onClick={() => inputRef.current?.focus()}
+        suppressHydrationWarning
         className="relative h-14 min-w-0 flex-1 overflow-hidden rounded-[40px] bg-white"
       >
         <label htmlFor="mobile-header-search" className="sr-only">
@@ -94,6 +95,7 @@ export function MobileHeaderSearch({
         </span>
         <input
           ref={inputRef}
+          suppressHydrationWarning
           id="mobile-header-search"
           type="search"
           name="q"

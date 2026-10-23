@@ -56,10 +56,14 @@ type CheckoutDetailsLabels = {
   scheduleUseAsap: string;
   schedulePickDate: string;
   schedulePickTime: string;
+  scheduleDeliveryDay: string;
+  scheduleDeliveryTime: string;
   scheduleTimeHint: string;
   scheduleNoSlots: string;
   schedulePrevMonth: string;
   scheduleNextMonth: string;
+  scheduleApply: string;
+  scheduleClose: string;
   cashChangeTitle: string;
   cashChangeHint: string;
   cashChangeAria: string;
@@ -279,10 +283,14 @@ export function CheckoutDetailsSections({
                   useAsap: labels.scheduleUseAsap,
                   pickDate: labels.schedulePickDate,
                   pickTime: labels.schedulePickTime,
+                  deliveryDay: labels.scheduleDeliveryDay,
+                  deliveryTime: labels.scheduleDeliveryTime,
                   timeHint: labels.scheduleTimeHint,
                   noSlots: labels.scheduleNoSlots,
                   prevMonth: labels.schedulePrevMonth,
                   nextMonth: labels.scheduleNextMonth,
+                  apply: labels.scheduleApply,
+                  close: labels.scheduleClose,
                 }}
               />
         </div>

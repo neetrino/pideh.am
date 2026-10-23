@@ -3,6 +3,7 @@
 import { Calendar, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useMemo, useState } from 'react';
 
+import { DeliverySlotMobileSchedule } from '@/features/checkout/ui/DeliverySlotMobileSchedule';
 import {
   buildMonthCells,
   monthLabel,
@@ -26,10 +27,14 @@ type DeliverySlotPickerLabels = {
   useAsap: string;
   pickDate: string;
   pickTime: string;
+  deliveryDay: string;
+  deliveryTime: string;
   timeHint: string;
   noSlots: string;
   prevMonth: string;
   nextMonth: string;
+  apply: string;
+  close: string;
 };
 
 type DeliverySlotPickerProps = {
@@ -183,7 +188,41 @@ export function DeliverySlotPicker({
       ) : null}
 
       {isEditing && availableDays.length > 0 ? (
-        <div className="overflow-hidden rounded-[22px] border border-[#ff6b00]/15 bg-white">
+        <>
+          <DeliverySlotMobileSchedule
+            locale={locale}
+            disabled={disabled}
+            asapLabel={labels.useAsap}
+            datePlaceholder={labels.pickDate}
+            timePlaceholder={labels.pickTime}
+            dateTitle={labels.deliveryDay}
+            timeTitle={labels.deliveryTime}
+            applyLabel={labels.apply}
+            closeLabel={labels.close}
+            asapSelected={selected == null}
+            days={availableDays}
+            pickedDate={selected?.date ?? null}
+            pickedSlot={
+              selected
+                ? {
+                    startTime: selected.startTime,
+                    endTime: selected.endTime,
+                    label: `${selected.startTime}–${selected.endTime}`,
+                  }
+                : null
+            }
+            onAsap={selectAsap}
+            onDateApplied={() => undefined}
+            onTimeApplied={(date, slot) => {
+              onChange({
+                date,
+                startTime: slot.startTime,
+                endTime: slot.endTime,
+              });
+              setIsEditing(false);
+            }}
+          />
+          <div className="hidden overflow-hidden rounded-[22px] border border-[#ff6b00]/15 bg-white sm:block">
           <div className="border-b border-[#ff6b00]/10 px-3 pt-3">
             <button
               type="button"
@@ -198,7 +237,7 @@ export function DeliverySlotPicker({
               {labels.useAsap}
             </button>
           </div>
-          <div className="grid items-stretch gap-3 p-3 md:grid-cols-[15.5rem_minmax(0,1fr)]">
+          <div className="hidden items-stretch gap-3 p-3 sm:grid md:grid-cols-[15.5rem_minmax(0,1fr)]">
             <div className="rounded-2xl bg-[#fff8e7]/80 p-2">
               <p className="mb-2 font-display text-xs leading-none tracking-wide text-[#ff6b00] uppercase">
                 {labels.pickDate}
@@ -289,6 +328,7 @@ export function DeliverySlotPicker({
             </div>
           </div>
         </div>
+        </>
       ) : null}
     </div>
   );
