@@ -37,7 +37,8 @@ export function useAboutTeamScroll(sectionRef: RefObject<HTMLElement | null>): v
   useGSAP(
     () => {
       const section = sectionRef.current;
-      if (reduceMotion || !section) {
+      const desktop = window.matchMedia('(min-width: 768px)').matches;
+      if (reduceMotion || !section || !desktop) {
         return;
       }
       const track = section.querySelector<HTMLElement>('[data-gallery-track]');
