@@ -17,7 +17,7 @@ export const CHECKOUT_PRIMARY_BTN =
   '!h-12 !w-full !rounded-full !bg-[#ff6b00] !font-bold !text-white !ring-2 !ring-[#ff6b00] !ring-offset-2 !ring-offset-white hover:!bg-[#e85f00] focus:!ring-[#ff6b00]';
 
 export const CHECKOUT_APPLY_BTN =
-  '!h-11 !shrink-0 !rounded-[15px] !border-transparent !bg-[#ff6b00] !px-4 !text-sm !font-bold !text-white hover:!bg-[#e85f00] focus:!ring-[#ff6b00] disabled:!bg-[#ff6b00]/45 disabled:!text-white/80 disabled:!opacity-100';
+  '!h-[37px] !shrink-0 !rounded-[13px] !border-transparent !bg-[#ff6b00] !px-4 !text-sm !font-bold !text-white hover:!bg-[#e85f00] focus:!ring-[#ff6b00] disabled:!bg-[#ff6b00]/45 disabled:!text-white/80 disabled:!opacity-100';
 
 /** Native radio redrawn in orange, with no black ring or dot. */
 export const CHECKOUT_RADIO =

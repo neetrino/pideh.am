@@ -143,7 +143,7 @@ export function CheckoutOrderSummary({
     'flex h-14 items-center gap-2 rounded-[20px] border-[1.5px] border-[#1e1e1e]/12 bg-[#fff8e7] pr-1.5 pl-4';
   const codeInputClass =
     'h-full min-w-0 flex-1 bg-transparent text-sm text-[#1e1e1e] outline-none placeholder:text-[#1e1e1e]/35 disabled:opacity-60';
-  const codeButtonClass = `${CHECKOUT_APPLY_BTN} !h-10`;
+  const codeButtonClass = CHECKOUT_APPLY_BTN;
 
   return (
     <div>
@@ -171,7 +171,7 @@ export function CheckoutOrderSummary({
             />
             <button
               type="button"
-              className={codeButtonClass}
+              className={`${codeButtonClass} mr-0.5`}
               disabled={isSubmitting || isApplyingCoupon || !couponDraft.trim()}
               onClick={onApplyCoupon}
             >
@@ -203,7 +203,7 @@ export function CheckoutOrderSummary({
             />
             <button
               type="button"
-              className={codeButtonClass}
+              className={`${codeButtonClass} mr-0.5`}
               disabled={isSubmitting || isApplyingGiftCard || !giftCardDraft.trim()}
               onClick={onApplyGiftCard}
             >
