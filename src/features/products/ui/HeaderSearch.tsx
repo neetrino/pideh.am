@@ -48,7 +48,6 @@ export function HeaderSearch({ locale, currency, labels }: HeaderSearchProps) {
   const [exiting, setExiting] = useState(false);
   const [query, setQuery] = useState('');
   const [products, setProducts] = useState<HeaderSearchProduct[]>([]);
-  const [total, setTotal] = useState(0);
   const [searchedQuery, setSearchedQuery] = useState('');
   const [pending, startTransition] = useTransition();
 
@@ -104,7 +103,6 @@ export function HeaderSearch({ locale, currency, labels }: HeaderSearchProps) {
     if (trimmed.length < MIN_QUERY_LENGTH) {
       requestIdRef.current += 1;
       setProducts([]);
-      setTotal(0);
       setSearchedQuery('');
       return;
     }
@@ -115,7 +113,6 @@ export function HeaderSearch({ locale, currency, labels }: HeaderSearchProps) {
         const result = await searchHeaderProductsAction(locale, currency, trimmed);
         if (requestId !== requestIdRef.current) return;
         setProducts(result.products);
-        setTotal(result.total);
         setSearchedQuery(result.query);
       });
     }, SEARCH_DEBOUNCE_MS);
@@ -132,7 +129,6 @@ export function HeaderSearch({ locale, currency, labels }: HeaderSearchProps) {
     setExiting(false);
     setQuery('');
     setProducts([]);
-    setTotal(0);
     setSearchedQuery('');
   }
 
@@ -225,7 +221,6 @@ export function HeaderSearch({ locale, currency, labels }: HeaderSearchProps) {
                   pending={pending}
                   products={products}
                   searchedQuery={searchedQuery}
-                  total={total}
                   viewAllHref={viewAllHref}
                   onNavigate={closePopup}
                 />
