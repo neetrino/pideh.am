@@ -17,7 +17,11 @@ export const CHECKOUT_PRIMARY_BTN =
   '!h-12 !w-full !rounded-full !bg-[#ff6b00] !font-bold !text-white !ring-2 !ring-[#ff6b00] !ring-offset-2 !ring-offset-white hover:!bg-[#e85f00] focus:!ring-[#ff6b00]';
 
 export const CHECKOUT_APPLY_BTN =
-  '!h-11 !shrink-0 !rounded-full !border-transparent !bg-[#ff6b00] !px-4 !text-sm !font-bold !text-white hover:!bg-[#e85f00] focus:!ring-[#ff6b00]';
+  '!h-11 !shrink-0 !rounded-[15px] !border-transparent !bg-[#ff6b00] !px-4 !text-sm !font-bold !text-white hover:!bg-[#e85f00] focus:!ring-[#ff6b00] disabled:!bg-[#ff6b00]/45 disabled:!text-white/80 disabled:!opacity-100';
+
+/** Native radio redrawn in orange, with no black ring or dot. */
+export const CHECKOUT_RADIO =
+  'size-4 shrink-0 appearance-none rounded-full border-2 border-[#ff6b00] bg-white bg-center bg-no-repeat outline-none checked:bg-[radial-gradient(circle,#ff6b00_45%,transparent_47%)] focus-visible:ring-2 focus-visible:ring-[#ff6b00]/35 disabled:cursor-not-allowed disabled:opacity-40';
 
 export const CHECKOUT_RADIO_ON = 'border-[#ff6b00] bg-[#fff8e7]';
 
